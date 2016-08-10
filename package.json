@@ -1,0 +1,57 @@
+{
+  "name": "smoketest",
+  "title": "SmokeTest",
+  "main": "dist/smoketestBundle.js",
+  "version": "0.0.1",
+  "description": "Framework, that allows write functional smoke tests easy",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/browserify -t browserify-css smokeCore.js --ignore 'fs' --ignore 'glob' --ignore 'path' --ignore 'supports-color' > dist/smoketestBundle.js",
+    "test": "./node_modules/.bin/_mocha tests/unit --recursive",
+    "lint": "./node_modules/.bin/eslint -c .eslintrc.js smokeCore.js smokeActions.js getClassUtil.js tests/**/*.js",
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/**/*.js --recursive ; exit 0",
+    "checkupdates": "./node_modules/.bin/ncu"
+  },
+  "engines": {
+    "node": "6.3.1"
+  },
+  "files": [
+    "dist",
+    "cssBundleInstructions.css",
+    "getClassUtil.js",
+    "smokeActions.js",
+    "smokeCore.js"
+  ],
+  "author": {
+    "name": "evegreen",
+    "email": "romenbane@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evegreen/smoketest.git"
+  },
+  "keywords": [
+    "test",
+    "functional",
+    "integration",
+    "smoke"
+  ],
+  "bugs": {
+    "url": "https://github.com/evegreen/smoketest/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "alertify.js": "1.0.12",
+    "browserify": "13.1.0",
+    "browserify-css": "0.9.1",
+    "chai": "3.5.0",
+    "eslint": "3.2.2",
+    "istanbul": "0.4.4",
+    "jquery": "3.1.0",
+    "mocha": "3.0.2",
+    "npm-check-updates": "2.8.0",
+    "sinon": "1.17.5"
+  }
+}

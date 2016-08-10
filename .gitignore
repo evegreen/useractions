@@ -1,0 +1,20 @@
+# idea files #
+.idea/
+*.iml
+
+# linux temp files #
+*~
+
+# logs files #
+*.log.lck
+*.log
+
+# git diff and patch files #
+*.diff
+*.patch
+
+**/node_modules/**
+**/bower_components/**
+**/coverage/**
+
+smoketestBundle.js
