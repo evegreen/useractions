@@ -1,6 +1,7 @@
 'use strict';
 
 var expect = smokeTest.chai.expect;
+var assert = smokeTest.chai.assert;
 
 var smokeActions = smokeTest.actions;
 var promisedActions = smokeActions.promised;
@@ -72,6 +73,38 @@ describe('getText method', () => {
     getText(testDivSelector, (err, text) => {
       expect(err).to.equal(null);
       expect(text).to.equal('forGetText');
+      done();
+    });
+  });
+});
+
+describe('pickInSelect method', () => {
+
+  let pickInSelect = smokeActions.pickInSelect;
+
+  it('pick by option number', done => {
+    pickInSelect('select#forPickInSelectByOptionNumber', 1, err => {
+      assert.isNull(err);
+      let actualValue = document.querySelector('select#forPickInSelectByOptionNumber').value;
+      assert.equal(actualValue, 'mercedez');
+      done();
+    });
+  });
+
+  it('pick by option value', done => {
+    pickInSelect('select#forPickInSelectByValue', 'bmw', err => {
+      assert.isNull(err);
+      let actualValue = document.querySelector('select#forPickInSelectByValue').value;
+      assert.equal(actualValue, 'bmw');
+      done();
+    });
+  });
+
+  it('pick by option innerHtml', done => {
+    pickInSelect('select#forPickInSelectByInnerHtml', 'Mercedez Benz', err => {
+      assert.isNull(err);
+      let actualValue = document.querySelector('select#forPickInSelectByInnerHtml').value;
+      assert.equal(actualValue, 'mercedez');
       done();
     });
   });

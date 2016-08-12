@@ -1,0 +1,34 @@
+{
+  "name": "smoketest",
+  "description": "Framework, that allows write functional smoke tests easy",
+  "version": "0.1.0",
+  "main": "dist/smoketestBundle.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evegreen/smoketest.git"
+  },
+  "authors": [
+    {
+      "name": "evegreen",
+      "email": "romenbane@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "test",
+    "functional",
+    "integration",
+    "smoke"
+  ],
+  "homepage": "https://github.com/evegreen/smoketest",
+  "ignore": [
+    "**/.*",
+    "**/*.*~",
+    "node_modules",
+    "bower_components",
+    "package.json",
+    "tests",
+    "angularMiddlewares.js",
+    "checkHasMocha.js"
+  ]
+}

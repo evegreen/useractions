@@ -2,7 +2,7 @@
   "name": "smoketest",
   "title": "SmokeTest",
   "main": "dist/smoketestBundle.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Framework, that allows write functional smoke tests easy",
   "directories": {
     "test": "tests"
@@ -19,6 +19,8 @@
   },
   "files": [
     "dist",
+    "README.md",
+    "LICENSE",
     "cssBundleInstructions.css",
     "getClassUtil.js",
     "smokeActions.js",

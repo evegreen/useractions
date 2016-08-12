@@ -181,39 +181,133 @@ describe('smoke actions', () => {
       // asserts
       assert.isTrue(stubElementWasReturned);
       assert.isTrue(eventWasTriggerred);
-      done();
 
       // restore stubs
       smokeActions.___jqueryRestore();
       global.document = null;
-    });
-  });
 
-  describe('inputText method', () => {
-    it('can be called without callback', done => {
-      // todo 9 ...
       done();
     });
   });
 
   describe('focusOn method', () => {
+    let focusOn = smokeActions.focusOn;
     it('can be called without callback', done => {
-      // todo 9 ...
+      let stubElementWasReturned;
+      let eventWasTriggerred;
+
+      // stub document for findElement method
+      global.document = {querySelector: () => 'stubElement'};
+
+      // stub jquery
+      let fakeJquery = fakeElement => {
+        assert.equal(fakeElement, 'stubElement');
+        stubElementWasReturned = true;
+        return {
+          focus: () => {
+            eventWasTriggerred = true;
+          }
+        };
+      };
+
+      smokeActions.___jquerySetter(fakeJquery);
+
+      focusOn('fakeSelector');
+
+      // asserts
+      assert.isTrue(stubElementWasReturned);
+      assert.isTrue(eventWasTriggerred);
+
+      // restore stubs
+      smokeActions.___jqueryRestore();
+      global.document = null;
+
       done();
     });
   });
 
   describe('blur method', () => {
+    let blur = smokeActions.blur;
     it('can be called without callback', done => {
-      // todo 9 ...
+      let stubElementWasReturned;
+      let eventWasTriggerred;
+
+      // stub document for findElement method
+      global.document = {querySelector: () => 'stubElement'};
+
+      // stub jquery
+      let fakeJquery = fakeElement => {
+        assert.equal(fakeElement, 'stubElement');
+        stubElementWasReturned = true;
+        return {
+          blur: () => {
+            eventWasTriggerred = true;
+          }
+        };
+      };
+
+      smokeActions.___jquerySetter(fakeJquery);
+
+      blur('fakeSelector');
+
+      // asserts
+      assert.isTrue(stubElementWasReturned);
+      assert.isTrue(eventWasTriggerred);
+
+      // restore stubs
+      smokeActions.___jqueryRestore();
+      global.document = null;
+
       done();
     });
   });
 
-  describe('selectInSelect method', () => {
+  describe('inputText method', () => {
+    let inputText = smokeActions.inputText;
     it('can be called without callback', done => {
-      // todo 9 ...
+      // stub document for findElement method, window for angular events
+      let stubInputElement = {value: 'oldValue'};
+      global.document = {querySelector: () => stubInputElement};
+      global.window = {};
+
+      inputText('fakeSelector', 'myNewValue');
+      assert.equal(stubInputElement.value, 'myNewValue');
+
+      // restore stubs
+      global.document = null;
+      global.window = null;
+
+      done();
+    });
+  });
+
+  describe('pickInSelect method', () => {
+    let pickInSelect = smokeActions.pickInSelect;
+    it('can be called without callback', done => {
+
+      // stubs
+      let stubSelectElement = {
+        value: 'oldValue',
+        options: [
+          {value: 'toyota'},
+          {value: 'nissan'},
+          {value: 'mercedez'},
+          {value: 'bmw'}
+        ]
+      };
+      global.document = {querySelector: () => stubSelectElement};
+      global.window = {};
+
+      pickInSelect('fakeSelector', 2);
+      assert.equal(stubSelectElement.value, 'mercedez');
+
+      // unstub
+      global.document = null;
+      global.window = null;
+
       done();
     });
   });
 });
+
+// todo: unify some code in "can be called without callback"-type tests

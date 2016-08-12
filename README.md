@@ -24,7 +24,7 @@ interact methods:
 - [inputText method](#inputtext-method)
 - [focusOn method](#focuson-method)
 - [blur method](#blur-method)
-- [selectInSelect method](#selectinselect-method)
+- [pickInSelect method](#pickinselect-method)
 
 get methods:
 - [getText method](#gettext-method)
@@ -66,15 +66,18 @@ blur('input#age', optionalCallback);
 ```
 
 
-### selectInSelect method
+### pickInSelect method
 ```js
-var selectInSelect = smokeTest.actions.selectInSelect;
+var pickInSelect = smokeTest.actions.pickInSelect;
 
-// You can pass a value
-selectInSelect('select#car', 'Mercedes Benz', optionalCallback);
+// You can pass option value
+pickInSelect('select#car', 'mercedez', optionalCallback);
+
+// You can pass option innerHTML
+pickInSelect('select#car', 'Mercedez Benz', optionalCallback);
 
 // Or a number of selected value
-selectInSelect('select#car', 2, optionalCallback);
+pickInSelect('select#car', 2, optionalCallback);
 ```
 
 

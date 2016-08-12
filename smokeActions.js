@@ -138,14 +138,16 @@ function inputText (selector, newValue, cb = simpleThrowerCallback) {
     }
 
     inputElement.value = newValue;
-    // need produce input event
-    if (window.angular && window.angular.element) {
-      // todo: why same triggerHandler from jquery doesn't work here? WTF
-      angular.element(selector).triggerHandler('input');
-    }
-
+    produceEventForAngular(selector, 'input');
     return cb(null);
   });
+}
+
+function produceEventForAngular (selector, eventName) {
+  if (window.angular && window.angular.element) {
+    // todo: why same triggerHandler from jquery doesn't work here? WTF
+    angular.element(selector).triggerHandler(eventName);
+  }
 }
 
 function getText (selector, cb) {
@@ -162,54 +164,56 @@ function getValue (selector, cb) {
   });
 }
 
-function selectInSelect (selectSelector, optionValueOrOptionNumber, cb = simpleThrowerCallback) {
+// option - number or value or innerHTML
+function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
   findElement(selectSelector, (err, selectElement) => {
     if (err) return cb(err);
 
-    let selectOptions = [];
+    let valueOptions = [];
+    let innerHtmlOptions = [];
     for (let i = 0; i < selectElement.options.length; i++) {
-      selectOptions.push(selectElement.options[i].value);
+      valueOptions.push(selectElement.options[i].value);
+      innerHtmlOptions.push(selectElement.options[i].innerHTML);
     }
 
-    if (selectOptions.length < 1) {
+    if (valueOptions.length < 1) {
       throw new Error(`select ${selectSelector} has no options`);
     }
 
-    if (isString(optionValueOrOptionNumber)) {
-      if (!selectOptions.includes(optionValueOrOptionNumber)) {
-        throw new Error(`select ${selectSelector} not contains ${optionValueOrOptionNumber} option`);
+    if (isString(option)) {
+
+      if (valueOptions.includes(option)) {
+        selectElement.value = option;
+        produceEventForAngular(selectSelector, 'change');
+        return cb(null);
       }
 
-      selectElement.value = optionValueOrOptionNumber;
-      // need produce input event
-      if (window.angular && window.angular.element) {
-        // todo: why same triggerHandler from jquery doesn't work here? WTF
-        angular.element(selectSelector).triggerHandler('change');
+      for (let i = 0; i < innerHtmlOptions.length; i++) {
+        if (innerHtmlOptions[i] === option) {
+          selectElement.value = valueOptions[i];
+          produceEventForAngular(selectSelector, 'change');
+          return cb(null);
+        }
       }
 
+      return cb(new Error(`select ${selectSelector} not contains ${option} option`));
+    }
+
+    if (isNumber(option)) {
+      if (option < 0) {
+        return cb(new Error(`in ${selectSelector}: your option is less then 0`));
+      }
+
+      if (option >= valueOptions.length) {
+        return cb(new Error(`in ${selectSelector}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
+      }
+
+      selectElement.value = valueOptions[option];
+      produceEventForAngular(selectSelector, 'change');
       return cb(null);
     }
 
-    if (isNumber(optionValueOrOptionNumber)) {
-      if (optionValueOrOptionNumber < 0) {
-        throw new Error(`in ${selectSelector}: your option is less then 0`);
-      }
-
-      if (optionValueOrOptionNumber >= selectOptions.length) {
-        throw new Error(`in ${selectSelector}: you selected ${optionValueOrOptionNumber}, but max number is ${selectOptions.length - 1}`);
-      }
-
-      selectElement.value = selectOptions[optionValueOrOptionNumber];
-      // need produce input event
-      if (window.angular && window.angular.element) {
-        // todo: why same triggerHandler from jquery doesn't work here? WTF
-        angular.element(selectSelector).triggerHandler('change');
-      }
-
-      return cb(null);
-    }
-
-    throw new Error('optionValueOrOptionNumber parameter is not string or number');
+    return cb(new Error('option parameter is not string or number'));
   });
 }
 
@@ -296,8 +300,8 @@ function promisedFocusOn (selector) {
   return promisifyWrapper1arg(focusOn, selector);
 }
 
-function promisedSelectInSelect (selectSelector, optionValueOrOptionNumber) {
-  return promisifyWrapper2arg(selectInSelect, selectSelector, optionValueOrOptionNumber);
+function promisedPickInSelect (selectSelector, option) {
+  return promisifyWrapper2arg(pickInSelect, selectSelector, option);
 }
 
 function promisedGetText (selector) {
@@ -367,7 +371,7 @@ promisedActions.click = promisedClick;
 promisedActions.inputText = promisedInputText;
 promisedActions.blur = promisedBlur;
 promisedActions.focusOn = promisedFocusOn;
-promisedActions.selectInSelect = promisedSelectInSelect;
+promisedActions.pickInSelect = promisedPickInSelect;
 
 promisedActions.getText = promisedGetText;
 promisedActions.getValue = promisedGetValue;
@@ -380,7 +384,7 @@ exports.click = click;
 exports.inputText = inputText;
 exports.focusOn = focusOn;
 exports.blur = blur;
-exports.selectInSelect = selectInSelect;
+exports.pickInSelect = pickInSelect;
 
 exports.getText = getText;
 exports.getValue = getValue;
