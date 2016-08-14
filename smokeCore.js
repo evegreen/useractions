@@ -1,6 +1,6 @@
 'use strict';
 
-var version = require('./package.json').version;
+var packageJson = require('./package.json');
 // eslint-disable-next-line no-unused-vars
 var css = require('./cssBundleInstructions.css');
 
@@ -24,7 +24,11 @@ function runAll () {
 }
 
 function getVersion () {
-  return version;
+  return `SmokeTest: ${packageJson.version}
+  Mocha: ${mocha.version}
+  JQuery: ${packageJson.devDependencies.jquery}
+  Chai: ${packageJson.devDependencies.chai}
+  Alertify: ${packageJson.devDependencies['alertify.js']}`;
 }
 
 let loadedMessage = `SmokeTest framework loaded (v ${version})`;
