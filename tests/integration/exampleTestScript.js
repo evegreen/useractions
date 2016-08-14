@@ -1,6 +1,5 @@
 'use strict';
 
-var expect = smokeTest.chai.expect;
 var assert = smokeTest.chai.assert;
 
 var smokeActions = smokeTest.actions;
@@ -16,7 +15,7 @@ describe('click method', () => {
 
     // check element doesn't exist before click
     let emptyImmediateResult = document.querySelector(resultSelector);
-    expect(emptyImmediateResult).to.equal(null);
+    assert.isNull(emptyImmediateResult);
 
     click(immediateResultButtonSelector, err => {
       if (err) throw err;
@@ -24,8 +23,8 @@ describe('click method', () => {
       // check exists after click
       let immediateResult = document.querySelector(resultSelector);
 
-      expect(immediateResult.id).to.equal('immediateResult');
-      expect(immediateResult.innerHTML).to.equal('immediateResult');
+      assert.equal(immediateResult.id, 'immediateResult');
+      assert.equal(immediateResult.innerHTML, 'immediateResult');
       done();
     });
   });
@@ -38,13 +37,13 @@ describe('changeValue method', () => {
     let testInputSelector = 'input#forChangeValue';
 
     let initialValue = document.querySelector(testInputSelector).value;
-    expect(initialValue).to.equal('forChangeValueInitial');
+    assert.equal(initialValue, 'forChangeValueInitial');
 
     inputText(testInputSelector, 'value changed!', err => {
       if (err) throw err;
 
       let newValue = document.querySelector(testInputSelector).value;
-      expect(newValue).to.equal('value changed!');
+      assert.equal(newValue, 'value changed!');
       done();
     });
   });
@@ -57,8 +56,9 @@ describe('getValue method', () => {
   it('works with simple input', done => {
     let testInputSelector = 'input#forGetValue';
     getValue(testInputSelector, (err, value) => {
-      expect(err).to.equal(null);
-      expect(value).to.equal('forGetValue');
+      assert.isNull(err);
+      assert.equal(value, 'forGetValue');
+
       done();
     });
   });
@@ -71,8 +71,9 @@ describe('getText method', () => {
   it('works with simple div element with inner text', done => {
     let testDivSelector = 'div#forGetText';
     getText(testDivSelector, (err, text) => {
-      expect(err).to.equal(null);
-      expect(text).to.equal('forGetText');
+      assert.isNull(err);
+      assert.equal('forGetText');
+
       done();
     });
   });
@@ -122,7 +123,7 @@ describe('promise style usage', () => {
     .then(() => click('input#promiseChainSecondButton'))
     .then(() => getText('div#promiseChainThirdDiv'))
     .then(text => {
-      expect(text).to.equal('promiseChainTextResult1 is given');
+      assert.equal(text, 'promiseChainTextResult1 is given');
       done();
     }).catch(err => {
       if (err) {
@@ -161,7 +162,7 @@ describe('can write step-based integration tests', () => {
   it('final assert', done => {
     getText('div#stepsExampleLastDiv', (err, text) => {
       if (err) throw err;
-      expect(text).to.equal('stepsExampleFinalText');
+      assert.equal(text, 'stepsExampleFinalText');
       done();
     });
   });

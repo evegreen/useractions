@@ -1,8 +1,6 @@
 'use strict';
 
-var chai = require('chai');
-var expect = chai.expect;
-var assert = chai.assert;
+var assert = require('chai').assert;
 var sinon = require('sinon');
 
 var smokeActions = require('../../smokeActions');
@@ -13,25 +11,25 @@ describe('smoke actions', () => {
 
     it('returns true after predicate returns true', done => {
       let result = runPredicate(() => {return true;});
-      expect(result).to.equal(true);
+      assert.isTrue(result);
       done();
     });
 
     it('returns false after predicate returns false', done => {
       let result = runPredicate(() => {return false;});
-      expect(result).to.equal(false);
+      assert.isFalse(result);
       done();
     });
 
     it('returns false after predicate returns nothing', done => {
       let result = runPredicate(() => {return;});
-      expect(result).to.equal(false);
+      assert.isFalse(result);
       done();
     });
 
     it('returns false after predicate throws error', done => {
       let result = runPredicate(() => {throw new Error('lol');});
-      expect(result).to.equal(false);
+      assert.isFalse(result);
       done();
     });
 
@@ -74,7 +72,7 @@ describe('smoke actions', () => {
 
     it('runs callback with null-first argument, when predicate immediately true', done => {
       waitState(() => true, err => {
-        expect(err).to.equal(null);
+        assert.isNull(err);
         done();
       });
     });
@@ -88,7 +86,7 @@ describe('smoke actions', () => {
       };
 
       waitState(predicate, err => {
-        expect(err).to.equal(null);
+        assert.isNull(err);
         done();
       }, 5, 2);
     });
@@ -96,7 +94,7 @@ describe('smoke actions', () => {
     it('runs callback with timeout error, when predicate is always false', done => {
       waitState(() => false, err => {
         expect(err).to.be.an('error');
-        expect(err.message).to.equal('Timeout in waitState occurred!');
+        assert.equal(err.message, 'Timeout in waitState occurred!');
         done();
       }, 5, 2);
     });

@@ -1,6 +1,6 @@
 'use strict';
 
-var expect = require('chai').expect;
+var assert = require('chai').assert;
 
 var getClassUtil = require('../../getClassUtil');
 
@@ -10,49 +10,50 @@ describe('getClassUtil', () => {
 
     it('returns "Function" when get function', done => {
       let myFunc = function () {};
-      expect(getClass(myFunc)).to.equal('Function');
+      assert.equal(getClass(myFunc), 'Function');
       done();
     });
 
     it('returns "Function" when get arrow function', done => {
       let myArrowFunc = () => {};
-      expect(getClass(myArrowFunc)).to.equal('Function');
+      assert.equal(getClass(myArrowFunc), 'Function');
       done();
     });
 
     it('returns "Number" when get number', done => {
-      expect(getClass(5)).to.equal('Number');
+      assert.equal(getClass(5), 'Number');
       done();
     });
 
     it('returns "String" when get string', done => {
-      expect(getClass('lol')).to.equal('String');
+      assert.equal(getClass('lol'), 'String');
       done();
     });
 
     it('returns "Undefined" when get nothing', done => {
-      expect(getClass()).to.equal('Undefined');
+      assert.equal(getClass(), 'Undefined');
       done();
     });
 
     it('returns "Null" when get null', done => {
-      expect(getClass(null)).to.equal('Null');
+      assert.equal(getClass(null), 'Null');
       done();
     });
 
     it('returns "Object" when get simple object', done => {
-      expect(getClass({})).to.equal('Object');
+      assert.equal(getClass({}), 'Object');
       done();
     });
 
     it('returns "Array" when get empty array', done => {
-      expect(getClass([])).to.equal('Array');
+      assert.equal(getClass([]), 'Array');
       done();
     });
 
     it('returns "Boolean" when get true or false', done => {
-      expect(getClass(true)).to.equal('Boolean');
-      expect(getClass(false)).to.equal('Boolean');
+      assert.equal(getClass(true), 'Boolean');
+      assert.equal(getClass(false), 'Boolean');
+
       done();
     });
   });
@@ -61,17 +62,17 @@ describe('getClassUtil', () => {
     let isFunction = getClassUtil.isFunction;
 
     it('try function', done => {
-      expect(isFunction((function () {}))).to.equal(true);
+      assert.isTrue(isFunction((function () {})));
       done();
     });
 
     it('try arrow function', done => {
-      expect(isFunction(() => {})).to.equal(true);
+      assert.isTrue(isFunction(() => {}));
       done();
     });
 
     it('try object', done => {
-      expect(isFunction({})).to.equal(false);
+      assert.isFalse(isFunction({}));
       done();
     });
   });
@@ -80,12 +81,12 @@ describe('getClassUtil', () => {
     let isArray = getClassUtil.isArray;
 
     it('try array', done => {
-      expect(isArray([])).to.equal(true);
+      assert.isTrue(isArray([]));
       done();
     });
 
     it('try simple object', done => {
-      expect(isArray({})).to.equal(false);
+      assert.isFalse(isArray({}));
       done();
     });
   });
@@ -94,12 +95,12 @@ describe('getClassUtil', () => {
     let isNumber = getClassUtil.isNumber;
 
     it('try number', done => {
-      expect(isNumber(5)).to.equal(true);
+      assert.isTrue(isNumber(5));
       done();
     });
 
     it('try object', done => {
-      expect(isNumber({})).to.equal(false);
+      assert.isFalse(isNumber({}));
       done();
     });
   });
@@ -108,12 +109,12 @@ describe('getClassUtil', () => {
     let isString = getClassUtil.isString;
 
     it('try string', done => {
-      expect(isString('my string')).to.equal(true);
+      assert.isTrue(isString('my string'));
       done();
     });
 
     it('try array', done => {
-      expect(isString([])).to.equal(false);
+      assert.isFalse(isString([]));
       done();
     });
   });
@@ -122,12 +123,12 @@ describe('getClassUtil', () => {
     let isObject = getClassUtil.isObject;
 
     it('try object', done => {
-      expect(isObject({})).to.equal(true);
+      assert.isTrue(isObject({}));
       done();
     });
 
     it('try number', done => {
-      expect(isObject(5.5)).to.equal(false);
+      assert.isFalse(isObject(5.5));
       done();
     });
   });
@@ -136,12 +137,12 @@ describe('getClassUtil', () => {
     let isNull = getClassUtil.isNull;
 
     it('try null', done => {
-      expect(isNull(null)).to.equal(true);
+      assert.isTrue(isNull(null));
       done();
     });
 
     it('try zero number', done => {
-      expect(isNull(0)).to.equal(false);
+      assert.isFalse(isNull(0));
       done();
     });
   });
@@ -151,13 +152,13 @@ describe('getClassUtil', () => {
 
     it('try undefined', done => {
       let lol = {};
-      expect(isUndefined(lol.undef)).to.equal(true);
+      assert.isTrue(isUndefined(lol.undef));
       done();
     });
 
     it('try defined', done => {
       let lol = {};
-      expect(isUndefined(lol)).to.equal(false);
+      assert.isFalse(isUndefined(lol));
       done();
     });
   });
@@ -166,28 +167,28 @@ describe('getClassUtil', () => {
     let isBoolean = getClassUtil.isBoolean;
 
     it('try true', done => {
-      expect(isBoolean(true)).to.equal(true);
+      assert.isTrue(isBoolean(true));
       done();
     });
 
     it('try false', done => {
-      expect(isBoolean(false)).to.equal(true);
+      assert.isTrue(isBoolean(false));
       done();
     });
 
     it('try undefined', done => {
       let myVar = {};
-      expect(isBoolean(myVar.thisIsUndef)).to.equal(false);
+      assert.isFalse(isBoolean(myVar.thisIsUndef));
       done();
     });
 
     it('try null', done => {
-      expect(isBoolean()).to.equal(false);
+      assert.isFalse(isBoolean());
       done();
     });
 
     it('try object', done => {
-      expect(isBoolean({})).to.equal(false);
+      assert.isFalse(isBoolean({}));
       done();
     });
   });

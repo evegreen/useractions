@@ -1,8 +1,6 @@
 'use strict';
 
-var chai = require('chai');
-var expect = chai.expect;
-var assert = chai.assert;
+var assert = require('chai').assert;
 var AssertionError = chai.AssertionError;
 
 describe('Mocha framework', () => {
@@ -19,7 +17,7 @@ describe('Mocha framework', () => {
 
       // if "_id" present, that mocha downloaded from npm
       let mochaPackageJson = JSON.parse(fs.readFileSync(mochaPackageJsonFilePath, 'utf8'));
-      expect(mochaPackageJson._id).to.equal(undefined);
+      assert.isUndefined(mochaPackageJson._id, undefined);
     } catch (err) {
       if (err instanceof AssertionError || err.message.includes('ENOENT')) {
         throw new Error('Need checkout mocha framework from repository, not from npm or bower');
