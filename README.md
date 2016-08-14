@@ -9,6 +9,7 @@ Full documentation are not here yet, but base API presents
 - [Action methods](#action-methods)
 - [Configure timeouts](#configure-timeouts)
 - [Promisified methods](#promisified-methods)
+- [Other](#other)
 
 ---
 
@@ -167,3 +168,11 @@ getText('div#carDescription')
 .then(function (text) { /* work with text =) */ })
 .catch(function (err) { /* handle error =( */ };
 ```
+
+---
+
+## other
+```js
+smokeTest.version();
+```
+Returns versions of framework and bundled libraries
