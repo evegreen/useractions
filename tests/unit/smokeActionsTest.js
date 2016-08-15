@@ -161,6 +161,7 @@ describe('smoke actions', () => {
 
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
+      global.window = {};
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -185,6 +186,7 @@ describe('smoke actions', () => {
       // restore stubs
       smokeActions.___jqueryRestore();
       global.document = null;
+      global.window = null;
 
       done();
     });
@@ -198,6 +200,7 @@ describe('smoke actions', () => {
 
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
+      global.window = {};
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -221,6 +224,7 @@ describe('smoke actions', () => {
       // restore stubs
       smokeActions.___jqueryRestore();
       global.document = null;
+      global.window = null;
 
       done();
     });
@@ -232,8 +236,9 @@ describe('smoke actions', () => {
       let stubElementWasReturned;
       let eventWasTriggerred;
 
-      // stub document for findElement method
+      // stub
       global.document = {querySelector: () => 'stubElement'};
+      global.window = {};
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -254,9 +259,10 @@ describe('smoke actions', () => {
       assert.isTrue(stubElementWasReturned);
       assert.isTrue(eventWasTriggerred);
 
-      // restore stubs
+      // unstub
       smokeActions.___jqueryRestore();
       global.document = null;
+      global.window = null;
 
       done();
     });

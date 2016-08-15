@@ -93,6 +93,7 @@ function click (selector, cb = simpleThrowerCallback) {
     }
 
     smokeJquery(element).trigger('click');
+    produceEventForAngular(selector, 'click');
     return cb(null);
   });
 }
@@ -108,6 +109,7 @@ function focusOn (inputSelector, cb = simpleThrowerCallback) {
     }
 
     smokeJquery(element).focus();
+    produceEventForAngular(inputSelector, 'focus');
     return cb(null);
   });
 }
@@ -122,7 +124,9 @@ function blur (selector, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
+    // todo: need test on angular input, when input has some effect on blur event
     smokeJquery(element).blur();
+    produceEventForAngular(selector, 'blur');
     return cb(null);
   });
 }
