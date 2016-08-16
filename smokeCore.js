@@ -7,6 +7,7 @@ var css = require('./cssBundleInstructions.css');
 // here is nessessary cloned mocha project with installed npm dependencies
 // can not out from here mocha path, cause browserify can't handle this =(
 var mocha = require('../mocha/browser-entry').mocha;
+var mochaVersion = require('../mocha/package.json').version;
 var smokeAlertify = require('alertify.js');
 var smokeChai = require('chai');
 
@@ -25,7 +26,7 @@ function runAll () {
 
 function getVersion () {
   return `SmokeTest: ${packageJson.version}
-  Mocha: ${mocha.version}
+  Mocha: ${mochaVersion}
   JQuery: ${packageJson.devDependencies.jquery}
   Chai: ${packageJson.devDependencies.chai}
   Alertify: ${packageJson.devDependencies['alertify.js']}`;
