@@ -21775,7 +21775,7 @@ module.exports={
   "name": "smoketest",
   "title": "SmokeTest",
   "main": "dist/smoketestBundle.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Framework, that allows write functional smoke tests easy",
   "directories": {
     "test": "tests"
@@ -21822,7 +21822,7 @@ module.exports={
     "browserify": "13.1.0",
     "browserify-css": "0.9.1",
     "chai": "3.5.0",
-    "eslint": "3.2.2",
+    "eslint": "3.3.1",
     "istanbul": "0.4.4",
     "jquery": "3.1.0",
     "mocha": "3.0.2",
