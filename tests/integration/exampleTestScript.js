@@ -72,7 +72,7 @@ describe('getText method', () => {
     let testDivSelector = 'div#forGetText';
     getText(testDivSelector, (err, text) => {
       assert.isNull(err);
-      assert.equal('forGetText');
+      assert.equal(text, 'forGetText');
 
       done();
     });

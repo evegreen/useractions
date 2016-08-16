@@ -1,6 +1,7 @@
 'use strict';
 
-var assert = require('chai').assert;
+var chai = require('chai');
+var assert = chai.assert;
 var AssertionError = chai.AssertionError;
 
 describe('Mocha framework', () => {
