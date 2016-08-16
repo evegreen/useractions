@@ -31,7 +31,7 @@ function getVersion () {
   Alertify: ${packageJson.devDependencies['alertify.js']}`;
 }
 
-let loadedMessage = `SmokeTest framework loaded (v ${version})`;
+let loadedMessage = `SmokeTest framework loaded (v ${packageJson.version})`;
 // eslint-disable-next-line no-console
 console.log(loadedMessage);
 smokeAlertify.logPosition('bottom right');
