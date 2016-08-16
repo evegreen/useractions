@@ -1,12 +1,13 @@
 'use strict';
 
-var version = require('./package.json').version;
+var packageJson = require('./package.json');
 // eslint-disable-next-line no-unused-vars
 var css = require('./cssBundleInstructions.css');
 
 // here is nessessary cloned mocha project with installed npm dependencies
 // can not out from here mocha path, cause browserify can't handle this =(
 var mocha = require('../mocha/browser-entry').mocha;
+var mochaVersion = require('../mocha/package.json').version;
 var smokeAlertify = require('alertify.js');
 var smokeChai = require('chai');
 
@@ -24,10 +25,14 @@ function runAll () {
 }
 
 function getVersion () {
-  return version;
+  return `SmokeTest: ${packageJson.version}
+  Mocha: ${mochaVersion}
+  JQuery: ${packageJson.devDependencies.jquery}
+  Chai: ${packageJson.devDependencies.chai}
+  Alertify: ${packageJson.devDependencies['alertify.js']}`;
 }
 
-let loadedMessage = `SmokeTest framework loaded (v ${version})`;
+let loadedMessage = `SmokeTest framework loaded (v ${packageJson.version})`;
 // eslint-disable-next-line no-console
 console.log(loadedMessage);
 smokeAlertify.logPosition('bottom right');
