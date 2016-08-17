@@ -21928,6 +21928,9 @@ function click (selector, cb = simpleThrowerCallback) {
 
     smokeJquery(element).trigger('click');
     produceEventForAngular(element, 'click');
+    if (element.href) {
+      element.click();
+    }
     return cb(null);
   });
 }
