@@ -168,4 +168,6 @@ describe('can write step-based integration tests', () => {
 
 // todo: add test for focusOn method
 
+// todo: add test for "click" method, that button is not double-clicked
+
 // todo: add tests for check that "click" method handle "a href" link jump + ng-click event

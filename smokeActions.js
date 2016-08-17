@@ -92,10 +92,12 @@ function click (selector, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    smokeJquery(element).trigger('click');
-    produceEventForAngular(element, 'click');
     if (element.href) {
       element.click();
+    } else if (window.angular && window.angular.element) {
+      produceEventForAngular(element, 'click');
+    } else {
+      smokeJquery(element).trigger('click');
     }
     return cb(null);
   });
