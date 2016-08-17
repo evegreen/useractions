@@ -18,7 +18,7 @@ function runAll () {
   if (!startedOnce) {
     startedOnce = true;
     addMochaDiv();
-    mocha.run();
+    return mocha.run();
   } else {
     console.warn('Tests already started. That can\'t run twice!');
   }
