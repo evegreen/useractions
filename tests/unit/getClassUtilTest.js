@@ -62,12 +62,12 @@ describe('getClassUtil', () => {
     let isFunction = getClassUtil.isFunction;
 
     it('try function', done => {
-      assert.isTrue(isFunction((function () {})));
+      assert(isFunction((function () {})));
       done();
     });
 
     it('try arrow function', done => {
-      assert.isTrue(isFunction(() => {}));
+      assert(isFunction(() => {}));
       done();
     });
 
@@ -81,7 +81,7 @@ describe('getClassUtil', () => {
     let isArray = getClassUtil.isArray;
 
     it('try array', done => {
-      assert.isTrue(isArray([]));
+      assert(isArray([]));
       done();
     });
 
@@ -95,7 +95,7 @@ describe('getClassUtil', () => {
     let isNumber = getClassUtil.isNumber;
 
     it('try number', done => {
-      assert.isTrue(isNumber(5));
+      assert(isNumber(5));
       done();
     });
 
@@ -109,7 +109,7 @@ describe('getClassUtil', () => {
     let isString = getClassUtil.isString;
 
     it('try string', done => {
-      assert.isTrue(isString('my string'));
+      assert(isString('my string'));
       done();
     });
 
@@ -123,7 +123,7 @@ describe('getClassUtil', () => {
     let isObject = getClassUtil.isObject;
 
     it('try object', done => {
-      assert.isTrue(isObject({}));
+      assert(isObject({}));
       done();
     });
 
@@ -137,7 +137,7 @@ describe('getClassUtil', () => {
     let isNull = getClassUtil.isNull;
 
     it('try null', done => {
-      assert.isTrue(isNull(null));
+      assert(isNull(null));
       done();
     });
 
@@ -152,7 +152,7 @@ describe('getClassUtil', () => {
 
     it('try undefined', done => {
       let lol = {};
-      assert.isTrue(isUndefined(lol.undef));
+      assert(isUndefined(lol.undef));
       done();
     });
 
@@ -167,12 +167,12 @@ describe('getClassUtil', () => {
     let isBoolean = getClassUtil.isBoolean;
 
     it('try true', done => {
-      assert.isTrue(isBoolean(true));
+      assert(isBoolean(true));
       done();
     });
 
     it('try false', done => {
-      assert.isTrue(isBoolean(false));
+      assert(isBoolean(false));
       done();
     });
 

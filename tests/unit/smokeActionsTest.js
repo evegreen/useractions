@@ -34,9 +34,9 @@ describe('smoke actions', () => {
     });
 
     it('throws error, if predicate is not function', done => {
-      expect(() => {
+      assert.throws(() => {
         return runPredicate(5);
-      }).to.throw(Error, 'Argument is not predicate function!');
+      }, Error, 'Argument is not predicate function!');
       done();
     });
 
@@ -48,16 +48,16 @@ describe('smoke actions', () => {
     let waitState = smokeActions.waitState;
 
     it('throws error without predicate', done => {
-      expect(() => {
+      assert.throws(() => {
         waitState();
-      }).to.throw(Error, 'First argument of waitState is not predicate!');
+      }, Error, 'First argument of waitState is not predicate!');
       done();
     });
 
     it('throws error without callback', done => {
-      expect(() => {
+      assert.throws(() => {
         waitState(() => {return true;});
-      }).to.throw(Error, 'Second argument of waitState is not function!');
+      }, Error, 'Second argument of waitState is not function!');
       done();
     });
 
@@ -65,7 +65,7 @@ describe('smoke actions', () => {
       let startTime = process.hrtime()[1];
       waitState(() => true, () => {
         let resultTime = process.hrtime()[1] - startTime;
-        expect(resultTime).to.be.below(400000);
+        assert(resultTime < 400000);
         done();
       });
     });
@@ -93,7 +93,7 @@ describe('smoke actions', () => {
 
     it('runs callback with timeout error, when predicate is always false', done => {
       waitState(() => false, err => {
-        expect(err).to.be.an('error');
+        assert.typeOf(err, 'error');
         assert.equal(err.message, 'Timeout in waitState occurred!');
         done();
       }, 5, 2);
@@ -115,15 +115,14 @@ describe('smoke actions', () => {
     let findElement = smokeActions.findElement;
 
     it('throws error without arguments', done => {
-      expect(findElement)
-          .to.throw(Error, 'first argument of findElement() undefined, it must be css selector!');
+      assert.throws(findElement, Error, 'first argument of findElement() undefined, it must be css selector!');
       done();
     });
 
     it('throws error with selector argument only', done => {
-      expect(() => {
+      assert.throws(() => {
         findElement('my selector');
-      }).to.throw(Error, 'second argument of findElement() must be timeout number or a callback function!');
+      }, Error, 'second argument of findElement() must be timeout number or a callback function!');
       done();
     });
 
