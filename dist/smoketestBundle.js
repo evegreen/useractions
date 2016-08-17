@@ -21927,7 +21927,7 @@ function click (selector, cb = simpleThrowerCallback) {
     }
 
     smokeJquery(element).trigger('click');
-    produceEventForAngular(selector, 'click');
+    produceEventForAngular(element, 'click');
     return cb(null);
   });
 }
@@ -21943,7 +21943,7 @@ function focusOn (inputSelector, cb = simpleThrowerCallback) {
     }
 
     smokeJquery(element).focus();
-    produceEventForAngular(inputSelector, 'focus');
+    produceEventForAngular(element, 'focus');
     return cb(null);
   });
 }
@@ -21960,7 +21960,7 @@ function blur (selector, cb = simpleThrowerCallback) {
 
     // todo: need test on angular input, when input has some effect on blur event
     smokeJquery(element).blur();
-    produceEventForAngular(selector, 'blur');
+    produceEventForAngular(element, 'blur');
     return cb(null);
   });
 }
@@ -21976,15 +21976,16 @@ function inputText (selector, newValue, cb = simpleThrowerCallback) {
     }
 
     inputElement.value = newValue;
-    produceEventForAngular(selector, 'input');
+    produceEventForAngular(inputElement, 'input');
     return cb(null);
   });
 }
 
-function produceEventForAngular (selector, eventName) {
+function produceEventForAngular (element, eventName) {
   if (window.angular && window.angular.element) {
     // todo: why same triggerHandler from jquery doesn't work here? WTF
-    angular.element(selector).triggerHandler(eventName);
+    // need pass only element, not selector (for compatibility with jquery light)
+    angular.element(element).triggerHandler(eventName);
   }
 }
 
@@ -22022,14 +22023,14 @@ function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
 
       if (valueOptions.includes(option)) {
         selectElement.value = option;
-        produceEventForAngular(selectSelector, 'change');
+        produceEventForAngular(selectElement, 'change');
         return cb(null);
       }
 
       for (let i = 0; i < innerHtmlOptions.length; i++) {
         if (innerHtmlOptions[i] === option) {
           selectElement.value = valueOptions[i];
-          produceEventForAngular(selectSelector, 'change');
+          produceEventForAngular(selectElement, 'change');
           return cb(null);
         }
       }
@@ -22047,7 +22048,7 @@ function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
       }
 
       selectElement.value = valueOptions[option];
-      produceEventForAngular(selectSelector, 'change');
+      produceEventForAngular(selectElement, 'change');
       return cb(null);
     }
 
