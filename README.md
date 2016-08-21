@@ -4,6 +4,20 @@ Smoketest - pure javascript smoke-test framework. (currently in beta)
 
 Full documentation are not here yet, but base API presents
 
+## Getting started
+
+### Npm
+
+    npm install smoketest --save-dev
+
+### Bower
+
+    bower install smoketest --save-dev
+
+Or just fetch build under [dist](https://github.com/evegreen/smoketest/tree/master/dist).
+
+---
+
 # Table of contents
 - [Run tests](#run-tests)
 - [Action methods](#action-methods)
