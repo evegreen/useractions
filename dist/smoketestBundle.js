@@ -21797,7 +21797,7 @@ module.exports={
   "name": "smoketest",
   "title": "SmokeTest",
   "main": "dist/smoketestBundle.js",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Framework, that allows write functional smoke tests easy",
   "directories": {
     "test": "tests"
@@ -21814,6 +21814,7 @@ module.exports={
   },
   "files": [
     "dist",
+    "tests",
     "README.md",
     "LICENSE",
     "cssBundleInstructions.css",
