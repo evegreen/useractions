@@ -76,6 +76,4 @@ let exportsObject = {
 window.smokeTest = exportsObject;
 window.smoketest = exportsObject;
 
-setTimeout(() => {
-  document.body.dispatchEvent(new Event('smoketestloaded'));
-}, 500);
+document.body.dispatchEvent(new Event('smoketestloaded'));

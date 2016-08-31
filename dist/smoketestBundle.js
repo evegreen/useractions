@@ -22356,8 +22356,6 @@ let exportsObject = {
 window.smokeTest = exportsObject;
 window.smoketest = exportsObject;
 
-setTimeout(() => {
-  document.body.dispatchEvent(new Event('smoketestloaded'));
-}, 500);
+document.body.dispatchEvent(new Event('smoketestloaded'));
 
 },{"../mocha/browser-entry":1,"../mocha/package.json":54,"./cssBundleInstructions.css":55,"./package.json":124,"./smokeActions":125,"alertify.js":57,"chai":64}]},{},[126]);
