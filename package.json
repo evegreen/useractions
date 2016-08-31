@@ -19,6 +19,7 @@
   },
   "files": [
     "dist",
+    "tests"
     "README.md",
     "LICENSE",
     "cssBundleInstructions.css",
@@ -49,8 +50,8 @@
     "browserify": "13.1.0",
     "browserify-css": "0.9.1",
     "chai": "3.5.0",
-    "eslint": "3.3.1",
-    "istanbul": "0.4.4",
+    "eslint": "3.4.0",
+    "istanbul": "0.4.5",
     "jquery": "3.1.0",
     "mocha": "3.0.2",
     "npm-check-updates": "2.8.0",
