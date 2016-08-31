@@ -31,7 +31,7 @@ Or just fetch build under [dist](https://github.com/evegreen/smoketest/tree/mast
 ## Add tests to site
 
 For add framework and tests to your site, just add it right in simple script.
-[Look to the example](https://github.com/evegreen/smoketest/blob/master/tests/regression/exampleTestScript.js)
+[Look to the example](https://github.com/evegreen/smoketest/blob/master/tests/regression/exampleApp.html)
 
 But if you want add framework and tests without change your site files, you can use userscripts (tampermonkey / greasemonkey extensions)
 [Look to the example](https://github.com/evegreen/smoketest/blob/master/tests/regression/userScriptExample.js)
