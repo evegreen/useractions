@@ -21810,7 +21810,7 @@ module.exports={
     "checkupdates": "./node_modules/.bin/ncu"
   },
   "engines": {
-    "node": "6.3.1"
+    "node": "6.5.0"
   },
   "files": [
     "dist",
@@ -21843,7 +21843,7 @@ module.exports={
   "devDependencies": {
     "alertify.js": "1.0.12",
     "browserify": "13.1.0",
-    "browserify-css": "0.9.1",
+    "browserify-css": "0.9.2",
     "chai": "3.5.0",
     "eslint": "3.4.0",
     "istanbul": "0.4.5",
@@ -21931,10 +21931,14 @@ function navigateToUrl (url) {
   window.location = url;
 }
 
-function findElementNormalized (selector, timeout, cb) {
+function findElementNormalized (selectorOrElement, timeout, cb) {
+  if (selectorOrElement instanceof HTMLElement) {
+    return cb(null, selectorOrElement);
+  }
+
   let foundElement;
   waitState(() => {
-    foundElement = document.querySelector(selector);
+    foundElement = document.querySelector(selectorOrElement);
     return checkFoundElement(foundElement);
   }, () => cb(null, foundElement), timeout);
 }

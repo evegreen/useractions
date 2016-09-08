@@ -126,7 +126,7 @@ describe('smoke actions', () => {
       done();
     });
 
-    it('runs cb with null-first argument and element in second argument with good selector and callback', done => {
+    it('calls cb with null-first(err) argument and found element when called with good selector and callback', done => {
       global.document = {querySelector: () => 'stubElement'};
       let callbackFn = function (err, element) {
         assert.isNull(err);
@@ -138,7 +138,7 @@ describe('smoke actions', () => {
     });
 
     /*
-    it('runs cb with null-first argument with good selector, timeout and callback', done => {
+    it('calls cb with null-first(err) argument with good selector, timeout and callback', done => {
       // todo ...
     });
     */

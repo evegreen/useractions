@@ -74,10 +74,14 @@ function navigateToUrl (url) {
   window.location = url;
 }
 
-function findElementNormalized (selector, timeout, cb) {
+function findElementNormalized (selectorOrElement, timeout, cb) {
+  if (selectorOrElement instanceof HTMLElement) {
+    return cb(null, selectorOrElement);
+  }
+
   let foundElement;
   waitState(() => {
-    foundElement = document.querySelector(selector);
+    foundElement = document.querySelector(selectorOrElement);
     return checkFoundElement(foundElement);
   }, () => cb(null, foundElement), timeout);
 }
