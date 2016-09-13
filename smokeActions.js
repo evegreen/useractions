@@ -96,6 +96,7 @@ function click (selector, cb = simpleThrowerCallback) {
       element.click();
     } else if (window.angular && window.angular.element) {
       produceEventForAngular(element, 'click');
+      produceEventForAngular(element, 'change');
     } else {
       smokeJquery(element).trigger('click');
     }
