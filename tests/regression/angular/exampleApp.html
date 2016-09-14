@@ -1,14 +1,10 @@
-<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title>Example Angular.js single page app</title>
 </head>
 <body>
   <div ng-app="myApp" ng-controller="myCtrl">
-
-    <!-- howto notification -->
-    <div class="howtoNotification">Just run in console: smokeTest.runAll()</div>
-    <br><br>
 
     <!-- for click on checkbox -->
     Checkbox for click:
@@ -16,10 +12,14 @@
           id="forClickOnCheckbox"
           ng-model="forClickOnCheckbox"
           ng-change="checkboxPostScript()">
+    <br><br>
+
+    <!-- for click on button -->
+    <button id="buttonForClick" ng-click="buttonClicked()">buttonForClick</button>
+
   </div>
 </body>
 
-<link rel="stylesheet" href="exampleApp.css">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 <script src="exampleApp.js"></script>
 

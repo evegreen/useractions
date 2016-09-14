@@ -17,7 +17,20 @@ describe('click method', () => {
       assert.isNull(err);
       assert.isTrue(checkbox.checked);
       assert.isTrue(angular.element(checkbox).scope().forClickOnCheckbox);
-      assert.isTrue(checkboxPostScriptExecuted);
+      assert.isTrue(angular.element(checkbox).scope().checkboxPostScriptExecuted);
+      done();
+    });
+  });
+
+  it('can click on button once', done => {
+    let button = document.querySelector('#buttonForClick');
+    assert.equal(angular.element(button).scope().buttonWasClickedCount, 0);
+    click('#buttonForClick', err => {
+      assert.isNull(err);
+      assert.equal(angular.element(button).scope().buttonWasClickedCount, 1);
+      done();
     });
   });
 });
+
+// todo: add tests for check that "click" method handle "a href" link jump + ng-click event

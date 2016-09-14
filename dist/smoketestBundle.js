@@ -21830,14 +21830,15 @@ module.exports={
     "test": "tests"
   },
   "scripts": {
-    "build": "./node_modules/.bin/browserify -t browserify-css smokeCore.js --ignore 'fs' --ignore 'glob' --ignore 'path' --ignore 'supports-color' > dist/smoketestBundle.js",
+    "build": "./node_modules/.bin/browserify -t browserify-css smokeCore.js --ignore 'fs' --ignore 'glob' --ignore 'path' --ignore 'supports-color' -o dist/smoketestBundle.js",
+    "devmode": "./node_modules/.bin/watchify -t browserify-css smokeCore.js --ignore 'fs' --ignore 'glob' --ignore 'path' --ignore 'supports-color' -o dist/smoketestBundle.js",
     "test": "./node_modules/.bin/_mocha tests/unit --recursive",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js smokeCore.js smokeActions.js getClassUtil.js tests/**/*.js",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/**/*.js --recursive ; exit 0",
     "checkupdates": "./node_modules/.bin/ncu"
   },
   "engines": {
-    "node": "6.3.1"
+    "node": "6.5.0"
   },
   "files": [
     "dist",
@@ -21877,7 +21878,8 @@ module.exports={
     "jquery": "3.1.0",
     "mocha": "3.0.2",
     "npm-check-updates": "2.8.0",
-    "sinon": "1.17.5"
+    "sinon": "1.17.5",
+    "watchify": "3.7.0"
   }
 }
 
@@ -21979,8 +21981,11 @@ function click (selector, cb = simpleThrowerCallback) {
     if (element.href) {
       element.click();
     } else if (window.angular && window.angular.element) {
-      produceEventForAngular(element, 'click');
-      produceEventForAngular(element, 'change');
+      if (element.type === 'checkbox') {
+        element.click();
+      } else {
+        produceEventForAngular(element, 'click');
+      }
     } else {
       smokeJquery(element).trigger('click');
     }
@@ -22305,6 +22310,8 @@ exports.___jquerySetter = function (fakeJquery) {
 exports.___jqueryRestore = function () {
   smokeJquery = ___nonMockedJquery;
 };
+
+// todo: export angular-specific code to angular middlewares
 
 },{"./getClassUtil":56,"./node_modules/jquery/dist/jquery.min":103}],127:[function(require,module,exports){
 'use strict';

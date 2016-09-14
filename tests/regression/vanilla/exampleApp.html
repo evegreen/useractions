@@ -6,12 +6,12 @@
   <body>
     <div id="main">
 
-      <!-- howto notification -->
-      <div class="howtoNotification">Just run in console: smokeTest.runAll()</div>
+      <!-- for click and wait immediate result -->
+      <input type="button" id="immediateResultButton" onclick="immediateResultButtonClicked()" value="immediateResult">
       <br><br>
 
-      <!-- for click method -->
-      <input type="button" id="immediateResultButton" onclick="immediateResultButtonClicked()" value="immediateResult">
+      <!-- for click on button once -->
+      <input type="button" id="forClickOnButtonOnce" onclick="onceButtonClicked()" value="onceButton">
       <br><br>
 
       <!-- for click on checkbox -->
@@ -64,7 +64,6 @@
 
     </div>
   </body>
-  <link rel="stylesheet" href="exampleApp.css">
   <script src="exampleApp.js"></script>
 
   <!-- You need only this for test your app! -->

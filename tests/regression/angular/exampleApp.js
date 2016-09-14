@@ -1,7 +1,7 @@
+'use strict';
+
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope) {
-  $scope.firstname = "John";
-  $scope.lastname = "Doe";
 
   $scope.forClickOnCheckbox = false;
   $scope.checkboxPostScriptExecuted = false;
@@ -9,4 +9,10 @@ app.controller('myCtrl', function($scope) {
   $scope.checkboxPostScript = function () {
     $scope.checkboxPostScriptExecuted = true;
   };
+
+  $scope.buttonWasClickedCount = 0;
+  $scope.buttonClicked = function () {
+    $scope.buttonWasClickedCount++;
+  }
+
 });
