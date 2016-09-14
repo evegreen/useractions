@@ -6619,7 +6619,7 @@ exports.isPromise = function isPromise(value) {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./to-iso-string":37,"_process":106,"buffer":63,"debug":2,"fs":62,"glob":62,"json3":43,"path":62,"util":123}],39:[function(require,module,exports){
+},{"./to-iso-string":37,"_process":106,"buffer":63,"debug":2,"fs":62,"glob":62,"json3":43,"path":62,"util":124}],39:[function(require,module,exports){
 (function (process){
 var WritableStream = require('stream').Writable
 var inherits = require('util').inherits
@@ -6648,7 +6648,7 @@ BrowserStdout.prototype._write = function(chunks, encoding, cb) {
 }
 
 }).call(this,require('_process'))
-},{"_process":106,"stream":117,"util":123}],40:[function(require,module,exports){
+},{"_process":106,"stream":117,"util":124}],40:[function(require,module,exports){
 /* See LICENSE file for terms of use */
 
 /*
@@ -8952,6 +8952,19 @@ var argsTag = '[object Arguments]',
     funcTag = '[object Function]',
     genTag = '[object GeneratorFunction]';
 
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -8960,13 +8973,26 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
 var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a
+ * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
+ * Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
 
 /**
  * Checks if `value` is likely an `arguments` object.
@@ -8987,7 +9013,7 @@ var propertyIsEnumerable = objectProto.propertyIsEnumerable;
  * // => false
  */
 function isArguments(value) {
-  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
   return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
     (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
 }
@@ -9018,7 +9044,7 @@ function isArguments(value) {
  * // => false
  */
 function isArrayLike(value) {
-  return value != null && isLength(value.length) && !isFunction(value);
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 /**
@@ -9069,7 +9095,8 @@ function isArrayLikeObject(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }
@@ -9077,15 +9104,16 @@ function isFunction(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This method is loosely based on
- * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @static
  * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
  * @example
  *
  * _.isLength(3);
@@ -9107,7 +9135,7 @@ function isLength(value) {
 
 /**
  * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
  * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
@@ -10047,7 +10075,7 @@ module.exports={
 }
 
 },{}],55:[function(require,module,exports){
-var css = "@charset \"utf-8\";\nbody {\n  margin: 0;\n}\n#mocha {\n  font: 20px/1.5 \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  margin: 60px 50px;\n}\n#mocha ul,\n#mocha li {\n  margin: 0;\n  padding: 0;\n}\n#mocha ul {\n  list-style: none;\n}\n#mocha h1,\n#mocha h2 {\n  margin: 0;\n}\n#mocha h1 {\n  margin-top: 15px;\n  font-size: 1em;\n  font-weight: 200;\n}\n#mocha h1 a {\n  text-decoration: none;\n  color: inherit;\n}\n#mocha h1 a:hover {\n  text-decoration: underline;\n}\n#mocha .suite .suite h1 {\n  margin-top: 0;\n  font-size: .8em;\n}\n#mocha .hidden {\n  display: none;\n}\n#mocha h2 {\n  font-size: 12px;\n  font-weight: normal;\n  cursor: pointer;\n}\n#mocha .suite {\n  margin-left: 15px;\n}\n#mocha .test {\n  margin-left: 15px;\n  overflow: hidden;\n}\n#mocha .test.pending:hover h2::after {\n  content: '(pending)';\n  font-family: arial, sans-serif;\n}\n#mocha .test.pass.medium .duration {\n  background: #c09853;\n}\n#mocha .test.pass.slow .duration {\n  background: #b94a48;\n}\n#mocha .test.pass::before {\n  content: '✓';\n  font-size: 12px;\n  display: block;\n  float: left;\n  margin-right: 5px;\n  color: #00d6b2;\n}\n#mocha .test.pass .duration {\n  font-size: 9px;\n  margin-left: 5px;\n  padding: 2px 5px;\n  color: #fff;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);\n  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);\n  box-shadow: inset 0 1px 1px rgba(0,0,0,.2);\n  -webkit-border-radius: 5px;\n  -moz-border-radius: 5px;\n  -ms-border-radius: 5px;\n  -o-border-radius: 5px;\n  border-radius: 5px;\n}\n#mocha .test.pass.fast .duration {\n  display: none;\n}\n#mocha .test.pending {\n  color: #0b97c4;\n}\n#mocha .test.pending::before {\n  content: '◦';\n  color: #0b97c4;\n}\n#mocha .test.fail {\n  color: #c00;\n}\n#mocha .test.fail pre {\n  color: black;\n}\n#mocha .test.fail::before {\n  content: '✖';\n  font-size: 12px;\n  display: block;\n  float: left;\n  margin-right: 5px;\n  color: #c00;\n}\n#mocha .test pre.error {\n  color: #c00;\n  max-height: 300px;\n  overflow: auto;\n}\n#mocha .test .html-error {\n  overflow: auto;\n  color: black;\n  line-height: 1.5;\n  display: block;\n  float: left;\n  clear: left;\n  font: 12px/1.5 monaco, monospace;\n  margin: 5px;\n  padding: 15px;\n  border: 1px solid #eee;\n  max-width: 85%;\n  /*(1)*/\n  max-width: -webkit-calc(100% - 42px);\n  max-width: -moz-calc(100% - 42px);\n  max-width: calc(100% - 42px);\n  /*(2)*/\n  max-height: 300px;\n  word-wrap: break-word;\n  border-bottom-color: #ddd;\n  -webkit-box-shadow: 0 1px 3px #eee;\n  -moz-box-shadow: 0 1px 3px #eee;\n  box-shadow: 0 1px 3px #eee;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n}\n#mocha .test .html-error pre.error {\n  border: none;\n  -webkit-border-radius: 0;\n  -moz-border-radius: 0;\n  border-radius: 0;\n  -webkit-box-shadow: 0;\n  -moz-box-shadow: 0;\n  box-shadow: 0;\n  padding: 0;\n  margin: 0;\n  margin-top: 18px;\n  max-height: none;\n}\n/**\n * (1): approximate for browsers not supporting calc\n * (2): 42 = 2*15 + 2*10 + 2*1 (padding + margin + border)\n *      ^^ seriously\n */\n#mocha .test pre {\n  display: block;\n  float: left;\n  clear: left;\n  font: 12px/1.5 monaco, monospace;\n  margin: 5px;\n  padding: 15px;\n  border: 1px solid #eee;\n  max-width: 85%;\n  /*(1)*/\n  max-width: -webkit-calc(100% - 42px);\n  max-width: -moz-calc(100% - 42px);\n  max-width: calc(100% - 42px);\n  /*(2)*/\n  word-wrap: break-word;\n  border-bottom-color: #ddd;\n  -webkit-box-shadow: 0 1px 3px #eee;\n  -moz-box-shadow: 0 1px 3px #eee;\n  box-shadow: 0 1px 3px #eee;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n}\n#mocha .test h2 {\n  position: relative;\n}\n#mocha .test a.replay {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  text-decoration: none;\n  vertical-align: middle;\n  display: block;\n  width: 15px;\n  height: 15px;\n  line-height: 15px;\n  text-align: center;\n  background: #eee;\n  font-size: 15px;\n  -webkit-border-radius: 15px;\n  -moz-border-radius: 15px;\n  border-radius: 15px;\n  -webkit-transition: opacity 200ms;\n  -moz-transition: opacity 200ms;\n  -o-transition: opacity 200ms;\n  transition: opacity 200ms;\n  opacity: 0.3;\n  color: #888;\n}\n#mocha .test:hover a.replay {\n  opacity: 1;\n}\n#mocha-report.pass .test.fail {\n  display: none;\n}\n#mocha-report.fail .test.pass {\n  display: none;\n}\n#mocha-report.pending .test.pass,\n#mocha-report.pending .test.fail {\n  display: none;\n}\n#mocha-report.pending .test.pass.pending {\n  display: block;\n}\n#mocha-error {\n  color: #c00;\n  font-size: 1.5em;\n  font-weight: 100;\n  letter-spacing: 1px;\n}\n#mocha-stats {\n  position: fixed;\n  top: 15px;\n  right: 10px;\n  font-size: 12px;\n  margin: 0;\n  color: #888;\n  z-index: 1;\n}\n#mocha-stats .progress {\n  float: right;\n  padding-top: 0;\n  /**\n   * Set safe initial values, so mochas .progress does not inherit these\n   * properties from Bootstrap .progress (which causes .progress height to\n   * equal line height set in Bootstrap).\n   */\n  height: auto;\n  -webkit-box-shadow: none;\n  -moz-box-shadow: none;\n  box-shadow: none;\n  background-color: initial;\n}\n#mocha-stats em {\n  color: black;\n}\n#mocha-stats a {\n  text-decoration: none;\n  color: inherit;\n}\n#mocha-stats a:hover {\n  border-bottom: 1px solid #eee;\n}\n#mocha-stats li {\n  display: inline-block;\n  margin: 0 5px;\n  list-style: none;\n  padding-top: 11px;\n}\n#mocha-stats canvas {\n  width: 40px;\n  height: 40px;\n}\n#mocha code .comment {\n  color: #ddd;\n}\n#mocha code .init {\n  color: #2f6fad;\n}\n#mocha code .string {\n  color: #5890ad;\n}\n#mocha code .keyword {\n  color: #8a6343;\n}\n#mocha code .number {\n  color: #2f6fad;\n}\n@media screen and (max-device-width: 480px) {\n  #mocha {\n    margin: 60px 0px;\n  }\n\n  #mocha #stats {\n    position: absolute;\n  }\n}\n"; (require("browserify-css").createStyle(css, { "href": "cssBundleInstructions.css"})); module.exports = css;
+var css = "@charset \"utf-8\";\nbody {\n  margin: 0;\n}\n#mocha {\n  font: 20px/1.5 \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  margin: 60px 50px;\n}\n#mocha ul,\n#mocha li {\n  margin: 0;\n  padding: 0;\n}\n#mocha ul {\n  list-style: none;\n}\n#mocha h1,\n#mocha h2 {\n  margin: 0;\n}\n#mocha h1 {\n  margin-top: 15px;\n  font-size: 1em;\n  font-weight: 200;\n}\n#mocha h1 a {\n  text-decoration: none;\n  color: inherit;\n}\n#mocha h1 a:hover {\n  text-decoration: underline;\n}\n#mocha .suite .suite h1 {\n  margin-top: 0;\n  font-size: .8em;\n}\n#mocha .hidden {\n  display: none;\n}\n#mocha h2 {\n  font-size: 12px;\n  font-weight: normal;\n  cursor: pointer;\n}\n#mocha .suite {\n  margin-left: 15px;\n}\n#mocha .test {\n  margin-left: 15px;\n  overflow: hidden;\n}\n#mocha .test.pending:hover h2::after {\n  content: '(pending)';\n  font-family: arial, sans-serif;\n}\n#mocha .test.pass.medium .duration {\n  background: #c09853;\n}\n#mocha .test.pass.slow .duration {\n  background: #b94a48;\n}\n#mocha .test.pass::before {\n  content: '✓';\n  font-size: 12px;\n  display: block;\n  float: left;\n  margin-right: 5px;\n  color: #00d6b2;\n}\n#mocha .test.pass .duration {\n  font-size: 9px;\n  margin-left: 5px;\n  padding: 2px 5px;\n  color: #fff;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);\n  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);\n  box-shadow: inset 0 1px 1px rgba(0,0,0,.2);\n  -webkit-border-radius: 5px;\n  -moz-border-radius: 5px;\n  -ms-border-radius: 5px;\n  -o-border-radius: 5px;\n  border-radius: 5px;\n}\n#mocha .test.pass.fast .duration {\n  display: none;\n}\n#mocha .test.pending {\n  color: #0b97c4;\n}\n#mocha .test.pending::before {\n  content: '◦';\n  color: #0b97c4;\n}\n#mocha .test.fail {\n  color: #c00;\n}\n#mocha .test.fail pre {\n  color: black;\n}\n#mocha .test.fail::before {\n  content: '✖';\n  font-size: 12px;\n  display: block;\n  float: left;\n  margin-right: 5px;\n  color: #c00;\n}\n#mocha .test pre.error {\n  color: #c00;\n  max-height: 300px;\n  overflow: auto;\n}\n#mocha .test .html-error {\n  overflow: auto;\n  color: black;\n  line-height: 1.5;\n  display: block;\n  float: left;\n  clear: left;\n  font: 12px/1.5 monaco, monospace;\n  margin: 5px;\n  padding: 15px;\n  border: 1px solid #eee;\n  max-width: 85%;\n  /*(1)*/\n  max-width: -webkit-calc(100% - 42px);\n  max-width: -moz-calc(100% - 42px);\n  max-width: calc(100% - 42px);\n  /*(2)*/\n  max-height: 300px;\n  word-wrap: break-word;\n  border-bottom-color: #ddd;\n  -webkit-box-shadow: 0 1px 3px #eee;\n  -moz-box-shadow: 0 1px 3px #eee;\n  box-shadow: 0 1px 3px #eee;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n}\n#mocha .test .html-error pre.error {\n  border: none;\n  -webkit-border-radius: 0;\n  -moz-border-radius: 0;\n  border-radius: 0;\n  -webkit-box-shadow: 0;\n  -moz-box-shadow: 0;\n  box-shadow: 0;\n  padding: 0;\n  margin: 0;\n  margin-top: 18px;\n  max-height: none;\n}\n/**\n * (1): approximate for browsers not supporting calc\n * (2): 42 = 2*15 + 2*10 + 2*1 (padding + margin + border)\n *      ^^ seriously\n */\n#mocha .test pre {\n  display: block;\n  float: left;\n  clear: left;\n  font: 12px/1.5 monaco, monospace;\n  margin: 5px;\n  padding: 15px;\n  border: 1px solid #eee;\n  max-width: 85%;\n  /*(1)*/\n  max-width: -webkit-calc(100% - 42px);\n  max-width: -moz-calc(100% - 42px);\n  max-width: calc(100% - 42px);\n  /*(2)*/\n  word-wrap: break-word;\n  border-bottom-color: #ddd;\n  -webkit-box-shadow: 0 1px 3px #eee;\n  -moz-box-shadow: 0 1px 3px #eee;\n  box-shadow: 0 1px 3px #eee;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n}\n#mocha .test h2 {\n  position: relative;\n}\n#mocha .test a.replay {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  text-decoration: none;\n  vertical-align: middle;\n  display: block;\n  width: 15px;\n  height: 15px;\n  line-height: 15px;\n  text-align: center;\n  background: #eee;\n  font-size: 15px;\n  -webkit-border-radius: 15px;\n  -moz-border-radius: 15px;\n  border-radius: 15px;\n  -webkit-transition: opacity 200ms;\n  -moz-transition: opacity 200ms;\n  -o-transition: opacity 200ms;\n  transition: opacity 200ms;\n  opacity: 0.3;\n  color: #888;\n}\n#mocha .test:hover a.replay {\n  opacity: 1;\n}\n#mocha-report.pass .test.fail {\n  display: none;\n}\n#mocha-report.fail .test.pass {\n  display: none;\n}\n#mocha-report.pending .test.pass,\n#mocha-report.pending .test.fail {\n  display: none;\n}\n#mocha-report.pending .test.pass.pending {\n  display: block;\n}\n#mocha-error {\n  color: #c00;\n  font-size: 1.5em;\n  font-weight: 100;\n  letter-spacing: 1px;\n}\n#mocha-stats {\n  position: fixed;\n  top: 15px;\n  right: 10px;\n  font-size: 12px;\n  margin: 0;\n  color: #888;\n  z-index: 1;\n}\n#mocha-stats .progress {\n  float: right;\n  padding-top: 0;\n  /**\n   * Set safe initial values, so mochas .progress does not inherit these\n   * properties from Bootstrap .progress (which causes .progress height to\n   * equal line height set in Bootstrap).\n   */\n  height: auto;\n  -webkit-box-shadow: none;\n  -moz-box-shadow: none;\n  box-shadow: none;\n  background-color: initial;\n}\n#mocha-stats em {\n  color: black;\n}\n#mocha-stats a {\n  text-decoration: none;\n  color: inherit;\n}\n#mocha-stats a:hover {\n  border-bottom: 1px solid #eee;\n}\n#mocha-stats li {\n  display: inline-block;\n  margin: 0 5px;\n  list-style: none;\n  padding-top: 11px;\n}\n#mocha-stats canvas {\n  width: 40px;\n  height: 40px;\n}\n#mocha code .comment {\n  color: #ddd;\n}\n#mocha code .init {\n  color: #2f6fad;\n}\n#mocha code .string {\n  color: #5890ad;\n}\n#mocha code .keyword {\n  color: #8a6343;\n}\n#mocha code .number {\n  color: #2f6fad;\n}\n@media screen and (max-device-width: 480px) {\n  #mocha {\n    margin: 60px 0px;\n  }\n\n  #mocha #stats {\n    position: absolute;\n  }\n}\n"; (require("browserify-css").createStyle(css, { "href": "cssBundleInstructions.css" }, { "insertAt": "bottom" })); module.exports = css;
 },{"browserify-css":61}],56:[function(require,module,exports){
 'use strict';
 
@@ -10325,6 +10353,31 @@ function fromByteArray (uint8) {
 'use strict';
 // For more information about browser field, check out the browser field at https://github.com/substack/browserify-handbook#browser-field.
 
+var styleElementsInsertedAtTop = [];
+
+var insertStyleElement = function(styleElement, options) {
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+
+    options = options || {};
+    options.insertAt = options.insertAt || 'bottom';
+
+    if (options.insertAt === 'top') {
+        if (!lastStyleElementInsertedAtTop) {
+            head.insertBefore(styleElement, head.firstChild);
+        } else if (lastStyleElementInsertedAtTop.nextSibling) {
+            head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+        } else {
+            head.appendChild(styleElement);
+        }
+        styleElementsInsertedAtTop.push(styleElement);
+    } else if (options.insertAt === 'bottom') {
+        head.appendChild(styleElement);
+    } else {
+        throw new Error('Invalid value for parameter \'insertAt\'. Must be \'top\' or \'bottom\'.');
+    }
+};
+
 module.exports = {
     // Create a <link> tag with optional data attributes
     createLink: function(href, attributes) {
@@ -10345,10 +10398,10 @@ module.exports = {
         head.appendChild(link);
     },
     // Create a <style> tag with optional data attributes
-    createStyle: function(cssText, attributes) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style');
+    createStyle: function(cssText, attributes, extraOptions) {
+        extraOptions = extraOptions || {};
 
+        var style = document.createElement('style');
         style.type = 'text/css';
 
         for (var key in attributes) {
@@ -10358,17 +10411,17 @@ module.exports = {
             var value = attributes[key];
             style.setAttribute('data-' + key, value);
         }
-        
+
         if (style.sheet) { // for jsdom and IE9+
             style.innerHTML = cssText;
             style.sheet.cssText = cssText;
-            head.appendChild(style);
+            insertStyleElement(style, { insertAt: extraOptions.insertAt });
         } else if (style.styleSheet) { // for IE8 and below
-            head.appendChild(style);
+            insertStyleElement(style, { insertAt: extraOptions.insertAt });
             style.styleSheet.cssText = cssText;
         } else { // for Chrome, Firefox, and Safari
             style.appendChild(document.createTextNode(cssText));
-            head.appendChild(style);
+            insertStyleElement(style, { insertAt: extraOptions.insertAt });
         }
     }
 };
@@ -10544,6 +10597,8 @@ if (Buffer.TYPED_ARRAY_SUPPORT) {
 function assertSize (size) {
   if (typeof size !== 'number') {
     throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
   }
 }
 
@@ -10620,7 +10675,7 @@ function fromString (that, string, encoding) {
 }
 
 function fromArrayLike (that, array) {
-  var length = checked(array.length) | 0
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
   that = createBuffer(that, length)
   for (var i = 0; i < length; i += 1) {
     that[i] = array[i] & 255
@@ -10689,7 +10744,7 @@ function fromObject (that, obj) {
 }
 
 function checked (length) {
-  // Note: cannot use `length < kMaxLength` here because that fails when
+  // Note: cannot use `length < kMaxLength()` here because that fails when
   // length is NaN (which is otherwise coerced to zero.)
   if (length >= kMaxLength()) {
     throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
@@ -18722,25 +18777,40 @@ var process = module.exports = {};
 var cachedSetTimeout;
 var cachedClearTimeout;
 
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
 (function () {
     try {
-        cachedSetTimeout = setTimeout;
-    } catch (e) {
-        cachedSetTimeout = function () {
-            throw new Error('setTimeout is not defined');
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
         }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
     }
     try {
-        cachedClearTimeout = clearTimeout;
-    } catch (e) {
-        cachedClearTimeout = function () {
-            throw new Error('clearTimeout is not defined');
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
         }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
     }
 } ())
 function runTimeout(fun) {
     if (cachedSetTimeout === setTimeout) {
         //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
         return setTimeout(fun, 0);
     }
     try {
@@ -18761,6 +18831,11 @@ function runTimeout(fun) {
 function runClearTimeout(marker) {
     if (cachedClearTimeout === clearTimeout) {
         //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
         return clearTimeout(marker);
     }
     try {
@@ -21146,13 +21221,15 @@ function config (name) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],122:[function(require,module,exports){
+arguments[4][100][0].apply(exports,arguments)
+},{"dup":100}],123:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],123:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -21742,7 +21819,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":122,"_process":106,"inherits":100}],124:[function(require,module,exports){
+},{"./support/isBuffer":123,"_process":106,"inherits":122}],125:[function(require,module,exports){
 module.exports={
   "name": "smoketest",
   "title": "SmokeTest",
@@ -21793,9 +21870,9 @@ module.exports={
   "devDependencies": {
     "alertify.js": "1.0.12",
     "browserify": "13.1.0",
-    "browserify-css": "0.9.1",
+    "browserify-css": "0.9.2",
     "chai": "3.5.0",
-    "eslint": "3.4.0",
+    "eslint": "3.5.0",
     "istanbul": "0.4.5",
     "jquery": "3.1.0",
     "mocha": "3.0.2",
@@ -21804,7 +21881,7 @@ module.exports={
   }
 }
 
-},{}],125:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 'use strict';
 
 var smokeJquery = require('./node_modules/jquery/dist/jquery.min');
@@ -22229,7 +22306,7 @@ exports.___jqueryRestore = function () {
   smokeJquery = ___nonMockedJquery;
 };
 
-},{"./getClassUtil":56,"./node_modules/jquery/dist/jquery.min":103}],126:[function(require,module,exports){
+},{"./getClassUtil":56,"./node_modules/jquery/dist/jquery.min":103}],127:[function(require,module,exports){
 'use strict';
 
 var packageJson = require('./package.json');
@@ -22310,4 +22387,4 @@ window.smoketest = exportsObject;
 
 document.body.dispatchEvent(new Event('smoketestloaded'));
 
-},{"../mocha/browser-entry":1,"../mocha/package.json":54,"./cssBundleInstructions.css":55,"./package.json":124,"./smokeActions":125,"alertify.js":57,"chai":64}]},{},[126]);
+},{"../mocha/browser-entry":1,"../mocha/package.json":54,"./cssBundleInstructions.css":55,"./package.json":125,"./smokeActions":126,"alertify.js":57,"chai":64}]},{},[127]);
