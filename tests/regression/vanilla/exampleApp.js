@@ -12,6 +12,11 @@ function immediateResultButtonClicked () {
   insertAfter(newDiv, immediateResultButton);
 }
 
+var onceButtonWasClickedCount = 0;
+function onceButtonClicked () {
+  onceButtonWasClickedCount++;
+}
+
 function promiseChainFirstClick () {
   let promiseChainFirstButton = document.querySelector('input#forPromiseChainTest');
 

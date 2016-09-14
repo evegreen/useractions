@@ -41,6 +41,7 @@ But if you want add framework and tests without change your site files, you can 
 ## Run tests
 
 Just type in console `smokeTest.runAll();`
+You can make typo in camelCase, it is no problem =)
 
 ---
 

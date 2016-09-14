@@ -10,21 +10,39 @@ describe('click method', () => {
   let click = smokeActions.click;
 
   it('works when check immediate result after click', done => {
-    let immediateResultButtonSelector = 'input#immediateResultButton';
     let resultSelector = 'div#immediateResult';
 
     // check element doesn't exist before click
     let emptyImmediateResult = document.querySelector(resultSelector);
     assert.isNull(emptyImmediateResult);
 
-    click(immediateResultButtonSelector, err => {
-      if (err) throw err;
+    click('input#immediateResultButton', err => {
+      assert.isNull(err);
 
       // check exists after click
       let immediateResult = document.querySelector(resultSelector);
-
       assert.equal(immediateResult.id, 'immediateResult');
       assert.equal(immediateResult.innerHTML, 'immediateResult');
+      done();
+    });
+  });
+
+  it('can click on button once', done => {
+    let onceButton = document.querySelector('XXXXX');
+    assert.equal(onceButtonWasClickedCount, 0);
+    click('#forClickOnButtonOnce', err => {
+      assert.isNull(err);
+      assert.equal(onceButtonWasClickedCount, 1);
+      done();
+    });
+  });
+
+  it('can enable checkbox', done => {
+    let checkbox = document.querySelector('#forClickOnCheckbox');
+    assert.isFalse(checkbox.checked);
+    click('#forClickOnCheckbox', err => {
+      assert.isNull(err);
+      assert.isTrue(checkbox.checked);
       done();
     });
   });
@@ -167,7 +185,3 @@ describe('can write step-based integration tests', () => {
 });
 
 // todo: add test for focusOn method
-
-// todo: add test for "click" method, that button is not double-clicked
-
-// todo: add tests for check that "click" method handle "a href" link jump + ng-click event
