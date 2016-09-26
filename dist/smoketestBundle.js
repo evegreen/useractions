@@ -10239,6 +10239,7 @@ AssertionError.prototype.toJSON = function (stack) {
 },{}],59:[function(require,module,exports){
 'use strict'
 
+exports.byteLength = byteLength
 exports.toByteArray = toByteArray
 exports.fromByteArray = fromByteArray
 
@@ -10246,23 +10247,17 @@ var lookup = []
 var revLookup = []
 var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
 
-function init () {
-  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-  for (var i = 0, len = code.length; i < len; ++i) {
-    lookup[i] = code[i]
-    revLookup[code.charCodeAt(i)] = i
-  }
-
-  revLookup['-'.charCodeAt(0)] = 62
-  revLookup['_'.charCodeAt(0)] = 63
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
 }
 
-init()
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
 
-function toByteArray (b64) {
-  var i, j, l, tmp, placeHolders, arr
+function placeHoldersCount (b64) {
   var len = b64.length
-
   if (len % 4 > 0) {
     throw new Error('Invalid string. Length must be a multiple of 4')
   }
@@ -10272,9 +10267,19 @@ function toByteArray (b64) {
   // represent one byte
   // if there is only one, then the three characters before it represent 2 bytes
   // this is just a cheap hack to not do indexOf twice
-  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
 
+function byteLength (b64) {
   // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
   arr = new Arr(len * 3 / 4 - placeHolders)
 
   // if there are placeholders, only get up to the last complete 4 chars
@@ -21834,11 +21839,10 @@ module.exports={
     "devmode": "./node_modules/.bin/watchify -t browserify-css smokeCore.js --ignore 'fs' --ignore 'glob' --ignore 'path' --ignore 'supports-color' -o dist/smoketestBundle.js",
     "test": "./node_modules/.bin/_mocha tests/unit --recursive",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js smokeCore.js smokeActions.js getClassUtil.js tests/**/*.js",
-    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/**/*.js --recursive ; exit 0",
-    "checkupdates": "./node_modules/.bin/ncu"
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/**/*.js --recursive ; exit 0"
   },
   "engines": {
-    "node": "6.5.0"
+    "node": "6.6.0"
   },
   "files": [
     "dist",
@@ -21873,12 +21877,11 @@ module.exports={
     "browserify": "13.1.0",
     "browserify-css": "0.9.2",
     "chai": "3.5.0",
-    "eslint": "3.5.0",
+    "eslint": "3.6.0",
     "istanbul": "0.4.5",
     "jquery": "3.1.0",
     "mocha": "3.0.2",
-    "npm-check-updates": "2.8.0",
-    "sinon": "1.17.5",
+    "sinon": "1.17.6",
     "watchify": "3.7.0"
   }
 }
@@ -21913,8 +21916,8 @@ function checkFoundElement (element, selectorForError) {
   throw new Error('Can\'t find element, selector = ' + selectorForError);
 }
 
-function findElement (selector, timeoutOrCb, cb) {
-  if (!selector) {
+function findElement (selectorOrElement, timeoutOrCb, cb) {
+  if (!selectorOrElement) {
     throw new Error('first argument of findElement() undefined, it must be css selector!');
   }
 
@@ -21928,11 +21931,11 @@ function findElement (selector, timeoutOrCb, cb) {
   }
 
   if (isFunction(timeoutOrCb)) {
-    return findElementNormalized(selector, defaultTimeout, timeoutOrCb);
+    return findElementNormalized(selectorOrElement, defaultTimeout, timeoutOrCb);
   }
 
   if (isNumber(timeoutOrCb)) {
-    return findElementNormalized(selector, timeoutOrCb, cb);
+    return findElementNormalized(selectorOrElement, timeoutOrCb, cb);
   }
 }
 
@@ -21960,20 +21963,24 @@ function navigateToUrl (url) {
   window.location = url;
 }
 
-function findElementNormalized (selector, timeout, cb) {
+function findElementNormalized (selectorOrElement, timeout, cb) {
+  if (selectorOrElement instanceof HTMLElement) {
+    return cb(null, selectorOrElement);
+  }
+
   let foundElement;
   waitState(() => {
-    foundElement = document.querySelector(selector);
+    foundElement = document.querySelector(selectorOrElement);
     return checkFoundElement(foundElement);
   }, () => cb(null, foundElement), timeout);
 }
 
-function click (selector, cb = simpleThrowerCallback) {
-  if (!selector) {
+function click (selectorOrElement, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
 
-  findElement(selector, (err, element) => {
+  findElement(selectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
@@ -21993,12 +22000,12 @@ function click (selector, cb = simpleThrowerCallback) {
   });
 }
 
-function focusOn (inputSelector, cb = simpleThrowerCallback) {
-  if (!inputSelector) {
+function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
+  if (!inputSelectorOrElement) {
     throw new Error('inputSelector argument is not defined');
   }
 
-  findElement(inputSelector, (err, element) => {
+  findElement(inputSelectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
@@ -22009,12 +22016,12 @@ function focusOn (inputSelector, cb = simpleThrowerCallback) {
   });
 }
 
-function blur (selector, cb = simpleThrowerCallback) {
-  if (!selector) {
+function blur (selectorOrElement, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
 
-  findElement(selector, (err, element) => {
+  findElement(selectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
@@ -22026,12 +22033,12 @@ function blur (selector, cb = simpleThrowerCallback) {
   });
 }
 
-function inputText (selector, newValue, cb = simpleThrowerCallback) {
-  if (!selector) {
+function inputText (selectorOrElement, newValue, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
 
-  findElement(selector, (err, inputElement) => {
+  findElement(selectorOrElement, (err, inputElement) => {
     if (err) {
       return cb(err);
     }
@@ -22050,23 +22057,23 @@ function produceEventForAngular (element, eventName) {
   }
 }
 
-function getText (selector, cb) {
-  findElement(selector, (err, element) => {
+function getText (selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
     let result = element.innerText || element.textContent;
     return cb(null, result);
   });
 }
 
-function getValue (selector, cb) {
-  findElement(selector, (err, element) => {
+function getValue (selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
     let result = element.value;
     return cb(null, result);
   });
 }
 
 // option - number or value or innerHTML
-function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
-  findElement(selectSelector, (err, selectElement) => {
+function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
+  findElement(selectSelectorOrElement, (err, selectElement) => {
     if (err) return cb(err);
 
     let valueOptions = [];
@@ -22077,7 +22084,10 @@ function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
     }
 
     if (valueOptions.length < 1) {
-      throw new Error(`select ${selectSelector} has no options`);
+      // i leave ${string} cast even if selectSelectorOrElement will be
+      // an element by desygn or by laziness.
+      // QA anyway will see problem in stacktrace
+      throw new Error(`select ${selectSelectorOrElement} has no options`);
     }
 
     if (isString(option)) {
@@ -22096,16 +22106,16 @@ function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
         }
       }
 
-      return cb(new Error(`select ${selectSelector} not contains ${option} option`));
+      return cb(new Error(`select ${selectSelectorOrElement} not contains ${option} option`));
     }
 
     if (isNumber(option)) {
       if (option < 0) {
-        return cb(new Error(`in ${selectSelector}: your option is less then 0`));
+        return cb(new Error(`in ${selectSelectorOrElement}: your option is less then 0`));
       }
 
       if (option >= valueOptions.length) {
-        return cb(new Error(`in ${selectSelector}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
+        return cb(new Error(`in ${selectSelectorOrElement}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
       }
 
       selectElement.value = valueOptions[option];
@@ -22188,25 +22198,25 @@ function promisifyWrapper2arg (func, selector, secondArg) {
   });
 }
 
-function promisedClick (selector) {
-  return promisifyWrapper1arg(click, selector);
+function promisedClick (selectorOrElement) {
+  return promisifyWrapper1arg(click, selectorOrElement);
 }
 
-function promisedBlur (selector) {
-  return promisifyWrapper1arg(blur, selector);
+function promisedBlur (selectorOrElement) {
+  return promisifyWrapper1arg(blur, selectorOrElement);
 }
 
-function promisedFocusOn (selector) {
-  return promisifyWrapper1arg(focusOn, selector);
+function promisedFocusOn (selectorOrElement) {
+  return promisifyWrapper1arg(focusOn, selectorOrElement);
 }
 
-function promisedPickInSelect (selectSelector, option) {
-  return promisifyWrapper2arg(pickInSelect, selectSelector, option);
+function promisedPickInSelect (selectSelectorOrElement, option) {
+  return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
 }
 
-function promisedGetText (selector) {
+function promisedGetText (selectorOrElement) {
   return new Promise((resolve, reject) => {
-    getText(selector, (err, text) => {
+    getText(selectorOrElement, (err, text) => {
       if (err) {
         return reject(err);
       }
@@ -22216,9 +22226,9 @@ function promisedGetText (selector) {
   });
 }
 
-function promisedGetValue (selector) {
+function promisedGetValue (selectorOrElement) {
   return new Promise((resolve, reject) => {
-    getValue(selector, (err, value) => {
+    getValue(selectorOrElement, (err, value) => {
       if (err) {
         return reject(err);
       }
@@ -22228,9 +22238,9 @@ function promisedGetValue (selector) {
   });
 }
 
-function promisedInputText (selector, newValue) {
+function promisedInputText (selectorOrElement, newValue) {
   return new Promise((resolve, reject) => {
-    inputText(selector, newValue, err => {
+    inputText(selectorOrElement, newValue, err => {
       if (err) {
         return reject(err);
       }
@@ -22254,9 +22264,9 @@ function promisedWaitState (predicate,
   });
 }
 
-function promisedFindElement (selector, optionalTimeout = defaultTimeout) {
+function promisedFindElement (selectorOrElement, optionalTimeout = defaultTimeout) {
   return new Promise((resolve, reject) => {
-    findElement(selector, optionalTimeout, (err, element) => {
+    findElement(selectorOrElement, optionalTimeout, (err, element) => {
       if (err) {
         return reject(err);
       }

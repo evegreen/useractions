@@ -95,6 +95,26 @@ describe('getText method', () => {
   });
 });
 
+describe('findElement method', () => {
+  let findElement = smokeActions.findElement;
+  it('can be called with element selector', done => {
+    findElement('#forFindElementBySelector', (err, element) => {
+      assert.isNull(err);
+      assert.equal(element.innerHTML, 'expected result one');
+      done();
+    });
+  });
+
+  it('can be called with already found element', done => {
+    let foundElement = document.querySelector('#forFindElementByAlreadyFoundElement');
+    findElement(foundElement, (err, element) => {
+      assert.isNull(err);
+      assert.equal(element.innerHTML, 'expected result two');
+      done();
+    });
+  });
+});
+
 describe('pickInSelect method', () => {
 
   let pickInSelect = smokeActions.pickInSelect;
