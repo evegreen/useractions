@@ -27,8 +27,8 @@ function checkFoundElement (element, selectorForError) {
   throw new Error('Can\'t find element, selector = ' + selectorForError);
 }
 
-function findElement (selector, timeoutOrCb, cb) {
-  if (!selector) {
+function findElement (selectorOrElement, timeoutOrCb, cb) {
+  if (!selectorOrElement) {
     throw new Error('first argument of findElement() undefined, it must be css selector!');
   }
 
@@ -42,11 +42,11 @@ function findElement (selector, timeoutOrCb, cb) {
   }
 
   if (isFunction(timeoutOrCb)) {
-    return findElementNormalized(selector, defaultTimeout, timeoutOrCb);
+    return findElementNormalized(selectorOrElement, defaultTimeout, timeoutOrCb);
   }
 
   if (isNumber(timeoutOrCb)) {
-    return findElementNormalized(selector, timeoutOrCb, cb);
+    return findElementNormalized(selectorOrElement, timeoutOrCb, cb);
   }
 }
 
@@ -86,12 +86,12 @@ function findElementNormalized (selectorOrElement, timeout, cb) {
   }, () => cb(null, foundElement), timeout);
 }
 
-function click (selector, cb = simpleThrowerCallback) {
-  if (!selector) {
+function click (selectorOrElement, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
 
-  findElement(selector, (err, element) => {
+  findElement(selectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
@@ -111,12 +111,12 @@ function click (selector, cb = simpleThrowerCallback) {
   });
 }
 
-function focusOn (inputSelector, cb = simpleThrowerCallback) {
-  if (!inputSelector) {
+function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
+  if (!inputSelectorOrElement) {
     throw new Error('inputSelector argument is not defined');
   }
 
-  findElement(inputSelector, (err, element) => {
+  findElement(inputSelectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
@@ -127,12 +127,12 @@ function focusOn (inputSelector, cb = simpleThrowerCallback) {
   });
 }
 
-function blur (selector, cb = simpleThrowerCallback) {
-  if (!selector) {
+function blur (selectorOrElement, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
 
-  findElement(selector, (err, element) => {
+  findElement(selectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
@@ -144,12 +144,12 @@ function blur (selector, cb = simpleThrowerCallback) {
   });
 }
 
-function inputText (selector, newValue, cb = simpleThrowerCallback) {
-  if (!selector) {
+function inputText (selectorOrElement, newValue, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
 
-  findElement(selector, (err, inputElement) => {
+  findElement(selectorOrElement, (err, inputElement) => {
     if (err) {
       return cb(err);
     }
@@ -168,23 +168,23 @@ function produceEventForAngular (element, eventName) {
   }
 }
 
-function getText (selector, cb) {
-  findElement(selector, (err, element) => {
+function getText (selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
     let result = element.innerText || element.textContent;
     return cb(null, result);
   });
 }
 
-function getValue (selector, cb) {
-  findElement(selector, (err, element) => {
+function getValue (selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
     let result = element.value;
     return cb(null, result);
   });
 }
 
 // option - number or value or innerHTML
-function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
-  findElement(selectSelector, (err, selectElement) => {
+function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
+  findElement(selectSelectorOrElement, (err, selectElement) => {
     if (err) return cb(err);
 
     let valueOptions = [];
@@ -195,7 +195,10 @@ function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
     }
 
     if (valueOptions.length < 1) {
-      throw new Error(`select ${selectSelector} has no options`);
+      // i leave ${string} cast even if selectSelectorOrElement will be
+      // an element by desygn or by laziness.
+      // QA anyway will see problem in stacktrace
+      throw new Error(`select ${selectSelectorOrElement} has no options`);
     }
 
     if (isString(option)) {
@@ -214,16 +217,16 @@ function pickInSelect (selectSelector, option, cb = simpleThrowerCallback) {
         }
       }
 
-      return cb(new Error(`select ${selectSelector} not contains ${option} option`));
+      return cb(new Error(`select ${selectSelectorOrElement} not contains ${option} option`));
     }
 
     if (isNumber(option)) {
       if (option < 0) {
-        return cb(new Error(`in ${selectSelector}: your option is less then 0`));
+        return cb(new Error(`in ${selectSelectorOrElement}: your option is less then 0`));
       }
 
       if (option >= valueOptions.length) {
-        return cb(new Error(`in ${selectSelector}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
+        return cb(new Error(`in ${selectSelectorOrElement}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
       }
 
       selectElement.value = valueOptions[option];
@@ -306,25 +309,25 @@ function promisifyWrapper2arg (func, selector, secondArg) {
   });
 }
 
-function promisedClick (selector) {
-  return promisifyWrapper1arg(click, selector);
+function promisedClick (selectorOrElement) {
+  return promisifyWrapper1arg(click, selectorOrElement);
 }
 
-function promisedBlur (selector) {
-  return promisifyWrapper1arg(blur, selector);
+function promisedBlur (selectorOrElement) {
+  return promisifyWrapper1arg(blur, selectorOrElement);
 }
 
-function promisedFocusOn (selector) {
-  return promisifyWrapper1arg(focusOn, selector);
+function promisedFocusOn (selectorOrElement) {
+  return promisifyWrapper1arg(focusOn, selectorOrElement);
 }
 
-function promisedPickInSelect (selectSelector, option) {
-  return promisifyWrapper2arg(pickInSelect, selectSelector, option);
+function promisedPickInSelect (selectSelectorOrElement, option) {
+  return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
 }
 
-function promisedGetText (selector) {
+function promisedGetText (selectorOrElement) {
   return new Promise((resolve, reject) => {
-    getText(selector, (err, text) => {
+    getText(selectorOrElement, (err, text) => {
       if (err) {
         return reject(err);
       }
@@ -334,9 +337,9 @@ function promisedGetText (selector) {
   });
 }
 
-function promisedGetValue (selector) {
+function promisedGetValue (selectorOrElement) {
   return new Promise((resolve, reject) => {
-    getValue(selector, (err, value) => {
+    getValue(selectorOrElement, (err, value) => {
       if (err) {
         return reject(err);
       }
@@ -346,9 +349,9 @@ function promisedGetValue (selector) {
   });
 }
 
-function promisedInputText (selector, newValue) {
+function promisedInputText (selectorOrElement, newValue) {
   return new Promise((resolve, reject) => {
-    inputText(selector, newValue, err => {
+    inputText(selectorOrElement, newValue, err => {
       if (err) {
         return reject(err);
       }
@@ -372,9 +375,9 @@ function promisedWaitState (predicate,
   });
 }
 
-function promisedFindElement (selector, optionalTimeout = defaultTimeout) {
+function promisedFindElement (selectorOrElement, optionalTimeout = defaultTimeout) {
   return new Promise((resolve, reject) => {
-    findElement(selector, optionalTimeout, (err, element) => {
+    findElement(selectorOrElement, optionalTimeout, (err, element) => {
       if (err) {
         return reject(err);
       }

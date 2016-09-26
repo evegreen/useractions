@@ -7,7 +7,7 @@ var smokeActions = require('../../smokeActions');
 
 var FakeNonMatchingHtmlElement = function () {
   this.__proto__ = {};
-}
+};
 
 describe('smoke actions', () => {
   describe('runPredicate method', () => {
