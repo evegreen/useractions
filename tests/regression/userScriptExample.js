@@ -23,15 +23,15 @@
 
     // our tests
     describe('test group 1', () => {
-      it('blabla', done => {
-        console.log('hooray!');
+      it('test 1', done => {
+        // expectations
         done();
       });
     });
 
     describe('test group 2', () => {
-      it('blablabla', done => {
-        console.log('hooray!');
+      it('test 2', done => {
+        // expectations
         done();
       });
     });

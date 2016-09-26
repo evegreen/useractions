@@ -99,7 +99,11 @@ function click (selector, cb = simpleThrowerCallback) {
     if (element.href) {
       element.click();
     } else if (window.angular && window.angular.element) {
-      produceEventForAngular(element, 'click');
+      if (element.type === 'checkbox') {
+        element.click();
+      } else {
+        produceEventForAngular(element, 'click');
+      }
     } else {
       smokeJquery(element).trigger('click');
     }
@@ -424,3 +428,5 @@ exports.___jquerySetter = function (fakeJquery) {
 exports.___jqueryRestore = function () {
   smokeJquery = ___nonMockedJquery;
 };
+
+// todo: export angular-specific code to angular middlewares
