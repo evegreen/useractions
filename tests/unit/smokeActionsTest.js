@@ -5,6 +5,10 @@ var sinon = require('sinon');
 
 var smokeActions = require('../../smokeActions');
 
+var FakeNonMatchingHtmlElement = function () {
+  this.__proto__ = {};
+}
+
 describe('smoke actions', () => {
   describe('runPredicate method', () => {
     let runPredicate = smokeActions.runPredicate;
@@ -128,6 +132,7 @@ describe('smoke actions', () => {
 
     it('calls cb with null-first(err) argument and found element when called with good selector and callback', done => {
       global.document = {querySelector: () => 'stubElement'};
+      global.HTMLElement = FakeNonMatchingHtmlElement;
       let callbackFn = function (err, element) {
         assert.isNull(err);
         assert.equal(element, 'stubElement');
@@ -135,6 +140,7 @@ describe('smoke actions', () => {
       };
       findElement('goodSelector', callbackFn);
       global.document = null;
+      global.HTMLElement = null;
     });
 
     /*
@@ -159,6 +165,7 @@ describe('smoke actions', () => {
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
       global.window = {};
+      global.HTMLElement = FakeNonMatchingHtmlElement;
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -184,6 +191,7 @@ describe('smoke actions', () => {
       smokeActions.___jqueryRestore();
       global.document = null;
       global.window = null;
+      global.HTMLElement = null;
 
       done();
     });
@@ -198,6 +206,7 @@ describe('smoke actions', () => {
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
       global.window = {};
+      global.HTMLElement = FakeNonMatchingHtmlElement;
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -222,6 +231,7 @@ describe('smoke actions', () => {
       smokeActions.___jqueryRestore();
       global.document = null;
       global.window = null;
+      global.HTMLElement = null;
 
       done();
     });
@@ -236,6 +246,7 @@ describe('smoke actions', () => {
       // stub
       global.document = {querySelector: () => 'stubElement'};
       global.window = {};
+      global.HTMLElement = FakeNonMatchingHtmlElement;
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -260,6 +271,7 @@ describe('smoke actions', () => {
       smokeActions.___jqueryRestore();
       global.document = null;
       global.window = null;
+      global.HTMLElement = null;
 
       done();
     });
@@ -272,6 +284,7 @@ describe('smoke actions', () => {
       let stubInputElement = {value: 'oldValue'};
       global.document = {querySelector: () => stubInputElement};
       global.window = {};
+      global.HTMLElement = FakeNonMatchingHtmlElement;
 
       inputText('fakeSelector', 'myNewValue');
       assert.equal(stubInputElement.value, 'myNewValue');
@@ -279,6 +292,7 @@ describe('smoke actions', () => {
       // restore stubs
       global.document = null;
       global.window = null;
+      global.HTMLElement = null;
 
       done();
     });
@@ -300,6 +314,7 @@ describe('smoke actions', () => {
       };
       global.document = {querySelector: () => stubSelectElement};
       global.window = {};
+      global.HTMLElement = FakeNonMatchingHtmlElement;
 
       pickInSelect('fakeSelector', 2);
       assert.equal(stubSelectElement.value, 'mercedez');
@@ -307,6 +322,7 @@ describe('smoke actions', () => {
       // unstub
       global.document = null;
       global.window = null;
+      global.HTMLElement = null;
 
       done();
     });
