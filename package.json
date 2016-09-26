@@ -52,7 +52,7 @@
     "chai": "3.5.0",
     "eslint": "3.6.0",
     "istanbul": "0.4.5",
-    "jquery": "3.1.0",
+    "jquery": "3.1.1",
     "mocha": "3.0.2",
     "sinon": "1.17.6",
     "watchify": "3.7.0"
