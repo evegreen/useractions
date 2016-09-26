@@ -1,7 +1,7 @@
 {
   "name": "smoketest",
   "description": "Framework, that allows write functional smoke tests easy",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "main": "dist/smoketestBundle.js",
   "repository": {
     "type": "git",
