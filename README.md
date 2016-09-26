@@ -24,6 +24,7 @@ Or just fetch build under [dist](https://github.com/evegreen/smoketest/tree/mast
 - [Action methods](#action-methods)
 - [Configure timeouts](#configure-timeouts)
 - [Promisified methods](#promisified-methods)
+- [Already found element](#already-found-element)
 - [Other](#other)
 
 ---
@@ -194,6 +195,21 @@ var getText = smokeTest.actions.promised.getText;
 getText('div#carDescription')
 .then(function (text) { /* work with text =) */ })
 .catch(function (err) { /* handle error =( */ };
+```
+
+---
+
+## Already found element
+All action methods (promisified too) you can use with already found element.
+It is comfortable for promise chaining:
+
+```js
+var promiseActions = smokeTest.actions.promised;
+var findElement = promiseActions.findElement;
+var click = promiseActions.click;
+
+findElement('#buttonForClick')
+.then(button => click(button));
 ```
 
 ---
