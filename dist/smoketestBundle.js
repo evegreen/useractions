@@ -1,5 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process,global){
+/* eslint no-unused-vars: off */
+
 /**
  * Shim process.stdout.
  */
@@ -35,15 +37,17 @@ var originalOnerrorHandler = global.onerror;
  * Revert to original onerror handler if previously defined.
  */
 
-process.removeListener = function(e, fn){
-  if ('uncaughtException' == e) {
+process.removeListener = function(e, fn) {
+  if (e === 'uncaughtException') {
     if (originalOnerrorHandler) {
       global.onerror = originalOnerrorHandler;
     } else {
       global.onerror = function() {};
     }
     var i = Mocha.utils.indexOf(uncaughtExceptionHandlers, fn);
-    if (i != -1) { uncaughtExceptionHandlers.splice(i, 1); }
+    if (i !== -1) {
+      uncaughtExceptionHandlers.splice(i, 1);
+    }
   }
 };
 
@@ -51,9 +55,9 @@ process.removeListener = function(e, fn){
  * Implements uncaughtException listener.
  */
 
-process.on = function(e, fn){
-  if ('uncaughtException' == e) {
-    global.onerror = function(err, url, line){
+process.on = function(e, fn) {
+  if (e === 'uncaughtException') {
+    global.onerror = function(err, url, line) {
       fn(new Error(err + ' (' + url + ':' + line + ')'));
       return !mocha.allowUncaught;
     };
@@ -66,8 +70,8 @@ process.on = function(e, fn){
 // Ensure that this default UI does not expose its methods to the global scope.
 mocha.suite.removeAllListeners('pre-require');
 
-var immediateQueue = []
-  , immediateTimeout;
+var immediateQueue = [];
+var immediateTimeout;
 
 function timeslice() {
   var immediateStart = new Date().getTime();
@@ -98,7 +102,7 @@ Mocha.Runner.immediately = function(callback) {
  * only receive the 'message' attribute of the Error.
  */
 mocha.throwError = function(err) {
-  Mocha.utils.forEach(uncaughtExceptionHandlers, function (fn) {
+  Mocha.utils.forEach(uncaughtExceptionHandlers, function(fn) {
     fn(err);
   });
   throw err;
@@ -109,7 +113,7 @@ mocha.throwError = function(err) {
  * Normally this would happen in Mocha.prototype.loadFiles.
  */
 
-mocha.ui = function(ui){
+mocha.ui = function(ui) {
   Mocha.prototype.ui.call(this, ui);
   this.suite.emit('pre-require', global, null, this);
   return this;
@@ -119,9 +123,15 @@ mocha.ui = function(ui){
  * Setup mocha with the given setting options.
  */
 
-mocha.setup = function(opts){
-  if ('string' == typeof opts) opts = { ui: opts };
-  for (var opt in opts) this[opt](opts[opt]);
+mocha.setup = function(opts) {
+  if (typeof opts === 'string') {
+    opts = { ui: opts };
+  }
+  for (var opt in opts) {
+    if (opts.hasOwnProperty(opt)) {
+      this[opt](opts[opt]);
+    }
+  }
   return this;
 };
 
@@ -129,22 +139,30 @@ mocha.setup = function(opts){
  * Run mocha, returning the Runner.
  */
 
-mocha.run = function(fn){
+mocha.run = function(fn) {
   var options = mocha.options;
   mocha.globals('location');
 
   var query = Mocha.utils.parseQuery(global.location.search || '');
-  if (query.grep) mocha.grep(query.grep);
-  if (query.fgrep) mocha.fgrep(query.fgrep);
-  if (query.invert) mocha.invert();
+  if (query.grep) {
+    mocha.grep(query.grep);
+  }
+  if (query.fgrep) {
+    mocha.fgrep(query.fgrep);
+  }
+  if (query.invert) {
+    mocha.invert();
+  }
 
-  return Mocha.prototype.run.call(mocha, function(err){
+  return Mocha.prototype.run.call(mocha, function(err) {
     // The DOM Document is not available in Web Workers.
     var document = global.document;
     if (document && document.getElementById('mocha') && options.noHighlighting !== true) {
       Mocha.utils.highlightTags('code');
     }
-    if (fn) fn(err);
+    if (fn) {
+      fn(err);
+    }
   });
 };
 
@@ -894,6 +912,8 @@ module.exports = function(suites, context, mocha) {
         if (typeof opts.fn === 'function') {
           opts.fn.call(suite);
           suites.shift();
+        } else if (typeof opts.fn === 'undefined' && !suite.pending) {
+          throw new Error('Suite "' + suite.fullTitle() + '" was defined but no callback was supplied. Supply a callback or explicitly skip the suite.');
         }
 
         return suite;
@@ -1058,7 +1078,8 @@ module.exports = function(suite) {
       }
       return common.suite.create({
         title: title,
-        file: file
+        file: file,
+        fn: false
       });
     };
 
@@ -1072,7 +1093,8 @@ module.exports = function(suite) {
       }
       return common.suite.only({
         title: title,
-        file: file
+        file: file,
+        fn: false
       });
     };
 
@@ -4150,7 +4172,7 @@ Runnable.prototype.enableTimeouts = function(enabled) {
  * @api public
  */
 Runnable.prototype.skip = function() {
-  throw new Pending();
+  throw new Pending('sync skip');
 };
 
 /**
@@ -4315,14 +4337,19 @@ Runnable.prototype.run = function(fn) {
   if (this.async) {
     this.resetTimeout();
 
+    // allows skip() to be used in an explicit async context
+    this.skip = function asyncSkip() {
+      done(new Pending('async skip call'));
+      // halt execution.  the Runnable will be marked pending
+      // by the previous call, and the uncaught handler will ignore
+      // the failure.
+      throw new Pending('async skip; aborting execution');
+    };
+
     if (this.allowUncaught) {
       return callFnAsync(this.fn);
     }
     try {
-      // allows skip() to be used in an explicit async context
-      this.skip = function() {
-        done(new Pending());
-      };
       callFnAsync(this.fn);
     } catch (err) {
       done(utils.getError(err));
@@ -4616,6 +4643,10 @@ Runner.prototype.checkGlobals = function(test) {
  * @param {Error} err
  */
 Runner.prototype.fail = function(test, err) {
+  if (test.isPending()) {
+    return;
+  }
+
   ++this.failures;
   test.state = 'failed';
 
@@ -4702,9 +4733,11 @@ Runner.prototype.hook = function(name, fn) {
           if (name === 'beforeEach' || name === 'afterEach') {
             self.test.pending = true;
           } else {
-            suite.tests.forEach(function(test) {
+            utils.forEach(suite.tests, function(test) {
               test.pending = true;
             });
+            // a pending hook won't be executed twice.
+            hook.pending = true;
           }
         } else {
           self.failHook(hook, err);
@@ -4810,6 +4843,9 @@ Runner.prototype.runTest = function(fn) {
   var self = this;
   var test = this.test;
 
+  if (!test) {
+    return;
+  }
   if (this.asyncOnly) {
     test.asyncOnly = true;
   }
@@ -5091,8 +5127,8 @@ Runner.prototype.uncaught = function(err) {
 
   runnable.clearTimeout();
 
-  // Ignore errors if complete
-  if (runnable.state) {
+  // Ignore errors if complete or pending
+  if (runnable.state || runnable.isPending()) {
     return;
   }
   this.fail(runnable, err);
@@ -5250,7 +5286,7 @@ function filterOnly(suite) {
   } else {
     // Otherwise, do not run any of the tests in this suite.
     suite.tests = [];
-    suite._onlySuites.forEach(function(onlySuite) {
+    utils.forEach(suite._onlySuites, function(onlySuite) {
       // If there are other `only` tests/suites nested in the current `only` suite, then filter that `only` suite.
       // Otherwise, all of the tests on this `only` suite should be run, so don't filter it.
       if (hasOnly(onlySuite)) {
@@ -5288,7 +5324,7 @@ function hasOnly(suite) {
 function filterLeaks(ok, globals) {
   return filter(globals, function(key) {
     // Firefox and Chrome exposes iframes as index inside the window object
-    if (/^d+/.test(key)) {
+    if (/^\d+/.test(key)) {
       return false;
     }
 
@@ -5850,7 +5886,8 @@ var basename = require('path').basename;
 var debug = require('debug')('mocha:watch');
 var exists = require('fs').existsSync || require('path').existsSync;
 var glob = require('glob');
-var join = require('path').join;
+var path = require('path');
+var join = path.join;
 var readdirSync = require('fs').readdirSync;
 var statSync = require('fs').statSync;
 var watchFile = require('fs').watchFile;
@@ -5930,7 +5967,7 @@ exports.map = function(arr, fn, scope) {
  * @param {number} start
  * @return {number}
  */
-exports.indexOf = function(arr, obj, start) {
+var indexOf = exports.indexOf = function(arr, obj, start) {
   for (var i = start || 0, l = arr.length; i < l; i++) {
     if (arr[i] === obj) {
       return i;
@@ -5948,7 +5985,7 @@ exports.indexOf = function(arr, obj, start) {
  * @param {Object} val Initial value.
  * @return {*}
  */
-exports.reduce = function(arr, fn, val) {
+var reduce = exports.reduce = function(arr, fn, val) {
   var rval = val;
 
   for (var i = 0, l = arr.length; i < l; i++) {
@@ -6154,7 +6191,7 @@ exports.trim = function(str) {
  * @return {Object}
  */
 exports.parseQuery = function(qs) {
-  return exports.reduce(qs.replace('?', '').split('&'), function(obj, pair) {
+  return reduce(qs.replace('?', '').split('&'), function(obj, pair) {
     var i = pair.indexOf('=');
     var key = pair.slice(0, i);
     var val = pair.slice(++i);
@@ -6207,13 +6244,11 @@ exports.highlightTags = function(name) {
  *
  * @api private
  * @param {*} value The value to inspect.
- * @param {string} [type] The type of the value, if known.
+ * @param {string} typeHint The type of the value
  * @returns {string}
  */
-function emptyRepresentation(value, type) {
-  type = type || exports.type(value);
-
-  switch (type) {
+function emptyRepresentation(value, typeHint) {
+  switch (typeHint) {
     case 'function':
       return '[Function]';
     case 'object':
@@ -6232,7 +6267,7 @@ function emptyRepresentation(value, type) {
  * @api private
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
  * @param {*} value The value to test.
- * @returns {string}
+ * @returns {string} Computed type
  * @example
  * type({}) // 'object'
  * type([]) // 'array'
@@ -6244,8 +6279,9 @@ function emptyRepresentation(value, type) {
  * type(/foo/) // 'regexp'
  * type('type') // 'string'
  * type(global) // 'global'
+ * type(new String('foo') // 'object'
  */
-exports.type = function type(value) {
+var type = exports.type = function type(value) {
   if (value === undefined) {
     return 'undefined';
   } else if (value === null) {
@@ -6274,25 +6310,36 @@ exports.type = function type(value) {
  * @return {string}
  */
 exports.stringify = function(value) {
-  var type = exports.type(value);
+  var typeHint = type(value);
 
-  if (!~exports.indexOf(['object', 'array', 'function'], type)) {
-    if (type !== 'buffer') {
+  if (!~indexOf(['object', 'array', 'function'], typeHint)) {
+    if (typeHint === 'buffer') {
+      var json = value.toJSON();
+      // Based on the toJSON result
+      return jsonStringify(json.data && json.type ? json.data : json, 2)
+        .replace(/,(\n|$)/g, '$1');
+    }
+
+    // IE7/IE8 has a bizarre String constructor; needs to be coerced
+    // into an array and back to obj.
+    if (typeHint === 'string' && typeof value === 'object') {
+      value = reduce(value.split(''), function(acc, char, idx) {
+        acc[idx] = char;
+        return acc;
+      }, {});
+      typeHint = 'object';
+    } else {
       return jsonStringify(value);
     }
-    var json = value.toJSON();
-    // Based on the toJSON result
-    return jsonStringify(json.data && json.type ? json.data : json, 2)
-      .replace(/,(\n|$)/g, '$1');
   }
 
   for (var prop in value) {
     if (Object.prototype.hasOwnProperty.call(value, prop)) {
-      return jsonStringify(exports.canonicalize(value), 2).replace(/,(\n|$)/g, '$1');
+      return jsonStringify(exports.canonicalize(value, null, typeHint), 2).replace(/,(\n|$)/g, '$1');
     }
   }
 
-  return emptyRepresentation(value, type);
+  return emptyRepresentation(value, typeHint);
 };
 
 /**
@@ -6321,7 +6368,7 @@ function jsonStringify(object, spaces, depth) {
   }
 
   function _stringify(val) {
-    switch (exports.type(val)) {
+    switch (type(val)) {
       case 'null':
       case 'undefined':
         val = '[' + val + ']';
@@ -6404,14 +6451,15 @@ exports.isBuffer = function(value) {
  * @see {@link exports.stringify}
  * @param {*} value Thing to inspect.  May or may not have properties.
  * @param {Array} [stack=[]] Stack of seen values
+ * @param {string} [typeHint] Type hint
  * @return {(Object|Array|Function|string|undefined)}
  */
-exports.canonicalize = function(value, stack) {
+exports.canonicalize = function canonicalize(value, stack, typeHint) {
   var canonicalizedObj;
   /* eslint-disable no-unused-vars */
   var prop;
   /* eslint-enable no-unused-vars */
-  var type = exports.type(value);
+  typeHint = typeHint || type(value);
   function withStack(value, fn) {
     stack.push(value);
     fn();
@@ -6420,11 +6468,11 @@ exports.canonicalize = function(value, stack) {
 
   stack = stack || [];
 
-  if (exports.indexOf(stack, value) !== -1) {
+  if (indexOf(stack, value) !== -1) {
     return '[Circular]';
   }
 
-  switch (type) {
+  switch (typeHint) {
     case 'undefined':
     case 'buffer':
     case 'null':
@@ -6445,7 +6493,7 @@ exports.canonicalize = function(value, stack) {
       }
       /* eslint-enable guard-for-in */
       if (!canonicalizedObj) {
-        canonicalizedObj = emptyRepresentation(value, type);
+        canonicalizedObj = emptyRepresentation(value, typeHint);
         break;
       }
     /* falls through */
@@ -6561,16 +6609,20 @@ exports.getError = function(err) {
  */
 exports.stackTraceFilter = function() {
   // TODO: Replace with `process.browser`
-  var slash = '/';
   var is = typeof document === 'undefined' ? { node: true } : { browser: true };
-  var cwd = is.node
-      ? process.cwd() + slash
-      : (typeof location === 'undefined' ? window.location : location).href.replace(/\/[^\/]*$/, '/');
+  var slash = path.sep;
+  var cwd;
+  if (is.node) {
+    cwd = process.cwd() + slash;
+  } else {
+    cwd = (typeof location === 'undefined' ? window.location : location).href.replace(/\/[^\/]*$/, '/');
+    slash = '/';
+  }
 
   function isMochaInternal(line) {
     return (~line.indexOf('node_modules' + slash + 'mocha' + slash))
-      || (~line.indexOf('components' + slash + 'mochajs' + slash))
-      || (~line.indexOf('components' + slash + 'mocha' + slash))
+      || (~line.indexOf('node_modules' + slash + 'mocha.js'))
+      || (~line.indexOf('bower_components' + slash + 'mocha.js'))
       || (~line.indexOf(slash + 'mocha.js'));
   }
 
@@ -6586,7 +6638,7 @@ exports.stackTraceFilter = function() {
   return function(stack) {
     stack = stack.split('\n');
 
-    stack = exports.reduce(stack, function(list, line) {
+    stack = reduce(stack, function(list, line) {
       if (isMochaInternal(line)) {
         return list;
       }
@@ -9718,7 +9770,7 @@ mkdirP.sync = function sync (p, opts, made) {
 },{"_process":106,"fs":62,"path":62}],54:[function(require,module,exports){
 module.exports={
   "name": "mocha",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "simple, flexible, fun test framework",
   "keywords": [
     "mocha",
@@ -21877,10 +21929,10 @@ module.exports={
     "browserify": "13.1.0",
     "browserify-css": "0.9.2",
     "chai": "3.5.0",
-    "eslint": "3.6.0",
+    "eslint": "3.6.1",
     "istanbul": "0.4.5",
     "jquery": "3.1.1",
-    "mocha": "3.0.2",
+    "mocha": "3.1.0",
     "sinon": "1.17.6",
     "watchify": "3.7.0"
   }
