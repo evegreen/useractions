@@ -10,6 +10,7 @@ var mocha = require('../mocha/browser-entry').mocha;
 var mochaVersion = require('../mocha/package.json').version;
 var smokeAlertify = require('alertify.js');
 var smokeChai = require('chai');
+var smokeJquery = require('./node_modules/jquery/dist/jquery.min');
 
 var smokeActions = require('./smokeActions');
 
@@ -67,6 +68,7 @@ let exportsObject = {
   actions: smokeActions,
   chai: smokeChai,
   alertify: smokeAlertify,
+  jquery: smokeJquery,
   runAll: runAll,
   runall: runAll,
   version: getVersion,

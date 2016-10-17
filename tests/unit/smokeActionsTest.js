@@ -277,8 +277,8 @@ describe('smoke actions', () => {
     });
   });
 
-  describe('inputText method', () => {
-    let inputText = smokeActions.inputText;
+  describe('changeValue method', () => {
+    let changeValue = smokeActions.changeValue;
     it('can be called without callback', done => {
       // stub document for findElement method, window for angular events
       let stubInputElement = {value: 'oldValue'};
@@ -286,7 +286,7 @@ describe('smoke actions', () => {
       global.window = {};
       global.HTMLElement = FakeNonMatchingHtmlElement;
 
-      inputText('fakeSelector', 'myNewValue');
+      changeValue('fakeSelector', 'myNewValue');
       assert.equal(stubInputElement.value, 'myNewValue');
 
       // restore stubs
