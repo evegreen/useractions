@@ -38,7 +38,7 @@ describe('Mocha framework', () => {
     execCmd(getLastCommitCmd, (err, stdout, stderr) => {
       assert.isNull(err);
       assert.equal(stderr, '');
-      assert.equal(stdout, '{hash: 9915dfb, author: Christopher Hiller, msg: Release v3.1.0}');
+      assert.equal(stdout, '{hash: 205e31b, author: Christopher Hiller, msg: Release v3.1.2}');
       done();
     });
   });
