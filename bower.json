@@ -1,11 +1,11 @@
 {
-  "name": "smoketest",
-  "description": "Framework, that allows write functional smoke tests easy",
-  "version": "0.3.1",
-  "main": "dist/smoketestBundle.js",
+  "name": "useractions",
+  "description": "Library, that helps simulate user actions for write fast functional tests",
+  "version": "0.1.0",
+  "main": "dist/useractionsBundle.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/evegreen/smoketest.git"
+    "url": "https://github.com/evegreen/useractions.git"
   },
   "authors": [
     {
@@ -16,18 +16,17 @@
   "license": "MIT",
   "keywords": [
     "test",
+    "action",
+    "actions",
     "functional",
-    "integration",
-    "smoke"
+    "simulate"
   ],
-  "homepage": "https://github.com/evegreen/smoketest",
+  "homepage": "https://github.com/evegreen/useractions",
   "ignore": [
     "**/.*",
     "**/*.*~",
     "node_modules",
     "bower_components",
-    "package.json",
-    "angularMiddlewares.js",
-    "checkHasMocha.js"
+    "package.json"
   ]
 }

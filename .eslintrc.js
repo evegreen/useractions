@@ -8,11 +8,8 @@ module.exports = {
   "globals": {
     "describe": true,
     "it": true,
-
-    // todo: until change angular.element(...)... on jQuery.element(...)...
-    "angular": true,
-
-    "smokeTest": true
+    "userActions": true,
+    "useractions": true
   },
   "extends": "eslint:recommended",
   "rules": {

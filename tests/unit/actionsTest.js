@@ -3,7 +3,7 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
-var smokeActions = require('../../smokeActions');
+var smokeActions = require('../../src/actions');
 
 var FakeNonMatchingHtmlElement = function () {
   this.__proto__ = {};

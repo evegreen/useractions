@@ -32,5 +32,3 @@ describe('click method', () => {
     });
   });
 });
-
-// todo: add tests for check that "click" method handle "a href" link jump + ng-click event

@@ -1,6 +1,6 @@
 'use strict';
 
-var smokeJquery = require('./node_modules/jquery/dist/jquery.min');
+var inlineJquery = require('../node_modules/jquery/dist/jquery.min');
 
 var getClassUtil = require('./getClassUtil');
 var isFunction = getClassUtil.isFunction;
@@ -11,6 +11,7 @@ var isString = getClassUtil.isString;
 var promiseWrappers = require('./promiseWrappers');
 var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
 var promisifyWrapper2arg = promiseWrappers.promisifyWrapper2arg;
+var promisifyWrapper1res = promiseWrappers.promisifyWrapper1res;
 
 
 var defaultTimeout = 2000;
@@ -55,10 +56,6 @@ function findElement (selectorOrElement, timeoutOrCb, cb) {
   }
 }
 
-function navigateToUrl (url) {
-  window.location = url;
-}
-
 function findElementNormalized (selectorOrElement, timeout, cb) {
   if (selectorOrElement instanceof HTMLElement) {
     return cb(null, selectorOrElement);
@@ -96,7 +93,7 @@ function click (selectorOrElement, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    smokeJquery(element).trigger('click');
+    inlineJquery(element).trigger('click');
     return cb(null);
   });
 }
@@ -111,7 +108,7 @@ function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    smokeJquery(element).trigger('focus');
+    inlineJquery(element).trigger('focus');
     return cb(null);
   });
 }
@@ -126,7 +123,7 @@ function blur (selectorOrElement, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    smokeJquery(element).trigger('blur');
+    inlineJquery(element).trigger('blur');
     return cb(null);
   });
 }
@@ -146,24 +143,24 @@ function changeValue (selectorOrElement, newValue, cb = simpleThrowerCallback) {
   });
 }
 
-function triggerEvent (selectorOrElement, eventName, cb) {
+function triggerEvent (selectorOrElement, eventName, cb = simpleThrowerCallback) {
   findElement(selectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
 
-    smokeJquery(element).trigger(eventName);
+    inlineJquery(element).trigger(eventName);
     return cb(null);
   });
 }
 
-function triggerHandler (selectorOrElement, eventName, cb) {
+function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallback) {
   findElement(selectorOrElement, (err, element) => {
     if (err) {
       return cb(err);
     }
 
-    smokeJquery(element).triggerHandler(eventName);
+    inlineJquery(element).triggerHandler(eventName);
     return cb(null);
   });
 }
@@ -196,13 +193,12 @@ function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallba
 
     if (valueOptions.length < 1) {
       // i leave ${string} cast even if selectSelectorOrElement will be
-      // an element by desygn or by laziness.
-      // QA anyway will see problem in stacktrace
+      // an element by design or by laziness.
+      // QA-developer anyway will see problem in stacktrace
       throw new Error(`select ${selectSelectorOrElement} has no options`);
     }
 
     if (isString(option)) {
-
       if (valueOptions.includes(option)) {
         selectElement.value = option;
         return cb(null);
@@ -242,12 +238,15 @@ function waitState (predicate, cb,
   if (!isFunction(predicate)) {
     throw new Error('First argument of waitState is not predicate!');
   }
+
   if (!isFunction(cb)) {
     throw new Error('Second argument of waitState is not function!');
   }
+
   if (timeout < refreshTime) {
     console.warn('Warning: Timeout argument less then refreshTime argument!');
   }
+
   if (runPredicate(predicate)) {
     return cb(null);
   } else {
@@ -255,8 +254,7 @@ function waitState (predicate, cb,
       return cb(new Error('Timeout in waitState occurred!'));
     }
 
-    setTimeout(waitState, refreshTime, predicate, cb,
-        timeout, refreshTime, startTime);
+    setTimeout(waitState, refreshTime, predicate, cb, timeout, refreshTime, startTime);
   }
 }
 
@@ -280,78 +278,61 @@ function simpleThrowerCallback (err) {
   if (err) throw err;
 }
 
-// PROMISED ACTIONS
-function promisedDirectClick (selectorOrElement) {
-  return promisifyWrapper1arg (directClick, selectorOrElement);
-}
+// EXPORTS
+exports.promised = {};
 
-function promisedClick (selectorOrElement) {
+exports.directClick = directClick;
+exports.promised.directClick = function (selectorOrElement) {
+  return promisifyWrapper1arg(directClick, selectorOrElement);
+};
+
+exports.click = click;
+exports.promised.click = function (selectorOrElement) {
   return promisifyWrapper1arg(click, selectorOrElement);
-}
+};
 
-function promisedBlur (selectorOrElement) {
-  return promisifyWrapper1arg(blur, selectorOrElement);
-}
+exports.changeValue = changeValue;
+exports.promised.changeValue = function (selectorOrElement, newValue) {
+  return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
+};
 
-function promisedFocusOn (selectorOrElement) {
+exports.focusOn = focusOn;
+exports.promised = function (selectorOrElement) {
   return promisifyWrapper1arg(focusOn, selectorOrElement);
-}
+};
 
-function promisedPickInSelect (selectSelectorOrElement, option) {
+exports.blur = blur;
+exports.promised.blur = function (selectorOrElement) {
+  return promisifyWrapper1arg(blur, selectorOrElement);
+};
+
+exports.pickInSelect = pickInSelect;
+exports.promised.pickInSelect = function (selectSelectorOrElement, option) {
   return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
-}
+};
 
-function promisedGetText (selectorOrElement) {
-  return new Promise((resolve, reject) => {
-    getText(selectorOrElement, (err, text) => {
-      if (err) {
-        return reject(err);
-      }
+exports.triggerEvent = triggerEvent;
+exports.promised.triggerEvent = function (selectorOrElement, eventName) {
+  return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
+};
 
-      return resolve(text);
-    });
-  });
-}
+exports.triggerHandler = triggerHandler;
+exports.promised.triggerHandler = function (selectorOrElement, eventName) {
+  return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
+};
 
-function promisedGetValue (selectorOrElement) {
-  return new Promise((resolve, reject) => {
-    getValue(selectorOrElement, (err, value) => {
-      if (err) {
-        return reject(err);
-      }
+exports.getText = getText;
+exports.promised.getText = function promisedGetText (selectorOrElement) {
+  return promisifyWrapper1res(selectorOrElement);
+};
 
-      return resolve(value);
-    });
-  });
-}
+exports.getValue = getValue;
+exports.promised.getValue = function (selectorOrElement) {
+  return promisifyWrapper1res(selectorOrElement);
+};
 
-function promisedChangeValue (selectorOrElement, newValue) {
-  return new Promise((resolve, reject) => {
-    changeValue(selectorOrElement, newValue, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
-}
-
-function promisedWaitState (predicate,
-                            timeout = defaultTimeout,
-                            refreshTime = defaultRefreshTime) {
-  return new Promise((resolve, reject) => {
-    waitState(predicate, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    }, timeout, refreshTime);
-  });
-}
-
-function promisedFindElement (selectorOrElement, optionalTimeout = defaultTimeout) {
+exports.findElement = findElement;
+exports.promised.findElement = function (selectorOrElement, optionalTimeout = defaultTimeout) {
   return new Promise((resolve, reject) => {
     findElement(selectorOrElement, optionalTimeout, (err, element) => {
       if (err) {
@@ -361,53 +342,30 @@ function promisedFindElement (selectorOrElement, optionalTimeout = defaultTimeou
       return resolve(element);
     });
   });
-}
-
-let promisedActions = {};
-promisedActions.click = promisedDirectClick;
-promisedActions.click = promisedClick;
-promisedActions.changeValue = promisedChangeValue;
-promisedActions.blur = promisedBlur;
-promisedActions.focusOn = promisedFocusOn;
-promisedActions.pickInSelect = promisedPickInSelect;
-
-promisedActions.getText = promisedGetText;
-promisedActions.getValue = promisedGetValue;
-
-promisedActions.waitState = promisedWaitState;
-promisedActions.findElement = promisedFindElement;
-
-// EXPORTS
-exports.directClick = directClick;
-exports.click = click;
-exports.changeValue = changeValue;
-exports.focusOn = focusOn;
-exports.blur = blur;
-exports.pickInSelect = pickInSelect;
-
-exports.triggerEvent = triggerEvent;
-exports.triggerHandler = triggerHandler;
-
-exports.getText = getText;
-exports.getValue = getValue;
+};
 
 exports.waitState = waitState;
-exports.findElement = findElement;
+exports.promised.waitState = function (predicate, timeout = defaultTimeout, refreshTime = defaultRefreshTime) {
+  return new Promise((resolve, reject) => {
+    waitState(predicate, err => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve();
+    }, timeout, refreshTime);
+  });
+};
+
 exports.runPredicate = runPredicate;
-
-exports.navigateToUrl = navigateToUrl;
-
 exports.setDefaultRefreshTime = setDefaultRefreshTime;
 exports.setDefaultTimeout = setDefaultTimeout;
 
-exports.promised = promisedActions;
-
 // EXPORTS ONLY FOR TESTS
-let ___nonMockedJquery;
+let ___nonMockedJquery = inlineJquery;
 exports.___jquerySetter = function (fakeJquery) {
-  ___nonMockedJquery = smokeJquery;
-  smokeJquery = fakeJquery;
+  inlineJquery = fakeJquery;
 };
 exports.___jqueryRestore = function () {
-  smokeJquery = ___nonMockedJquery;
+  inlineJquery = ___nonMockedJquery;
 };

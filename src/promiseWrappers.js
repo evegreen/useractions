@@ -1,6 +1,7 @@
 'use strict';
 
-// todo: mb unify promisify-wrapper for all callback-methods ?
+// TODO: maybe unify promisify-wrappers for all callback-methods ?
+
 exports.promisifyWrapper1arg = function (func, selector) {
   return new Promise((resolve, reject) => {
     func(selector, err => {
@@ -11,7 +12,7 @@ exports.promisifyWrapper1arg = function (func, selector) {
       return resolve();
     });
   });
-}
+};
 
 exports.promisifyWrapper2arg = function (func, selector, secondArg) {
   return new Promise((resolve, reject) => {
@@ -23,4 +24,16 @@ exports.promisifyWrapper2arg = function (func, selector, secondArg) {
       return resolve();
     });
   });
-}
+};
+
+exports.promisifyWrapper1res = function (func, selector) {
+  return new Promise((resolve, reject) => {
+    func(selector, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve(result);
+    });
+  });
+};
