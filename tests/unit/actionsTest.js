@@ -5,11 +5,9 @@ var sinon = require('sinon');
 
 var smokeActions = require('../../src/actions');
 
-var FakeNonMatchingHtmlElement = function () {
-  this.__proto__ = {};
-};
+var HtmlElementStub = require('./stubs').HtmlElementStub;
 
-describe('smoke actions', () => {
+describe('actions', () => {
   describe('runPredicate method', () => {
     let runPredicate = smokeActions.runPredicate;
 
@@ -132,7 +130,7 @@ describe('smoke actions', () => {
 
     it('calls cb with null-first(err) argument and found element when called with good selector and callback', done => {
       global.document = {querySelector: () => 'stubElement'};
-      global.HTMLElement = FakeNonMatchingHtmlElement;
+      global.HTMLElement = HtmlElementStub; // will not match
       let callbackFn = function (err, element) {
         assert.isNull(err);
         assert.equal(element, 'stubElement');
@@ -165,7 +163,7 @@ describe('smoke actions', () => {
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
       global.window = {};
-      global.HTMLElement = FakeNonMatchingHtmlElement;
+      global.HTMLElement = HtmlElementStub; // will not match
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -200,80 +198,18 @@ describe('smoke actions', () => {
   describe('focusOn method', () => {
     let focusOn = smokeActions.focusOn;
     it('can be called without callback', done => {
-      let stubElementWasReturned;
-      let eventWasTriggerred;
+      // TODO: write test on triggerEvent method, then use it here
 
-      // stub document for findElement method
-      global.document = {querySelector: () => 'stubElement'};
-      global.window = {};
-      global.HTMLElement = FakeNonMatchingHtmlElement;
-
-      // stub jquery
-      let fakeJquery = fakeElement => {
-        assert.equal(fakeElement, 'stubElement');
-        stubElementWasReturned = true;
-        return {
-          focus: () => {
-            eventWasTriggerred = true;
-          }
-        };
-      };
-
-      smokeActions.___jquerySetter(fakeJquery);
-
-      focusOn('fakeSelector');
-
-      // asserts
-      assert.isTrue(stubElementWasReturned);
-      assert.isTrue(eventWasTriggerred);
-
-      // restore stubs
-      smokeActions.___jqueryRestore();
-      global.document = null;
-      global.window = null;
-      global.HTMLElement = null;
-
-      done();
+      throw new Error('test not implemented right now =(');
     });
   });
 
   describe('blur method', () => {
     let blur = smokeActions.blur;
     it('can be called without callback', done => {
-      let stubElementWasReturned;
-      let eventWasTriggerred;
+      // TODO: write test on triggerEvent method, then use it here
 
-      // stub
-      global.document = {querySelector: () => 'stubElement'};
-      global.window = {};
-      global.HTMLElement = FakeNonMatchingHtmlElement;
-
-      // stub jquery
-      let fakeJquery = fakeElement => {
-        assert.equal(fakeElement, 'stubElement');
-        stubElementWasReturned = true;
-        return {
-          blur: () => {
-            eventWasTriggerred = true;
-          }
-        };
-      };
-
-      smokeActions.___jquerySetter(fakeJquery);
-
-      blur('fakeSelector');
-
-      // asserts
-      assert.isTrue(stubElementWasReturned);
-      assert.isTrue(eventWasTriggerred);
-
-      // unstub
-      smokeActions.___jqueryRestore();
-      global.document = null;
-      global.window = null;
-      global.HTMLElement = null;
-
-      done();
+      throw new Error('test not implemented right now =(');
     });
   });
 
@@ -284,7 +220,7 @@ describe('smoke actions', () => {
       let stubInputElement = {value: 'oldValue'};
       global.document = {querySelector: () => stubInputElement};
       global.window = {};
-      global.HTMLElement = FakeNonMatchingHtmlElement;
+      global.HTMLElement = HtmlElementStub; // will not match
 
       changeValue('fakeSelector', 'myNewValue');
       assert.equal(stubInputElement.value, 'myNewValue');
@@ -314,7 +250,7 @@ describe('smoke actions', () => {
       };
       global.document = {querySelector: () => stubSelectElement};
       global.window = {};
-      global.HTMLElement = FakeNonMatchingHtmlElement;
+      global.HTMLElement = HtmlElementStub; // will not match
 
       pickInSelect('fakeSelector', 2);
       assert.equal(stubSelectElement.value, 'mercedez');

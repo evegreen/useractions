@@ -57,6 +57,7 @@ function findElement (selectorOrElement, timeoutOrCb, cb) {
 }
 
 function findElementNormalized (selectorOrElement, timeout, cb) {
+  debugger;
   if (selectorOrElement instanceof HTMLElement) {
     return cb(null, selectorOrElement);
   }
