@@ -1,6 +1,7 @@
 'use strict';
 
-var inlineJquery = require('../node_modules/jquery/dist/jquery.min');
+// TODO: back to minified version
+var inlineJquery = require('../node_modules/jquery/dist/jquery');
 
 var getClassUtil = require('./getClassUtil');
 var isFunction = getClassUtil.isFunction;
@@ -57,8 +58,7 @@ function findElement (selectorOrElement, timeoutOrCb, cb) {
 }
 
 function findElementNormalized (selectorOrElement, timeout, cb) {
-  debugger;
-  if (selectorOrElement instanceof HTMLElement) {
+  if (selectorOrElement.nodeType) {
     return cb(null, selectorOrElement);
   }
 

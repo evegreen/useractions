@@ -3,13 +3,11 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
-var smokeActions = require('../../src/actions');
-
-var HtmlElementStub = require('./stubs').HtmlElementStub;
+var actions = require('../../src/actions');
 
 describe('actions', () => {
   describe('runPredicate method', () => {
-    let runPredicate = smokeActions.runPredicate;
+    let runPredicate = actions.runPredicate;
 
     it('returns true after predicate returns true', done => {
       let result = runPredicate(() => {return true;});
@@ -42,12 +40,12 @@ describe('actions', () => {
       done();
     });
 
-    // todo: don't know, what need to be returned if predicate returns
+    // TODO: don't know, what need to be returned if predicate returns
     // object or array ?
   });
 
   describe('waitState method', () => {
-    let waitState = smokeActions.waitState;
+    let waitState = actions.waitState;
 
     it('throws error without predicate', done => {
       assert.throws(() => {
@@ -109,12 +107,10 @@ describe('actions', () => {
       consoleWarnSpy.restore();
       done();
     });
-
-    // todo: add tests on callback with arguments
   });
 
   describe('findElement method', () => {
-    let findElement = smokeActions.findElement;
+    let findElement = actions.findElement;
 
     it('throws error without arguments', done => {
       assert.throws(findElement, Error, 'first argument of findElement() undefined, it must be css selector!');
@@ -130,7 +126,6 @@ describe('actions', () => {
 
     it('calls cb with null-first(err) argument and found element when called with good selector and callback', done => {
       global.document = {querySelector: () => 'stubElement'};
-      global.HTMLElement = HtmlElementStub; // will not match
       let callbackFn = function (err, element) {
         assert.isNull(err);
         assert.equal(element, 'stubElement');
@@ -140,22 +135,37 @@ describe('actions', () => {
       global.document = null;
       global.HTMLElement = null;
     });
+  });
 
-    /*
-    it('calls cb with null-first(err) argument with good selector, timeout and callback', done => {
-      // todo ...
+  describe('triggerEvent method', () => {
+    let triggerEvent = actions.triggerEvent;
+    it('can be called without callback', done => {
+      // stubs
+      let jqueryStub = function (fakeElement) {
+        return {
+          trigger: function (eventType) {
+            fakeElement['on' + eventType]();
+          }
+        };
+      };
+      actions.___jquerySetter(jqueryStub);
+
+      let fakeElement = {
+        nodeType: 1,
+        onclick: () => {
+          // restore stubs
+          actions.___jqueryRestore();
+
+          setTimeout(done, 5);
+        }
+      }
+
+      triggerEvent(fakeElement, 'click');
     });
-    */
-
-    // todo: add tests for wrong selector passed. need check error
   });
 
   describe('click method', () => {
-    let click = smokeActions.click;
-
-    // todo: if u know how to stub jquery with sinon,
-    // please send pull-request or message to me,
-    // i will really appreciate that help
+    let click = actions.click;
     it('can be called without callback', done => {
       let stubElementWasReturned;
       let eventWasTriggerred;
@@ -163,7 +173,6 @@ describe('actions', () => {
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
       global.window = {};
-      global.HTMLElement = HtmlElementStub; // will not match
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -177,7 +186,7 @@ describe('actions', () => {
         };
       };
 
-      smokeActions.___jquerySetter(fakeJquery);
+      actions.___jquerySetter(fakeJquery);
 
       click('fakeSelector');
 
@@ -186,7 +195,7 @@ describe('actions', () => {
       assert.isTrue(eventWasTriggerred);
 
       // restore stubs
-      smokeActions.___jqueryRestore();
+      actions.___jqueryRestore();
       global.document = null;
       global.window = null;
       global.HTMLElement = null;
@@ -195,32 +204,31 @@ describe('actions', () => {
     });
   });
 
-  describe('focusOn method', () => {
-    let focusOn = smokeActions.focusOn;
-    it('can be called without callback', done => {
-      // TODO: write test on triggerEvent method, then use it here
+  // describe('focusOn method', () => {
+  //   let focusOn = actions.focusOn;
+  //   it('can be called without callback', done => {
+  //     // TODO: write test on triggerEvent method, then use it here
+  //
+  //     throw new Error('test not implemented right now =(');
+  //   });
+  // });
 
-      throw new Error('test not implemented right now =(');
-    });
-  });
-
-  describe('blur method', () => {
-    let blur = smokeActions.blur;
-    it('can be called without callback', done => {
-      // TODO: write test on triggerEvent method, then use it here
-
-      throw new Error('test not implemented right now =(');
-    });
-  });
+  // describe('blur method', () => {
+  //   let blur = actions.blur;
+  //   it('can be called without callback', done => {
+  //     // TODO: write test on triggerEvent method, then use it here
+  //
+  //     throw new Error('test not implemented right now =(');
+  //   });
+  // });
 
   describe('changeValue method', () => {
-    let changeValue = smokeActions.changeValue;
+    let changeValue = actions.changeValue;
     it('can be called without callback', done => {
       // stub document for findElement method, window for angular events
       let stubInputElement = {value: 'oldValue'};
       global.document = {querySelector: () => stubInputElement};
       global.window = {};
-      global.HTMLElement = HtmlElementStub; // will not match
 
       changeValue('fakeSelector', 'myNewValue');
       assert.equal(stubInputElement.value, 'myNewValue');
@@ -235,7 +243,7 @@ describe('actions', () => {
   });
 
   describe('pickInSelect method', () => {
-    let pickInSelect = smokeActions.pickInSelect;
+    let pickInSelect = actions.pickInSelect;
     it('can be called without callback', done => {
 
       // stubs
@@ -250,7 +258,6 @@ describe('actions', () => {
       };
       global.document = {querySelector: () => stubSelectElement};
       global.window = {};
-      global.HTMLElement = HtmlElementStub; // will not match
 
       pickInSelect('fakeSelector', 2);
       assert.equal(stubSelectElement.value, 'mercedez');
@@ -264,5 +271,3 @@ describe('actions', () => {
     });
   });
 });
-
-// todo: unify some code in "can be called without callback"-type tests

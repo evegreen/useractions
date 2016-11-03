@@ -1,13 +1,15 @@
 'use strict';
 
-var assert = smokeTest.chai.assert;
+var assert = chai.assert;
 
-var smokeActions = smokeTest.actions;
-var promisedActions = smokeActions.promised;
+var actions = userActions;
+var promisedActions = userActions.promised;
+
+mocha.setup('bdd');
 
 describe('click method', () => {
 
-  let click = smokeActions.click;
+  let click = actions.click;
 
   it('works when check immediate result after click', done => {
     let resultSelector = 'div#immediateResult';
@@ -49,7 +51,7 @@ describe('click method', () => {
 });
 
 describe('changeValue method', () => {
-  let inputText = smokeActions.inputText;
+  let inputText = actions.inputText;
 
   it('works when simple change input value', done => {
     let testInputSelector = 'input#forChangeValue';
@@ -69,7 +71,7 @@ describe('changeValue method', () => {
 
 describe('getValue method', () => {
 
-  let getValue = smokeActions.getValue;
+  let getValue = actions.getValue;
 
   it('works with simple input', done => {
     let testInputSelector = 'input#forGetValue';
@@ -83,7 +85,7 @@ describe('getValue method', () => {
 
 describe('getText method', () => {
 
-  let getText = smokeActions.getText;
+  let getText = actions.getText;
 
   it('works with simple div element with inner text', done => {
     let testDivSelector = 'div#forGetText';
@@ -96,7 +98,7 @@ describe('getText method', () => {
 });
 
 describe('findElement method', () => {
-  let findElement = smokeActions.findElement;
+  let findElement = actions.findElement;
   it('can be called with element selector', done => {
     findElement('#forFindElementBySelector', (err, element) => {
       assert.isNull(err);
@@ -117,7 +119,7 @@ describe('findElement method', () => {
 
 describe('pickInSelect method', () => {
 
-  let pickInSelect = smokeActions.pickInSelect;
+  let pickInSelect = actions.pickInSelect;
 
   it('pick by option number', done => {
     pickInSelect('select#forPickInSelectByOptionNumber', 1, err => {
@@ -171,8 +173,8 @@ describe('promise style usage', () => {
 
 // attention: nested describes is not synchronized!
 describe('can write step-based integration tests', () => {
-  let click = smokeActions.click;
-  let getText = smokeActions.getText;
+  let click = actions.click;
+  let getText = actions.getText;
 
   it('step1', done => {
     click('input#forStepsExample', err => {
@@ -205,3 +207,5 @@ describe('can write step-based integration tests', () => {
 });
 
 // todo: add test for focusOn method
+
+mocha.run();
