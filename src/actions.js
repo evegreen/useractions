@@ -298,7 +298,7 @@ exports.promised.changeValue = function (selectorOrElement, newValue) {
 };
 
 exports.focusOn = focusOn;
-exports.promised = function (selectorOrElement) {
+exports.promised.focusOn = function (selectorOrElement) {
   return promisifyWrapper1arg(focusOn, selectorOrElement);
 };
 
@@ -324,12 +324,12 @@ exports.promised.triggerHandler = function (selectorOrElement, eventName) {
 
 exports.getText = getText;
 exports.promised.getText = function promisedGetText (selectorOrElement) {
-  return promisifyWrapper1res(selectorOrElement);
+  return promisifyWrapper1res(getText, selectorOrElement);
 };
 
 exports.getValue = getValue;
 exports.promised.getValue = function (selectorOrElement) {
-  return promisifyWrapper1res(selectorOrElement);
+  return promisifyWrapper1res(getValue, selectorOrElement);
 };
 
 exports.findElement = findElement;

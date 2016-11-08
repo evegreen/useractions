@@ -10263,7 +10263,7 @@ module.exports={
     "devmode": "./node_modules/.bin/watchify bundler.js -o dist/useractionsBundle.js",
     "test": "./node_modules/.bin/_mocha tests/unit --recursive",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js bundler.js src/**/*.js tests/**/*.js",
-    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/**/*.js --recursive ; exit 0"
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/unit/**/*.js --recursive ; exit 0"
   },
   "engines": {
     "node": "6.9.1"
@@ -10608,7 +10608,7 @@ exports.promised.changeValue = function (selectorOrElement, newValue) {
 };
 
 exports.focusOn = focusOn;
-exports.promised = function (selectorOrElement) {
+exports.promised.focusOn = function (selectorOrElement) {
   return promisifyWrapper1arg(focusOn, selectorOrElement);
 };
 
@@ -10634,12 +10634,12 @@ exports.promised.triggerHandler = function (selectorOrElement, eventName) {
 
 exports.getText = getText;
 exports.promised.getText = function promisedGetText (selectorOrElement) {
-  return promisifyWrapper1res(selectorOrElement);
+  return promisifyWrapper1res(getText, selectorOrElement);
 };
 
 exports.getValue = getValue;
 exports.promised.getValue = function (selectorOrElement) {
-  return promisifyWrapper1res(selectorOrElement);
+  return promisifyWrapper1res(getValue, selectorOrElement);
 };
 
 exports.findElement = findElement;

@@ -158,7 +158,7 @@ describe('actions', () => {
 
           setTimeout(done, 5);
         }
-      }
+      };
 
       triggerEvent(fakeElement, 'click');
     });

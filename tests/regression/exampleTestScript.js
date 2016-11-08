@@ -30,10 +30,12 @@ describe('click method', () => {
   });
 
   it('can click on button once', done => {
-    let onceButton = document.querySelector('XXXXX');
+    // than variable has raght in application, no need to declare it
+    // eslint-disable-next-line no-undef
     assert.equal(onceButtonWasClickedCount, 0);
     click('#forClickOnButtonOnce', err => {
       assert.isNull(err);
+      // eslint-disable-next-line no-undef
       assert.equal(onceButtonWasClickedCount, 1);
       done();
     });
@@ -51,7 +53,7 @@ describe('click method', () => {
 });
 
 describe('changeValue method', () => {
-  let inputText = actions.inputText;
+  let changeValue = actions.changeValue;
 
   it('works when simple change input value', done => {
     let testInputSelector = 'input#forChangeValue';
@@ -59,7 +61,7 @@ describe('changeValue method', () => {
     let initialValue = document.querySelector(testInputSelector).value;
     assert.equal(initialValue, 'forChangeValueInitial');
 
-    inputText(testInputSelector, 'value changed!', err => {
+    changeValue(testInputSelector, 'value changed!', err => {
       if (err) throw err;
 
       let newValue = document.querySelector(testInputSelector).value;
@@ -153,11 +155,11 @@ describe('promise style usage', () => {
   it('click, getText, change value, click and check getText', done => {
     let click = promisedActions.click;
     let getText = promisedActions.getText;
-    let inputText = promisedActions.inputText;
+    let changeValue = promisedActions.changeValue;
 
     click('input#forPromiseChainTest')
     .then(() => getText('div#promiseChainSecondDiv'))
-    .then(text => inputText('input#promiseChainSecondInput', text))
+    .then(text => changeValue('input#promiseChainSecondInput', text))
     .then(() => click('input#promiseChainSecondButton'))
     .then(() => getText('div#promiseChainThirdDiv'))
     .then(text => {
@@ -206,6 +208,11 @@ describe('can write step-based integration tests', () => {
   });
 });
 
-// todo: add test for focusOn method
+// eslint-disable-next-line no-unused-vars
+function runTests () {
+  let mochaDiv = document.createElement('div');
+  mochaDiv.id = 'mocha';
+  document.body.appendChild(mochaDiv);
 
-mocha.run();
+  mocha.run();
+}

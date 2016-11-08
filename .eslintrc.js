@@ -6,6 +6,8 @@ module.exports = {
     "node": true
   },
   "globals": {
+    "mocha": true,
+    "chai": true,
     "describe": true,
     "it": true,
     "userActions": true,
