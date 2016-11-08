@@ -1,12 +1,19 @@
 'use strict';
 
-var smokeJquery = require('./node_modules/jquery/dist/jquery.min');
+// TODO: back to minified version
+var inlineJquery = require('../node_modules/jquery/dist/jquery');
 
 var getClassUtil = require('./getClassUtil');
 var isFunction = getClassUtil.isFunction;
 var isNumber = getClassUtil.isNumber;
 var isBoolean = getClassUtil.isBoolean;
 var isString = getClassUtil.isString;
+
+var promiseWrappers = require('./promiseWrappers');
+var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
+var promisifyWrapper2arg = promiseWrappers.promisifyWrapper2arg;
+var promisifyWrapper1res = promiseWrappers.promisifyWrapper1res;
+
 
 var defaultTimeout = 2000;
 var defaultRefreshTime = 300;
@@ -50,32 +57,8 @@ function findElement (selectorOrElement, timeoutOrCb, cb) {
   }
 }
 
-function checkUrlEndsWith(expectedUrlEnd, failCbOrNewUrl) {
-  let actualUrl = window.location.href; // or can use document.URL
-  if (actualUrl.endsWith(expectedUrlEnd)) {
-    return true;
-  }
-
-  if (failCbOrNewUrl) {
-    if (isFunction(failCbOrNewUrl)) {
-      return failCbOrNewUrl();
-    }
-
-    if (isString(failCbOrNewUrl)) {
-      return navigateToUrl(failCbOrNewUrl);
-    }
-  } else {
-    throw new Error('actual Url ' + actualUrl + ' not ends with ' +
-    expectedUrlEnd);
-  }
-}
-
-function navigateToUrl (url) {
-  window.location = url;
-}
-
 function findElementNormalized (selectorOrElement, timeout, cb) {
-  if (selectorOrElement instanceof HTMLElement) {
+  if (selectorOrElement.nodeType) {
     return cb(null, selectorOrElement);
   }
 
@@ -84,6 +67,21 @@ function findElementNormalized (selectorOrElement, timeout, cb) {
     foundElement = document.querySelector(selectorOrElement);
     return checkFoundElement(foundElement);
   }, () => cb(null, foundElement), timeout);
+}
+
+function directClick (selectorOrElement, cb = simpleThrowerCallback) {
+  if (!selectorOrElement) {
+    throw new Error('selector argument is not defined');
+  }
+
+  findElement(selectorOrElement, (err, element) => {
+    if (err) {
+      return cb(err);
+    }
+
+    element.click();
+    return cb(null);
+  });
 }
 
 function click (selectorOrElement, cb = simpleThrowerCallback) {
@@ -96,17 +94,7 @@ function click (selectorOrElement, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    if (element.href) {
-      element.click();
-    } else if (window.angular && window.angular.element) {
-      if (element.type === 'checkbox') {
-        element.click();
-      } else {
-        produceEventForAngular(element, 'click');
-      }
-    } else {
-      smokeJquery(element).trigger('click');
-    }
+    inlineJquery(element).trigger('click');
     return cb(null);
   });
 }
@@ -121,8 +109,7 @@ function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    smokeJquery(element).focus();
-    produceEventForAngular(element, 'focus');
+    inlineJquery(element).trigger('focus');
     return cb(null);
   });
 }
@@ -137,14 +124,12 @@ function blur (selectorOrElement, cb = simpleThrowerCallback) {
       return cb(err);
     }
 
-    // todo: need test on angular input, when input has some effect on blur event
-    smokeJquery(element).blur();
-    produceEventForAngular(element, 'blur');
+    inlineJquery(element).trigger('blur');
     return cb(null);
   });
 }
 
-function inputText (selectorOrElement, newValue, cb = simpleThrowerCallback) {
+function changeValue (selectorOrElement, newValue, cb = simpleThrowerCallback) {
   if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
@@ -155,17 +140,30 @@ function inputText (selectorOrElement, newValue, cb = simpleThrowerCallback) {
     }
 
     inputElement.value = newValue;
-    produceEventForAngular(inputElement, 'input');
     return cb(null);
   });
 }
 
-function produceEventForAngular (element, eventName) {
-  if (window.angular && window.angular.element) {
-    // todo: why same triggerHandler from jquery doesn't work here? WTF
-    // need pass only element, not selector (for compatibility with jquery light)
-    angular.element(element).triggerHandler(eventName);
-  }
+function triggerEvent (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+  findElement(selectorOrElement, (err, element) => {
+    if (err) {
+      return cb(err);
+    }
+
+    inlineJquery(element).trigger(eventName);
+    return cb(null);
+  });
+}
+
+function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+  findElement(selectorOrElement, (err, element) => {
+    if (err) {
+      return cb(err);
+    }
+
+    inlineJquery(element).triggerHandler(eventName);
+    return cb(null);
+  });
 }
 
 function getText (selectorOrElement, cb) {
@@ -196,23 +194,20 @@ function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallba
 
     if (valueOptions.length < 1) {
       // i leave ${string} cast even if selectSelectorOrElement will be
-      // an element by desygn or by laziness.
-      // QA anyway will see problem in stacktrace
+      // an element by design or by laziness.
+      // QA-developer anyway will see problem in stacktrace
       throw new Error(`select ${selectSelectorOrElement} has no options`);
     }
 
     if (isString(option)) {
-
       if (valueOptions.includes(option)) {
         selectElement.value = option;
-        produceEventForAngular(selectElement, 'change');
         return cb(null);
       }
 
       for (let i = 0; i < innerHtmlOptions.length; i++) {
         if (innerHtmlOptions[i] === option) {
           selectElement.value = valueOptions[i];
-          produceEventForAngular(selectElement, 'change');
           return cb(null);
         }
       }
@@ -230,7 +225,6 @@ function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallba
       }
 
       selectElement.value = valueOptions[option];
-      produceEventForAngular(selectElement, 'change');
       return cb(null);
     }
 
@@ -245,12 +239,15 @@ function waitState (predicate, cb,
   if (!isFunction(predicate)) {
     throw new Error('First argument of waitState is not predicate!');
   }
+
   if (!isFunction(cb)) {
     throw new Error('Second argument of waitState is not function!');
   }
+
   if (timeout < refreshTime) {
     console.warn('Warning: Timeout argument less then refreshTime argument!');
   }
+
   if (runPredicate(predicate)) {
     return cb(null);
   } else {
@@ -258,8 +255,7 @@ function waitState (predicate, cb,
       return cb(new Error('Timeout in waitState occurred!'));
     }
 
-    setTimeout(waitState, refreshTime, predicate, cb,
-        timeout, refreshTime, startTime);
+    setTimeout(waitState, refreshTime, predicate, cb, timeout, refreshTime, startTime);
   }
 }
 
@@ -283,99 +279,61 @@ function simpleThrowerCallback (err) {
   if (err) throw err;
 }
 
-// PROMISED ACTIONS
-// todo: mb unify promisify-wrapper for all callback-methods ?
-function promisifyWrapper1arg (func, selector) {
-  return new Promise((resolve, reject) => {
-    func(selector, err => {
-      if (err) {
-        return reject(err);
-      }
+// EXPORTS
+exports.promised = {};
 
-      return resolve();
-    });
-  });
-}
+exports.directClick = directClick;
+exports.promised.directClick = function (selectorOrElement) {
+  return promisifyWrapper1arg(directClick, selectorOrElement);
+};
 
-function promisifyWrapper2arg (func, selector, secondArg) {
-  return new Promise((resolve, reject) => {
-    func(selector, secondArg, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
-}
-
-function promisedClick (selectorOrElement) {
+exports.click = click;
+exports.promised.click = function (selectorOrElement) {
   return promisifyWrapper1arg(click, selectorOrElement);
-}
+};
 
-function promisedBlur (selectorOrElement) {
-  return promisifyWrapper1arg(blur, selectorOrElement);
-}
+exports.changeValue = changeValue;
+exports.promised.changeValue = function (selectorOrElement, newValue) {
+  return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
+};
 
-function promisedFocusOn (selectorOrElement) {
+exports.focusOn = focusOn;
+exports.promised.focusOn = function (selectorOrElement) {
   return promisifyWrapper1arg(focusOn, selectorOrElement);
-}
+};
 
-function promisedPickInSelect (selectSelectorOrElement, option) {
+exports.blur = blur;
+exports.promised.blur = function (selectorOrElement) {
+  return promisifyWrapper1arg(blur, selectorOrElement);
+};
+
+exports.pickInSelect = pickInSelect;
+exports.promised.pickInSelect = function (selectSelectorOrElement, option) {
   return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
-}
+};
 
-function promisedGetText (selectorOrElement) {
-  return new Promise((resolve, reject) => {
-    getText(selectorOrElement, (err, text) => {
-      if (err) {
-        return reject(err);
-      }
+exports.triggerEvent = triggerEvent;
+exports.promised.triggerEvent = function (selectorOrElement, eventName) {
+  return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
+};
 
-      return resolve(text);
-    });
-  });
-}
+exports.triggerHandler = triggerHandler;
+exports.promised.triggerHandler = function (selectorOrElement, eventName) {
+  return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
+};
 
-function promisedGetValue (selectorOrElement) {
-  return new Promise((resolve, reject) => {
-    getValue(selectorOrElement, (err, value) => {
-      if (err) {
-        return reject(err);
-      }
+exports.getText = getText;
+exports.promised.getText = function promisedGetText (selectorOrElement) {
+  return promisifyWrapper1res(getText, selectorOrElement);
+};
 
-      return resolve(value);
-    });
-  });
-}
+exports.getValue = getValue;
+exports.promised.getValue = function (selectorOrElement) {
+  return promisifyWrapper1res(getValue, selectorOrElement);
+};
 
-function promisedInputText (selectorOrElement, newValue) {
-  return new Promise((resolve, reject) => {
-    inputText(selectorOrElement, newValue, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
-}
-
-function promisedWaitState (predicate,
-                            timeout = defaultTimeout,
-                            refreshTime = defaultRefreshTime) {
-  return new Promise((resolve, reject) => {
-    waitState(predicate, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    }, timeout, refreshTime);
-  });
-}
-
-function promisedFindElement (selectorOrElement, optionalTimeout = defaultTimeout) {
+exports.findElement = findElement;
+exports.promised.findElement = function (selectorOrElement, optionalTimeout = defaultTimeout) {
   return new Promise((resolve, reject) => {
     findElement(selectorOrElement, optionalTimeout, (err, element) => {
       if (err) {
@@ -385,51 +343,30 @@ function promisedFindElement (selectorOrElement, optionalTimeout = defaultTimeou
       return resolve(element);
     });
   });
-}
-
-let promisedActions = {};
-promisedActions.click = promisedClick;
-promisedActions.inputText = promisedInputText;
-promisedActions.blur = promisedBlur;
-promisedActions.focusOn = promisedFocusOn;
-promisedActions.pickInSelect = promisedPickInSelect;
-
-promisedActions.getText = promisedGetText;
-promisedActions.getValue = promisedGetValue;
-
-promisedActions.waitState = promisedWaitState;
-promisedActions.findElement = promisedFindElement;
-
-// EXPORTS
-exports.click = click;
-exports.inputText = inputText;
-exports.focusOn = focusOn;
-exports.blur = blur;
-exports.pickInSelect = pickInSelect;
-
-exports.getText = getText;
-exports.getValue = getValue;
+};
 
 exports.waitState = waitState;
-exports.findElement = findElement;
+exports.promised.waitState = function (predicate, timeout = defaultTimeout, refreshTime = defaultRefreshTime) {
+  return new Promise((resolve, reject) => {
+    waitState(predicate, err => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve();
+    }, timeout, refreshTime);
+  });
+};
+
 exports.runPredicate = runPredicate;
-
-exports.checkUrlEndsWith = checkUrlEndsWith;
-exports.navigateToUrl = navigateToUrl;
-
 exports.setDefaultRefreshTime = setDefaultRefreshTime;
 exports.setDefaultTimeout = setDefaultTimeout;
 
-exports.promised = promisedActions;
-
 // EXPORTS ONLY FOR TESTS
-let ___nonMockedJquery;
+let ___nonMockedJquery = inlineJquery;
 exports.___jquerySetter = function (fakeJquery) {
-  ___nonMockedJquery = smokeJquery;
-  smokeJquery = fakeJquery;
+  inlineJquery = fakeJquery;
 };
 exports.___jqueryRestore = function () {
-  smokeJquery = ___nonMockedJquery;
+  inlineJquery = ___nonMockedJquery;
 };
-
-// todo: export angular-specific code to angular middlewares

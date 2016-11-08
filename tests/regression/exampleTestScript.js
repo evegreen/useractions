@@ -1,13 +1,15 @@
 'use strict';
 
-var assert = smokeTest.chai.assert;
+var assert = chai.assert;
 
-var smokeActions = smokeTest.actions;
-var promisedActions = smokeActions.promised;
+var actions = userActions;
+var promisedActions = userActions.promised;
+
+mocha.setup('bdd');
 
 describe('click method', () => {
 
-  let click = smokeActions.click;
+  let click = actions.click;
 
   it('works when check immediate result after click', done => {
     let resultSelector = 'div#immediateResult';
@@ -28,10 +30,12 @@ describe('click method', () => {
   });
 
   it('can click on button once', done => {
-    let onceButton = document.querySelector('XXXXX');
+    // than variable has raght in application, no need to declare it
+    // eslint-disable-next-line no-undef
     assert.equal(onceButtonWasClickedCount, 0);
     click('#forClickOnButtonOnce', err => {
       assert.isNull(err);
+      // eslint-disable-next-line no-undef
       assert.equal(onceButtonWasClickedCount, 1);
       done();
     });
@@ -49,7 +53,7 @@ describe('click method', () => {
 });
 
 describe('changeValue method', () => {
-  let inputText = smokeActions.inputText;
+  let changeValue = actions.changeValue;
 
   it('works when simple change input value', done => {
     let testInputSelector = 'input#forChangeValue';
@@ -57,7 +61,7 @@ describe('changeValue method', () => {
     let initialValue = document.querySelector(testInputSelector).value;
     assert.equal(initialValue, 'forChangeValueInitial');
 
-    inputText(testInputSelector, 'value changed!', err => {
+    changeValue(testInputSelector, 'value changed!', err => {
       if (err) throw err;
 
       let newValue = document.querySelector(testInputSelector).value;
@@ -69,7 +73,7 @@ describe('changeValue method', () => {
 
 describe('getValue method', () => {
 
-  let getValue = smokeActions.getValue;
+  let getValue = actions.getValue;
 
   it('works with simple input', done => {
     let testInputSelector = 'input#forGetValue';
@@ -83,7 +87,7 @@ describe('getValue method', () => {
 
 describe('getText method', () => {
 
-  let getText = smokeActions.getText;
+  let getText = actions.getText;
 
   it('works with simple div element with inner text', done => {
     let testDivSelector = 'div#forGetText';
@@ -96,7 +100,7 @@ describe('getText method', () => {
 });
 
 describe('findElement method', () => {
-  let findElement = smokeActions.findElement;
+  let findElement = actions.findElement;
   it('can be called with element selector', done => {
     findElement('#forFindElementBySelector', (err, element) => {
       assert.isNull(err);
@@ -117,7 +121,7 @@ describe('findElement method', () => {
 
 describe('pickInSelect method', () => {
 
-  let pickInSelect = smokeActions.pickInSelect;
+  let pickInSelect = actions.pickInSelect;
 
   it('pick by option number', done => {
     pickInSelect('select#forPickInSelectByOptionNumber', 1, err => {
@@ -151,11 +155,11 @@ describe('promise style usage', () => {
   it('click, getText, change value, click and check getText', done => {
     let click = promisedActions.click;
     let getText = promisedActions.getText;
-    let inputText = promisedActions.inputText;
+    let changeValue = promisedActions.changeValue;
 
     click('input#forPromiseChainTest')
     .then(() => getText('div#promiseChainSecondDiv'))
-    .then(text => inputText('input#promiseChainSecondInput', text))
+    .then(text => changeValue('input#promiseChainSecondInput', text))
     .then(() => click('input#promiseChainSecondButton'))
     .then(() => getText('div#promiseChainThirdDiv'))
     .then(text => {
@@ -171,8 +175,8 @@ describe('promise style usage', () => {
 
 // attention: nested describes is not synchronized!
 describe('can write step-based integration tests', () => {
-  let click = smokeActions.click;
-  let getText = smokeActions.getText;
+  let click = actions.click;
+  let getText = actions.getText;
 
   it('step1', done => {
     click('input#forStepsExample', err => {
@@ -204,4 +208,11 @@ describe('can write step-based integration tests', () => {
   });
 });
 
-// todo: add test for focusOn method
+// eslint-disable-next-line no-unused-vars
+function runTests () {
+  let mochaDiv = document.createElement('div');
+  mochaDiv.id = 'mocha';
+  document.body.appendChild(mochaDiv);
+
+  mocha.run();
+}

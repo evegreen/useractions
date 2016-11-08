@@ -2,7 +2,7 @@
 
 var assert = require('chai').assert;
 
-var getClassUtil = require('../../getClassUtil');
+var getClassUtil = require('../../src/getClassUtil');
 
 describe('getClassUtil', () => {
   describe('getClass method', () => {
