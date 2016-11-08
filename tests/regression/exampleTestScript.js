@@ -208,6 +208,7 @@ describe('can write step-based integration tests', () => {
   });
 });
 
+// for start tests, just run this function from browser console
 // eslint-disable-next-line no-unused-vars
 function runTests () {
   let mochaDiv = document.createElement('div');
