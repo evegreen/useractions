@@ -1,25 +1,23 @@
-# **Smoketest**
+# **UserActions**
 
-Smoketest - pure javascript smoke-test framework. (currently in beta)
-
-Full documentation are not here yet, but base API presents
+Library, that helps simulate user actions for write fast functional tests
 
 ## Getting started
 
 ### Npm
 
-    npm install smoketest --save-dev
+    npm install useractions --save-dev
 
 ### Bower
 
-    bower install smoketest --save-dev
+    bower install useractions --save-dev
 
-Or just fetch build under [dist](https://github.com/evegreen/smoketest/tree/master/dist).
+Or just fetch build under [dist](https://github.com/evegreen/useractions/tree/master/dist).
 
 ---
 
 # Table of contents
-- [Add tests to site](#add-tests-to-site)
+- [Add tests to webpage](#add-tests-to-webpage)
 - [Run tests](#run-tests)
 - [Action methods](#action-methods)
 - [Configure timeouts](#configure-timeouts)
@@ -29,20 +27,18 @@ Or just fetch build under [dist](https://github.com/evegreen/smoketest/tree/mast
 
 ---
 
-## Add tests to site
+## Add tests to webpage
 
-For add framework and tests to your site, just add it right in simple script.
-[Look to the example](https://github.com/evegreen/smoketest/blob/master/tests/regression/exampleApp.html)
+For add tests to your webpage, just add it right in simple script.
+[Look to the example](https://github.com/evegreen/useractions/blob/master/tests/regression/exampleApp.html)
 
-But if you want add framework and tests without change your site files, you can use userscripts (tampermonkey / greasemonkey extensions)
-[Look to the example](https://github.com/evegreen/smoketest/blob/master/tests/regression/userScriptExample.js)
+But if you want add lib and tests without change your webpage files, you can use userscripts (tampermonkey / greasemonkey extensions)
 
 ---
 
 ## Run tests
 
-Just type in console `smokeTest.runAll();`
-You can make typo in camelCase, it is no problem =)
+[Look to the example](https://github.com/evegreen/useractions/blob/master/tests/regression/exampleTestScript.js)
 
 ---
 
@@ -50,7 +46,7 @@ You can make typo in camelCase, it is no problem =)
 
 interact methods:
 - [click method](#click-method)
-- [inputText method](#inputtext-method)
+- [changeValue method](#changevalue-method)
 - [focusOn method](#focuson-method)
 - [blur method](#blur-method)
 - [pickInSelect method](#pickinselect-method)
@@ -69,35 +65,35 @@ core methods:
 
 ### click method
 ```js
-var click = smokeTest.actions.click;
+var click = userActions.click;
 click('button#submit', optionalCallback);
 ```
 
 
-### inputText method
+### changeValue method
 ```js
-var inputText = smokeTest.actions.inputText;
-inputText('input#login', 'John Doe', optionalCallback);
+var changeValue = userActions.changeValue;
+changeValue('input#login', 'John Doe', optionalCallback);
 ```
 
 
 ### focusOn method
 ```js
-var focusOn = smokeTest.actions.focusOn;
+var focusOn = userActions.focusOn;
 focusOn('input#password', optionalCallback);
 ```
 
 
 ### blur method
 ```js
-var blur = smokeTest.actions.blur;
+var blur = userActions.blur;
 blur('input#age', optionalCallback);
 ```
 
 
 ### pickInSelect method
 ```js
-var pickInSelect = smokeTest.actions.pickInSelect;
+var pickInSelect = userActions.pickInSelect;
 
 // You can pass option value
 pickInSelect('select#car', 'mercedez', optionalCallback);
@@ -112,7 +108,7 @@ pickInSelect('select#car', 2, optionalCallback);
 
 ### getText method
 ```js
-var getText = smokeTest.actions.getText;
+var getText = userActions.getText;
 getText('div#selectedCar', function (err, text) {
   if (err) throw err;
 
@@ -123,7 +119,7 @@ getText('div#selectedCar', function (err, text) {
 
 ### getValue method
 ```js
-var getValue = smokeTest.actions.getValue;
+var getValue = userActions.getValue;
 getValue('input#surname', function (err, value) {
   if (err) throw err;
 
@@ -134,7 +130,7 @@ getValue('input#surname', function (err, value) {
 
 ### findElement method
 ```js
-var findElement = smokeTest.actions.findElement;
+var findElement = userActions.findElement;
 
 // You can use with default timeout waiting for element presense
 findElement('div#main', function (err, element) {
@@ -154,7 +150,7 @@ findElement('div#main', 3000, function (err, element) {
 
 ### waitState method
 ```js
-var waitState = smokeTest.actions.waitState;
+var waitState = userActions.waitState;
 
 waitState(function () {
   // this is predicate, it must return boolean value
@@ -175,14 +171,14 @@ waitState(function () {
 ### setDefaultRefreshTime method
 ```js
 // every waitState method or findElement process will try every second
-smokeTest.actions.setDefaultRefreshTime(1000);
+userActions.setDefaultRefreshTime(1000);
 ```
 
 
 ### setDefaultTimeout method
 ```js
 // every waitState method or findElement process will failed after 6 seconds
-smokeTest.actions.setDefaultTimeout(6000);
+userActions.setDefaultTimeout(6000);
 ```
 
 ---
@@ -190,7 +186,7 @@ smokeTest.actions.setDefaultTimeout(6000);
 ## Promisified methods
 All action methods has promisified version, in example `getText`:
 ```js
-var getText = smokeTest.actions.promised.getText;
+var getText = userActions.promised.getText;
 
 getText('div#carDescription')
 .then(function (text) { /* work with text =) */ })
@@ -204,7 +200,7 @@ All action methods (promisified too) you can use with already found element.
 It is comfortable for promise chaining:
 
 ```js
-var promiseActions = smokeTest.actions.promised;
+var promiseActions = userActions.promised;
 var findElement = promiseActions.findElement;
 var click = promiseActions.click;
 
@@ -216,6 +212,6 @@ findElement('#buttonForClick')
 
 ## Other
 ```js
-smokeTest.version();
+userActions.version();
 ```
-Returns versions of framework and bundled libraries
+Returns version of library and bundled dependencies

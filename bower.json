@@ -1,7 +1,7 @@
 {
   "name": "useractions",
   "description": "Library, that helps simulate user actions for write fast functional tests",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "main": "dist/useractionsBundle.js",
   "repository": {
     "type": "git",
