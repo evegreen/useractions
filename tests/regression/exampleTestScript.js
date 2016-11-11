@@ -52,6 +52,19 @@ describe('click method', () => {
   });
 });
 
+describe('directClick method', () => {
+  let directClick = actions.directClick;
+  it('can enable simple checkbox', done => {
+    let checkbox = document.querySelector('#forDirectClickOnCheckbox');
+    assert.isFalse(checkbox.checked);
+    directClick(checkbox, err => {
+      assert.isNull(err);
+      assert.isTrue(checkbox.checked);
+      done();
+    });
+  });
+});
+
 describe('changeValue method', () => {
   let changeValue = actions.changeValue;
 
