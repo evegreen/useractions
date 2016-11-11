@@ -1,13 +1,15 @@
 'use strict';
 
-// TODO: back to minified version
-var inlineJquery = require('../node_modules/jquery/dist/jquery');
+var inlineJquery = require('../node_modules/jquery/dist/jquery.min');
 
 var getClassUtil = require('./getClassUtil');
-var isFunction = getClassUtil.isFunction;
 var isNumber = getClassUtil.isNumber;
-var isBoolean = getClassUtil.isBoolean;
 var isString = getClassUtil.isString;
+
+var findModule = require('./findModule')(defaultTimeout, defaultRefreshTime);
+var runPredicate = findModule.runPredicate;
+var waitState = findModule.waitState;
+var findElement = findModule.findElement;
 
 var promiseWrappers = require('./promiseWrappers');
 var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
@@ -26,48 +28,6 @@ function setDefaultRefreshTime (refreshTime) {
   defaultRefreshTime = refreshTime;
 }
 
-function checkFoundElement (element, selectorForError) {
-  if (element != null) {
-    return true;
-  }
-
-  throw new Error('Can\'t find element, selector = ' + selectorForError);
-}
-
-function findElement (selectorOrElement, timeoutOrCb, cb) {
-  if (!selectorOrElement) {
-    throw new Error('first argument of findElement() undefined, it must be css selector!');
-  }
-
-  let secondArgumentErrorMessage = 'second argument of findElement() must be timeout number or a callback function!';
-  if (!timeoutOrCb) {
-    throw new Error(secondArgumentErrorMessage);
-  }
-
-  if (!isFunction(timeoutOrCb) && !isNumber(timeoutOrCb)) {
-    throw new Error(secondArgumentErrorMessage);
-  }
-
-  if (isFunction(timeoutOrCb)) {
-    return findElementNormalized(selectorOrElement, defaultTimeout, timeoutOrCb);
-  }
-
-  if (isNumber(timeoutOrCb)) {
-    return findElementNormalized(selectorOrElement, timeoutOrCb, cb);
-  }
-}
-
-function findElementNormalized (selectorOrElement, timeout, cb) {
-  if (selectorOrElement.nodeType) {
-    return cb(null, selectorOrElement);
-  }
-
-  let foundElement;
-  waitState(() => {
-    foundElement = document.querySelector(selectorOrElement);
-    return checkFoundElement(foundElement);
-  }, () => cb(null, foundElement), timeout);
-}
 
 function directClick (selectorOrElement, cb = simpleThrowerCallback) {
   if (!selectorOrElement) {
@@ -230,49 +190,6 @@ function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallba
 
     return cb(new Error('option parameter is not string or number'));
   });
-}
-
-function waitState (predicate, cb,
-                    timeout = defaultTimeout,
-                    refreshTime = defaultRefreshTime,
-                    startTime = Date.now()) {
-  if (!isFunction(predicate)) {
-    throw new Error('First argument of waitState is not predicate!');
-  }
-
-  if (!isFunction(cb)) {
-    throw new Error('Second argument of waitState is not function!');
-  }
-
-  if (timeout < refreshTime) {
-    console.warn('Warning: Timeout argument less then refreshTime argument!');
-  }
-
-  if (runPredicate(predicate)) {
-    return cb(null);
-  } else {
-    if (Date.now() - startTime > timeout) {
-      return cb(new Error('Timeout in waitState occurred!'));
-    }
-
-    setTimeout(waitState, refreshTime, predicate, cb, timeout, refreshTime, startTime);
-  }
-}
-
-function runPredicate (predicate) {
-  if (isFunction(predicate)) {
-    try {
-      let result = predicate();
-      if (!isBoolean(result)) {
-        return false;
-      }
-      return result;
-    } catch (err) {
-      return false;
-    }
-  }
-
-  throw new Error('Argument is not predicate function!');
 }
 
 function simpleThrowerCallback (err) {

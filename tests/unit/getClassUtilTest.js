@@ -130,6 +130,11 @@ describe('getClassUtil', () => {
       assert.isFalse(isObject(5.5));
       done();
     });
+
+    it('try function', done => {
+      assert.isFalse(isObject(() => {}));
+      done();
+    });
   });
 
   describe('isNull method', () => {
