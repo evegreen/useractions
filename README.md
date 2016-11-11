@@ -50,6 +50,7 @@ interact methods:
 - [focusOn method](#focuson-method)
 - [blur method](#blur-method)
 - [pickInSelect method](#pickinselect-method)
+- [directClick method](#directclick-method)
 
 get methods:
 - [getText method](#gettext-method)
@@ -105,6 +106,13 @@ pickInSelect('select#car', 'Mercedez Benz', optionalCallback);
 pickInSelect('select#car', 2, optionalCallback);
 ```
 
+### directClick method
+```js
+var directClick = userActions.directClick;
+
+// this method calls .click() method of element directly (without events)
+click('#myCheckbox', optionalCallback);
+```
 
 ### getText method
 ```js
@@ -162,14 +170,6 @@ waitState(function () {
 
   // work with successfully loaded car list
 }, 5000, 1000); // optional timeout and optional refresh time (wait 5 seconds and check predicate every second)
-```
-
-### directClick method
-```js
-var directClick = userActions.directClick;
-
-// this method calls .click() method of element directly (without events)
-click('#myCheckbox', optionalCallback);
 ```
 
 ---
