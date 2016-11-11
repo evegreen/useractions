@@ -65,6 +65,37 @@ describe('directClick method', () => {
   });
 });
 
+describe('focusOn method', () => {
+  let focusOn = actions.focusOn;
+  it('can focus on text input', done => {
+    let textInput = document.querySelector('#forFocusOn');
+    assert.notEqual(document.activeElement.id, textInput.id);
+    focusOn(textInput, err => {
+      assert.isNull(err);
+      assert.equal(document.activeElement.id, textInput.id);
+      done();
+    });
+  });
+});
+
+describe('blur method', () => {
+  let blur = actions.blur;
+  let focusOn = actions.focusOn;
+  it('can focus off text input', done => {
+    let textInput = document.querySelector('#forBlur');
+    assert.notEqual(document.activeElement.id, textInput.id);
+    focusOn(textInput, err => {
+      assert.isNull(err);
+      assert.equal(document.activeElement.id, textInput.id);
+      blur(textInput, err => {
+        assert.isNull(err);
+        assert.notEqual(document.activeElement.id, textInput.id);
+        done();
+      });
+    });
+  });
+});
+
 describe('changeValue method', () => {
   let changeValue = actions.changeValue;
 
