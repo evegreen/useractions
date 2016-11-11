@@ -3,6 +3,9 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
+// stub window
+global.window = {};
+
 var actions = require('../../src/actions');
 
 describe('actions', () => {
@@ -133,7 +136,6 @@ describe('actions', () => {
       };
       findElement('goodSelector', callbackFn);
       global.document = null;
-      global.HTMLElement = null;
     });
   });
 
@@ -172,7 +174,6 @@ describe('actions', () => {
 
       // stub document for findElement method
       global.document = {querySelector: () => 'stubElement'};
-      global.window = {};
 
       // stub jquery
       let fakeJquery = fakeElement => {
@@ -197,8 +198,6 @@ describe('actions', () => {
       // restore stubs
       actions.___jqueryRestore();
       global.document = null;
-      global.window = null;
-      global.HTMLElement = null;
 
       done();
     });
@@ -225,18 +224,15 @@ describe('actions', () => {
   describe('changeValue method', () => {
     let changeValue = actions.changeValue;
     it('can be called without callback', done => {
-      // stub document for findElement method, window for angular events
+      // stub document for findElement method
       let stubInputElement = {value: 'oldValue'};
       global.document = {querySelector: () => stubInputElement};
-      global.window = {};
 
       changeValue('fakeSelector', 'myNewValue');
       assert.equal(stubInputElement.value, 'myNewValue');
 
       // restore stubs
       global.document = null;
-      global.window = null;
-      global.HTMLElement = null;
 
       done();
     });
@@ -257,15 +253,12 @@ describe('actions', () => {
         ]
       };
       global.document = {querySelector: () => stubSelectElement};
-      global.window = {};
 
       pickInSelect('fakeSelector', 2);
       assert.equal(stubSelectElement.value, 'mercedez');
 
       // unstub
       global.document = null;
-      global.window = null;
-      global.HTMLElement = null;
 
       done();
     });

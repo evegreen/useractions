@@ -88,16 +88,20 @@ module.exports={
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var inlineJquery = require('../node_modules/jquery/dist/jquery.min');
-
-var getClassUtil = require('./getClassUtil');
-var isNumber = getClassUtil.isNumber;
-var isString = getClassUtil.isString;
-
-var findModule = require('./findModule')(defaultTimeout, defaultRefreshTime);
+var findModule = require('./findModule');
 var runPredicate = findModule.runPredicate;
 var waitState = findModule.waitState;
 var findElement = findModule.findElement;
+
+var interactModule = require('./interactModule');
+var directClick = interactModule.directClick;
+var click = interactModule.click;
+var changeValue = interactModule.changeValue;
+var focusOn = interactModule.focusOn;
+var blur = interactModule.blur;
+var pickInSelect = interactModule.pickInSelect;
+var triggerEvent = interactModule.triggerEvent;
+var triggerHandler = interactModule.triggerHandler;
 
 var promiseWrappers = require('./promiseWrappers');
 var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
@@ -105,17 +109,267 @@ var promisifyWrapper2arg = promiseWrappers.promisifyWrapper2arg;
 var promisifyWrapper1res = promiseWrappers.promisifyWrapper1res;
 
 
-var defaultTimeout = 2000;
-var defaultRefreshTime = 300;
+window.__defaultTimeout = 2000;
+window.__defaultRefreshTime = 300;
 
 function setDefaultTimeout (timeout) {
-  defaultTimeout = timeout;
+  window.__defaultTimeout = timeout;
 }
 
 function setDefaultRefreshTime (refreshTime) {
-  defaultRefreshTime = refreshTime;
+  window.__defaultRefreshTime = refreshTime;
 }
 
+function getText (selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
+    let result = element.innerText || element.textContent;
+    return cb(null, result);
+  });
+}
+
+function getValue (selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
+    let result = element.value;
+    return cb(null, result);
+  });
+}
+
+// EXPORTS
+exports.promised = {};
+
+exports.directClick = directClick;
+exports.promised.directClick = function (selectorOrElement) {
+  return promisifyWrapper1arg(directClick, selectorOrElement);
+};
+
+exports.click = click;
+exports.promised.click = function (selectorOrElement) {
+  return promisifyWrapper1arg(click, selectorOrElement);
+};
+
+exports.changeValue = changeValue;
+exports.promised.changeValue = function (selectorOrElement, newValue) {
+  return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
+};
+
+exports.focusOn = focusOn;
+exports.promised.focusOn = function (selectorOrElement) {
+  return promisifyWrapper1arg(focusOn, selectorOrElement);
+};
+
+exports.blur = blur;
+exports.promised.blur = function (selectorOrElement) {
+  return promisifyWrapper1arg(blur, selectorOrElement);
+};
+
+exports.pickInSelect = pickInSelect;
+exports.promised.pickInSelect = function (selectSelectorOrElement, option) {
+  return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
+};
+
+exports.triggerEvent = triggerEvent;
+exports.promised.triggerEvent = function (selectorOrElement, eventName) {
+  return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
+};
+
+exports.triggerHandler = triggerHandler;
+exports.promised.triggerHandler = function (selectorOrElement, eventName) {
+  return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
+};
+
+exports.getText = getText;
+exports.promised.getText = function promisedGetText (selectorOrElement) {
+  return promisifyWrapper1res(getText, selectorOrElement);
+};
+
+exports.getValue = getValue;
+exports.promised.getValue = function (selectorOrElement) {
+  return promisifyWrapper1res(getValue, selectorOrElement);
+};
+
+exports.findElement = findElement;
+exports.promised.findElement = function (selectorOrElement, optionalTimeout = window.__defaultTimeout) {
+  return new Promise((resolve, reject) => {
+    findElement(selectorOrElement, optionalTimeout, (err, element) => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve(element);
+    });
+  });
+};
+
+exports.waitState = waitState;
+exports.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
+  return new Promise((resolve, reject) => {
+    waitState(predicate, err => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve();
+    }, timeout, refreshTime);
+  });
+};
+
+exports.runPredicate = runPredicate;
+exports.setDefaultRefreshTime = setDefaultRefreshTime;
+exports.setDefaultTimeout = setDefaultTimeout;
+
+// EXPORTS ONLY FOR TESTS
+exports.___jquerySetter = interactModule.___jquerySetter;
+exports.___jqueryRestore = interactModule.___jqueryRestore;
+
+},{"./findModule":5,"./interactModule":7,"./promiseWrappers":8}],5:[function(require,module,exports){
+'use strict';
+
+var getClassUtil = require('./getClassUtil');
+var isFunction = getClassUtil.isFunction;
+var isNumber = getClassUtil.isNumber;
+var isBoolean = getClassUtil.isBoolean;
+
+function runPredicate (predicate) {
+  if (isFunction(predicate)) {
+    try {
+      let result = predicate();
+      if (!isBoolean(result)) {
+        return false;
+      }
+      return result;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  throw new Error('Argument is not predicate function!');
+}
+
+function waitState (predicate, cb,
+                    timeout = window.__defaultTimeout,
+                    refreshTime = window.__defaultRefreshTime,
+                    startTime = Date.now()) {
+  if (!isFunction(predicate)) {
+    throw new Error('First argument of waitState is not predicate!');
+  }
+
+  if (!isFunction(cb)) {
+    throw new Error('Second argument of waitState is not function!');
+  }
+
+  if (timeout < refreshTime) {
+    console.warn('Warning: Timeout argument less then refreshTime argument!');
+  }
+
+  if (runPredicate(predicate)) {
+    return cb(null);
+  } else {
+    if (Date.now() - startTime > timeout) {
+      return cb(new Error('Timeout in waitState occurred!'));
+    }
+
+    setTimeout(waitState, refreshTime, predicate, cb, timeout, refreshTime, startTime);
+  }
+}
+
+function checkFoundElement (element, selectorForError) {
+  if (element != null) {
+    return true;
+  }
+
+  throw new Error('Can\'t find element, selector = ' + selectorForError);
+}
+
+function findElement (selectorOrElement, timeoutOrCb, cb) {
+  if (!selectorOrElement) {
+    throw new Error('first argument of findElement() undefined, it must be css selector!');
+  }
+
+  let secondArgumentErrorMessage = 'second argument of findElement() must be timeout number or a callback function!';
+  if (!timeoutOrCb) {
+    throw new Error(secondArgumentErrorMessage);
+  }
+
+  if (!isFunction(timeoutOrCb) && !isNumber(timeoutOrCb)) {
+    throw new Error(secondArgumentErrorMessage);
+  }
+
+  if (isFunction(timeoutOrCb)) {
+    return findElementNormalized(selectorOrElement, window.__defaultTimeout, timeoutOrCb);
+  }
+
+  if (isNumber(timeoutOrCb)) {
+    return findElementNormalized(selectorOrElement, timeoutOrCb, cb);
+  }
+}
+
+function findElementNormalized (selectorOrElement, timeout, cb) {
+  if (selectorOrElement.nodeType) {
+    return cb(null, selectorOrElement);
+  }
+
+  let foundElement;
+  waitState(() => {
+    foundElement = document.querySelector(selectorOrElement);
+    return checkFoundElement(foundElement);
+  }, () => cb(null, foundElement), timeout);
+}
+
+exports.runPredicate = runPredicate;
+exports.waitState = waitState;
+exports.findElement = findElement;
+
+},{"./getClassUtil":6}],6:[function(require,module,exports){
+'use strict';
+
+function getClass (obj) {
+  return {}.toString.call(obj).slice(8, -1);
+}
+exports.getClass = getClass;
+
+exports.isFunction = function (obj) {
+  return getClass(obj) === 'Function';
+};
+
+exports.isArray = function (obj) {
+  return getClass(obj) === 'Array';
+};
+
+exports.isNumber = function (obj) {
+  return getClass(obj) === 'Number';
+};
+
+exports.isString = function (obj) {
+  return getClass(obj) === 'String';
+};
+
+exports.isObject = function (obj) {
+  return getClass(obj) === 'Object';
+};
+
+exports.isBoolean = function (obj) {
+  return getClass(obj) === 'Boolean';
+};
+
+exports.isNull = function (obj) {
+  return getClass(obj) === 'Null';
+};
+
+exports.isUndefined = function (obj) {
+  return getClass(obj) === 'Undefined';
+};
+
+},{}],7:[function(require,module,exports){
+'use strict';
+
+var inlineJquery = require('../node_modules/jquery/dist/jquery.min');
+
+var getClassUtil = require('./getClassUtil');
+var isNumber = getClassUtil.isNumber;
+var isString = getClassUtil.isString;
+
+var findModule = require('./findModule');
+var findElement = findModule.findElement;
 
 function directClick (selectorOrElement, cb = simpleThrowerCallback) {
   if (!selectorOrElement) {
@@ -214,20 +468,6 @@ function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallbac
   });
 }
 
-function getText (selectorOrElement, cb) {
-  findElement(selectorOrElement, (err, element) => {
-    let result = element.innerText || element.textContent;
-    return cb(null, result);
-  });
-}
-
-function getValue (selectorOrElement, cb) {
-  findElement(selectorOrElement, (err, element) => {
-    let result = element.value;
-    return cb(null, result);
-  });
-}
-
 // option - number or value or innerHTML
 function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
   findElement(selectSelectorOrElement, (err, selectElement) => {
@@ -284,88 +524,14 @@ function simpleThrowerCallback (err) {
   if (err) throw err;
 }
 
-// EXPORTS
-exports.promised = {};
-
 exports.directClick = directClick;
-exports.promised.directClick = function (selectorOrElement) {
-  return promisifyWrapper1arg(directClick, selectorOrElement);
-};
-
 exports.click = click;
-exports.promised.click = function (selectorOrElement) {
-  return promisifyWrapper1arg(click, selectorOrElement);
-};
-
-exports.changeValue = changeValue;
-exports.promised.changeValue = function (selectorOrElement, newValue) {
-  return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
-};
-
 exports.focusOn = focusOn;
-exports.promised.focusOn = function (selectorOrElement) {
-  return promisifyWrapper1arg(focusOn, selectorOrElement);
-};
-
 exports.blur = blur;
-exports.promised.blur = function (selectorOrElement) {
-  return promisifyWrapper1arg(blur, selectorOrElement);
-};
-
+exports.changeValue = changeValue;
 exports.pickInSelect = pickInSelect;
-exports.promised.pickInSelect = function (selectSelectorOrElement, option) {
-  return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
-};
-
 exports.triggerEvent = triggerEvent;
-exports.promised.triggerEvent = function (selectorOrElement, eventName) {
-  return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
-};
-
 exports.triggerHandler = triggerHandler;
-exports.promised.triggerHandler = function (selectorOrElement, eventName) {
-  return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
-};
-
-exports.getText = getText;
-exports.promised.getText = function promisedGetText (selectorOrElement) {
-  return promisifyWrapper1res(getText, selectorOrElement);
-};
-
-exports.getValue = getValue;
-exports.promised.getValue = function (selectorOrElement) {
-  return promisifyWrapper1res(getValue, selectorOrElement);
-};
-
-exports.findElement = findElement;
-exports.promised.findElement = function (selectorOrElement, optionalTimeout = defaultTimeout) {
-  return new Promise((resolve, reject) => {
-    findElement(selectorOrElement, optionalTimeout, (err, element) => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve(element);
-    });
-  });
-};
-
-exports.waitState = waitState;
-exports.promised.waitState = function (predicate, timeout = defaultTimeout, refreshTime = defaultRefreshTime) {
-  return new Promise((resolve, reject) => {
-    waitState(predicate, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    }, timeout, refreshTime);
-  });
-};
-
-exports.runPredicate = runPredicate;
-exports.setDefaultRefreshTime = setDefaultRefreshTime;
-exports.setDefaultTimeout = setDefaultTimeout;
 
 // EXPORTS ONLY FOR TESTS
 let ___nonMockedJquery = inlineJquery;
@@ -376,148 +542,7 @@ exports.___jqueryRestore = function () {
   inlineJquery = ___nonMockedJquery;
 };
 
-},{"../node_modules/jquery/dist/jquery.min":2,"./findModule":5,"./getClassUtil":6,"./promiseWrappers":7}],5:[function(require,module,exports){
-'use strict';
-
-var getClassUtil = require('./getClassUtil');
-var isFunction = getClassUtil.isFunction;
-var isNumber = getClassUtil.isNumber;
-var isBoolean = getClassUtil.isBoolean;
-
-module.exports = function (defaultTimeout, defaultRefreshTime) {
-  function runPredicate (predicate) {
-    if (isFunction(predicate)) {
-      try {
-        let result = predicate();
-        if (!isBoolean(result)) {
-          return false;
-        }
-        return result;
-      } catch (err) {
-        return false;
-      }
-    }
-
-    throw new Error('Argument is not predicate function!');
-  }
-
-  function waitState (predicate, cb,
-                      timeout = defaultTimeout,
-                      refreshTime = defaultRefreshTime,
-                      startTime = Date.now()) {
-    if (!isFunction(predicate)) {
-      throw new Error('First argument of waitState is not predicate!');
-    }
-
-    if (!isFunction(cb)) {
-      throw new Error('Second argument of waitState is not function!');
-    }
-
-    if (timeout < refreshTime) {
-      console.warn('Warning: Timeout argument less then refreshTime argument!');
-    }
-
-    if (runPredicate(predicate)) {
-      return cb(null);
-    } else {
-      if (Date.now() - startTime > timeout) {
-        return cb(new Error('Timeout in waitState occurred!'));
-      }
-
-      setTimeout(waitState, refreshTime, predicate, cb, timeout, refreshTime, startTime);
-    }
-  }
-
-  function checkFoundElement (element, selectorForError) {
-    if (element != null) {
-      return true;
-    }
-
-    throw new Error('Can\'t find element, selector = ' + selectorForError);
-  }
-
-  function findElement (selectorOrElement, timeoutOrCb, cb) {
-    if (!selectorOrElement) {
-      throw new Error('first argument of findElement() undefined, it must be css selector!');
-    }
-
-    let secondArgumentErrorMessage = 'second argument of findElement() must be timeout number or a callback function!';
-    if (!timeoutOrCb) {
-      throw new Error(secondArgumentErrorMessage);
-    }
-
-    if (!isFunction(timeoutOrCb) && !isNumber(timeoutOrCb)) {
-      throw new Error(secondArgumentErrorMessage);
-    }
-
-    if (isFunction(timeoutOrCb)) {
-      return findElementNormalized(selectorOrElement, defaultTimeout, timeoutOrCb);
-    }
-
-    if (isNumber(timeoutOrCb)) {
-      return findElementNormalized(selectorOrElement, timeoutOrCb, cb);
-    }
-  }
-
-  function findElementNormalized (selectorOrElement, timeout, cb) {
-    if (selectorOrElement.nodeType) {
-      return cb(null, selectorOrElement);
-    }
-
-    let foundElement;
-    waitState(() => {
-      foundElement = document.querySelector(selectorOrElement);
-      return checkFoundElement(foundElement);
-    }, () => cb(null, foundElement), timeout);
-  }
-
-  module.runPredicate = runPredicate;
-  module.waitState = waitState;
-  module.findElement = findElement;
-  return module;
-};
-
-},{"./getClassUtil":6}],6:[function(require,module,exports){
-'use strict';
-
-function getClass (obj) {
-  return {}.toString.call(obj).slice(8, -1);
-}
-exports.getClass = getClass;
-
-exports.isFunction = function (obj) {
-  return getClass(obj) === 'Function';
-};
-
-exports.isArray = function (obj) {
-  return getClass(obj) === 'Array';
-};
-
-exports.isNumber = function (obj) {
-  return getClass(obj) === 'Number';
-};
-
-exports.isString = function (obj) {
-  return getClass(obj) === 'String';
-};
-
-exports.isObject = function (obj) {
-  return getClass(obj) === 'Object';
-};
-
-exports.isBoolean = function (obj) {
-  return getClass(obj) === 'Boolean';
-};
-
-exports.isNull = function (obj) {
-  return getClass(obj) === 'Null';
-};
-
-exports.isUndefined = function (obj) {
-  return getClass(obj) === 'Undefined';
-};
-
-},{}],7:[function(require,module,exports){
+},{"../node_modules/jquery/dist/jquery.min":2,"./findModule":5,"./getClassUtil":6}],8:[function(require,module,exports){
 'use strict';
 
 // TODO: maybe unify promisify-wrappers for all callback-methods ?
