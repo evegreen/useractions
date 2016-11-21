@@ -2,7 +2,7 @@
 
 var packageJson = require('./package.json');
 var inlineJquery = require('./node_modules/jquery/dist/jquery.min');
-var actions = require('./src/actions');
+var actions = require('./src/actions')(inlineJquery);
 
 function getVersion () {
   return `UserActions: ${packageJson.version}
