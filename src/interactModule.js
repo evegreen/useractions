@@ -33,7 +33,6 @@ module.exports = function (inlineJquery) {
         return cb(err);
       }
 
-      debugger;
       inlineJquery(element).trigger('click');
       return cb(null);
     });

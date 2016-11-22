@@ -3,11 +3,10 @@
 var assert = require('chai').assert;
 
 const INTERACT_MODULE_PATH = '../../src/interactModule';
-var jqueryStub = {};
-var interactModule = require(INTERACT_MODULE_PATH)(jqueryStub);
+var JQUERY_DEFAULT_STUB = {};
 
 describe('directClick method', () => {
-  let directClick = interactModule.directClick;
+  let directClick = require(INTERACT_MODULE_PATH)(JQUERY_DEFAULT_STUB).directClick;
   it('execute .click() function on element directly once', done => {
     let directlyClickedCount = 0;
     let doneCallback = function (err) {
@@ -57,8 +56,7 @@ describe('click method', () => {
     // stub document for findElement method
     global.document = {querySelector: () => 'stubElement'};
 
-    // stub jquery
-    let fakeJquery = fakeElement => {
+    let jqueryStub = fakeElement => {
       assert.equal(fakeElement, 'stubElement');
       stubElementWasReturned = true;
       return {
