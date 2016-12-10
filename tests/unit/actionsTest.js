@@ -5,8 +5,9 @@ var sinon = require('sinon');
 
 // stub window
 global.window = {};
+var jqueryStub = {};
 
-var actions = require('../../src/actions');
+var actions = require('../../src/actions')(jqueryStub);
 
 describe('actions', () => {
   describe('runPredicate method', () => {
@@ -136,70 +137,6 @@ describe('actions', () => {
       };
       findElement('goodSelector', callbackFn);
       global.document = null;
-    });
-  });
-
-  describe('triggerEvent method', () => {
-    let triggerEvent = actions.triggerEvent;
-    it('can be called without callback', done => {
-      // stubs
-      let jqueryStub = function (fakeElement) {
-        return {
-          trigger: function (eventType) {
-            fakeElement['on' + eventType]();
-          }
-        };
-      };
-      actions.___jquerySetter(jqueryStub);
-
-      let fakeElement = {
-        nodeType: 1,
-        onclick: () => {
-          // restore stubs
-          actions.___jqueryRestore();
-
-          setTimeout(done, 5);
-        }
-      };
-
-      triggerEvent(fakeElement, 'click');
-    });
-  });
-
-  describe('click method', () => {
-    let click = actions.click;
-    it('can be called without callback', done => {
-      let stubElementWasReturned;
-      let eventWasTriggerred;
-
-      // stub document for findElement method
-      global.document = {querySelector: () => 'stubElement'};
-
-      // stub jquery
-      let fakeJquery = fakeElement => {
-        assert.equal(fakeElement, 'stubElement');
-        stubElementWasReturned = true;
-        return {
-          trigger: eventForProduce => {
-            assert.equal(eventForProduce, 'click');
-            eventWasTriggerred = true;
-          }
-        };
-      };
-
-      actions.___jquerySetter(fakeJquery);
-
-      click('fakeSelector');
-
-      // asserts
-      assert.isTrue(stubElementWasReturned);
-      assert.isTrue(eventWasTriggerred);
-
-      // restore stubs
-      actions.___jqueryRestore();
-      global.document = null;
-
-      done();
     });
   });
 

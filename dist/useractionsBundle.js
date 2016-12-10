@@ -3,7 +3,7 @@
 
 var packageJson = require('./package.json');
 var inlineJquery = require('./node_modules/jquery/dist/jquery.min');
-var actions = require('./src/actions');
+var actions = require('./src/actions')(inlineJquery);
 
 function getVersion () {
   return `UserActions: ${packageJson.version}
@@ -44,7 +44,7 @@ module.exports={
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/unit/**/*.js --recursive ; exit 0"
   },
   "engines": {
-    "node": "6.9.1"
+    "node": "6.9.2"
   },
   "files": [
     "dist",
@@ -76,10 +76,10 @@ module.exports={
   "devDependencies": {
     "browserify": "13.1.1",
     "chai": "3.5.0",
-    "eslint": "3.9.1",
+    "eslint": "3.12.0",
     "istanbul": "0.4.5",
     "jquery": "3.1.1",
-    "mocha": "3.1.2",
+    "mocha": "3.2.0",
     "sinon": "1.17.6",
     "watchify": "3.7.0"
   }
@@ -88,140 +88,107 @@ module.exports={
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var findModule = require('./findModule');
-var runPredicate = findModule.runPredicate;
-var waitState = findModule.waitState;
-var findElement = findModule.findElement;
+module.exports = function (inlineJquery) {
+  var findModule = require('./findModule');
+  var runPredicate = findModule.runPredicate;
+  var waitState = findModule.waitState;
+  var findElement = findModule.findElement;
 
-var interactModule = require('./interactModule');
-var directClick = interactModule.directClick;
-var click = interactModule.click;
-var changeValue = interactModule.changeValue;
-var focusOn = interactModule.focusOn;
-var blur = interactModule.blur;
-var pickInSelect = interactModule.pickInSelect;
-var triggerEvent = interactModule.triggerEvent;
-var triggerHandler = interactModule.triggerHandler;
+  var interactModule = require('./interactModule')(inlineJquery);
+  var directClick = interactModule.directClick;
+  var click = interactModule.click;
+  var changeValue = interactModule.changeValue;
+  var focusOn = interactModule.focusOn;
+  var blur = interactModule.blur;
+  var pickInSelect = interactModule.pickInSelect;
+  var triggerEvent = interactModule.triggerEvent;
+  var triggerHandler = interactModule.triggerHandler;
 
-var promiseWrappers = require('./promiseWrappers');
-var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
-var promisifyWrapper2arg = promiseWrappers.promisifyWrapper2arg;
-var promisifyWrapper1res = promiseWrappers.promisifyWrapper1res;
+  var promiseWrapper = require('./promiseWrapper');
 
 
-window.__defaultTimeout = 2000;
-window.__defaultRefreshTime = 300;
+  window.__defaultTimeout = 2000;
+  window.__defaultRefreshTime = 300;
 
-function setDefaultTimeout (timeout) {
-  window.__defaultTimeout = timeout;
-}
+  function setDefaultTimeout (timeout) {
+    window.__defaultTimeout = timeout;
+  }
 
-function setDefaultRefreshTime (refreshTime) {
-  window.__defaultRefreshTime = refreshTime;
-}
+  function setDefaultRefreshTime (refreshTime) {
+    window.__defaultRefreshTime = refreshTime;
+  }
 
-function getText (selectorOrElement, cb) {
-  findElement(selectorOrElement, (err, element) => {
-    let result = element.innerText || element.textContent;
-    return cb(null, result);
-  });
-}
-
-function getValue (selectorOrElement, cb) {
-  findElement(selectorOrElement, (err, element) => {
-    let result = element.value;
-    return cb(null, result);
-  });
-}
-
-// EXPORTS
-exports.promised = {};
-
-exports.directClick = directClick;
-exports.promised.directClick = function (selectorOrElement) {
-  return promisifyWrapper1arg(directClick, selectorOrElement);
-};
-
-exports.click = click;
-exports.promised.click = function (selectorOrElement) {
-  return promisifyWrapper1arg(click, selectorOrElement);
-};
-
-exports.changeValue = changeValue;
-exports.promised.changeValue = function (selectorOrElement, newValue) {
-  return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
-};
-
-exports.focusOn = focusOn;
-exports.promised.focusOn = function (selectorOrElement) {
-  return promisifyWrapper1arg(focusOn, selectorOrElement);
-};
-
-exports.blur = blur;
-exports.promised.blur = function (selectorOrElement) {
-  return promisifyWrapper1arg(blur, selectorOrElement);
-};
-
-exports.pickInSelect = pickInSelect;
-exports.promised.pickInSelect = function (selectSelectorOrElement, option) {
-  return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
-};
-
-exports.triggerEvent = triggerEvent;
-exports.promised.triggerEvent = function (selectorOrElement, eventName) {
-  return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
-};
-
-exports.triggerHandler = triggerHandler;
-exports.promised.triggerHandler = function (selectorOrElement, eventName) {
-  return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
-};
-
-exports.getText = getText;
-exports.promised.getText = function promisedGetText (selectorOrElement) {
-  return promisifyWrapper1res(getText, selectorOrElement);
-};
-
-exports.getValue = getValue;
-exports.promised.getValue = function (selectorOrElement) {
-  return promisifyWrapper1res(getValue, selectorOrElement);
-};
-
-exports.findElement = findElement;
-exports.promised.findElement = function (selectorOrElement, optionalTimeout = window.__defaultTimeout) {
-  return new Promise((resolve, reject) => {
-    findElement(selectorOrElement, optionalTimeout, (err, element) => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve(element);
+  function getText (selectorOrElement, cb) {
+    findElement(selectorOrElement, (err, element) => {
+      let result = element.innerText || element.textContent;
+      return cb(null, result);
     });
-  });
+  }
+
+  function getValue (selectorOrElement, cb) {
+    findElement(selectorOrElement, (err, element) => {
+      let result = element.value;
+      return cb(null, result);
+    });
+  }
+
+
+  module.promised = {};
+
+  module.directClick = directClick;
+  module.promised.directClick = promiseWrapper(directClick);
+
+  module.click = click;
+  module.promised.click = promiseWrapper(click);
+
+  module.changeValue = changeValue;
+  module.promised.changeValue = promiseWrapper(changeValue);
+
+  module.focusOn = focusOn;
+  module.promised.focusOn = promiseWrapper(focusOn);
+
+  module.blur = blur;
+  module.promised.blur = promiseWrapper(blur);
+
+  module.pickInSelect = pickInSelect;
+  module.promised.pickInSelect = promiseWrapper(pickInSelect);
+
+  module.triggerEvent = triggerEvent;
+  module.promised.triggerEvent = promiseWrapper(triggerEvent);
+
+  module.triggerHandler = triggerHandler;
+  module.promised.triggerHandler = promiseWrapper(triggerHandler);
+
+  module.getText = getText;
+  module.promised.getText = promiseWrapper(getText);
+
+  module.getValue = getValue;
+  module.promised.getValue = promiseWrapper(getValue);
+
+  module.findElement = findElement;
+  module.promised.findElement = promiseWrapper(findElement);
+
+  module.waitState = waitState;
+  module.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
+    return new Promise((resolve, reject) => {
+      waitState(predicate, err => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve();
+      }, timeout, refreshTime);
+    });
+  };
+
+  module.runPredicate = runPredicate;
+  module.setDefaultRefreshTime = setDefaultRefreshTime;
+  module.setDefaultTimeout = setDefaultTimeout;
+
+  return module;
 };
 
-exports.waitState = waitState;
-exports.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
-  return new Promise((resolve, reject) => {
-    waitState(predicate, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    }, timeout, refreshTime);
-  });
-};
-
-exports.runPredicate = runPredicate;
-exports.setDefaultRefreshTime = setDefaultRefreshTime;
-exports.setDefaultTimeout = setDefaultTimeout;
-
-// EXPORTS ONLY FOR TESTS
-exports.___jquerySetter = interactModule.___jquerySetter;
-exports.___jqueryRestore = interactModule.___jqueryRestore;
-
-},{"./findModule":5,"./interactModule":7,"./promiseWrappers":8}],5:[function(require,module,exports){
+},{"./findModule":5,"./interactModule":7,"./promiseWrapper":8}],5:[function(require,module,exports){
 'use strict';
 
 var getClassUtil = require('./getClassUtil');
@@ -362,225 +329,196 @@ exports.isUndefined = function (obj) {
 },{}],7:[function(require,module,exports){
 'use strict';
 
-var inlineJquery = require('../node_modules/jquery/dist/jquery.min');
+module.exports = function (inlineJquery) {
+  var getClassUtil = require('./getClassUtil');
+  var isNumber = getClassUtil.isNumber;
+  var isString = getClassUtil.isString;
 
-var getClassUtil = require('./getClassUtil');
-var isNumber = getClassUtil.isNumber;
-var isString = getClassUtil.isString;
+  var findModule = require('./findModule');
+  var findElement = findModule.findElement;
 
-var findModule = require('./findModule');
-var findElement = findModule.findElement;
+  function directClick (selectorOrElement, cb = simpleThrowerCallback) {
+    if (!selectorOrElement) {
+      throw new Error('selector argument is not defined');
+    }
 
-function directClick (selectorOrElement, cb = simpleThrowerCallback) {
-  if (!selectorOrElement) {
-    throw new Error('selector argument is not defined');
+    findElement(selectorOrElement, (err, element) => {
+      if (err) {
+        return cb(err);
+      }
+
+      element.click();
+      return cb(null);
+    });
   }
 
-  findElement(selectorOrElement, (err, element) => {
-    if (err) {
-      return cb(err);
+  function click (selectorOrElement, cb = simpleThrowerCallback) {
+    if (!selectorOrElement) {
+      throw new Error('selector argument is not defined');
     }
 
-    element.click();
-    return cb(null);
-  });
-}
+    findElement(selectorOrElement, (err, element) => {
+      if (err) {
+        return cb(err);
+      }
 
-function click (selectorOrElement, cb = simpleThrowerCallback) {
-  if (!selectorOrElement) {
-    throw new Error('selector argument is not defined');
+      inlineJquery(element).trigger('click');
+      return cb(null);
+    });
   }
 
-  findElement(selectorOrElement, (err, element) => {
-    if (err) {
-      return cb(err);
+  function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
+    if (!inputSelectorOrElement) {
+      throw new Error('inputSelector argument is not defined');
     }
 
-    inlineJquery(element).trigger('click');
-    return cb(null);
-  });
-}
+    findElement(inputSelectorOrElement, (err, element) => {
+      if (err) {
+        return cb(err);
+      }
 
-function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
-  if (!inputSelectorOrElement) {
-    throw new Error('inputSelector argument is not defined');
+      inlineJquery(element).trigger('focus');
+      return cb(null);
+    });
   }
 
-  findElement(inputSelectorOrElement, (err, element) => {
-    if (err) {
-      return cb(err);
+  function blur (selectorOrElement, cb = simpleThrowerCallback) {
+    if (!selectorOrElement) {
+      throw new Error('selector argument is not defined');
     }
 
-    inlineJquery(element).trigger('focus');
-    return cb(null);
-  });
-}
+    findElement(selectorOrElement, (err, element) => {
+      if (err) {
+        return cb(err);
+      }
 
-function blur (selectorOrElement, cb = simpleThrowerCallback) {
-  if (!selectorOrElement) {
-    throw new Error('selector argument is not defined');
+      inlineJquery(element).trigger('blur');
+      return cb(null);
+    });
   }
 
-  findElement(selectorOrElement, (err, element) => {
-    if (err) {
-      return cb(err);
+  function changeValue (selectorOrElement, newValue, cb = simpleThrowerCallback) {
+    if (!selectorOrElement) {
+      throw new Error('selector argument is not defined');
     }
 
-    inlineJquery(element).trigger('blur');
-    return cb(null);
-  });
-}
+    findElement(selectorOrElement, (err, inputElement) => {
+      if (err) {
+        return cb(err);
+      }
 
-function changeValue (selectorOrElement, newValue, cb = simpleThrowerCallback) {
-  if (!selectorOrElement) {
-    throw new Error('selector argument is not defined');
+      inputElement.value = newValue;
+      return cb(null);
+    });
   }
 
-  findElement(selectorOrElement, (err, inputElement) => {
-    if (err) {
-      return cb(err);
-    }
+  function triggerEvent (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+    findElement(selectorOrElement, (err, element) => {
+      if (err) {
+        return cb(err);
+      }
 
-    inputElement.value = newValue;
-    return cb(null);
-  });
-}
+      inlineJquery(element).trigger(eventName);
+      return cb(null);
+    });
+  }
 
-function triggerEvent (selectorOrElement, eventName, cb = simpleThrowerCallback) {
-  findElement(selectorOrElement, (err, element) => {
-    if (err) {
-      return cb(err);
-    }
+  function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+    findElement(selectorOrElement, (err, element) => {
+      if (err) {
+        return cb(err);
+      }
 
-    inlineJquery(element).trigger(eventName);
-    return cb(null);
-  });
-}
+      inlineJquery(element).triggerHandler(eventName);
+      return cb(null);
+    });
+  }
 
-function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallback) {
-  findElement(selectorOrElement, (err, element) => {
-    if (err) {
-      return cb(err);
-    }
+  // option - number or value or innerHTML
+  function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
+    findElement(selectSelectorOrElement, (err, selectElement) => {
+      if (err) return cb(err);
 
-    inlineJquery(element).triggerHandler(eventName);
-    return cb(null);
-  });
-}
+      let valueOptions = [];
+      let innerHtmlOptions = [];
+      for (let i = 0; i < selectElement.options.length; i++) {
+        valueOptions.push(selectElement.options[i].value);
+        innerHtmlOptions.push(selectElement.options[i].innerHTML);
+      }
 
-// option - number or value or innerHTML
-function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
-  findElement(selectSelectorOrElement, (err, selectElement) => {
-    if (err) return cb(err);
+      if (valueOptions.length < 1) {
+        // i leave ${string} cast even if selectSelectorOrElement will be
+        // an element by design or by laziness.
+        // QA-developer anyway will see problem in stacktrace
+        throw new Error(`select ${selectSelectorOrElement} has no options`);
+      }
 
-    let valueOptions = [];
-    let innerHtmlOptions = [];
-    for (let i = 0; i < selectElement.options.length; i++) {
-      valueOptions.push(selectElement.options[i].value);
-      innerHtmlOptions.push(selectElement.options[i].innerHTML);
-    }
+      if (isString(option)) {
+        if (valueOptions.includes(option)) {
+          selectElement.value = option;
+          return cb(null);
+        }
 
-    if (valueOptions.length < 1) {
-      // i leave ${string} cast even if selectSelectorOrElement will be
-      // an element by design or by laziness.
-      // QA-developer anyway will see problem in stacktrace
-      throw new Error(`select ${selectSelectorOrElement} has no options`);
-    }
+        for (let i = 0; i < innerHtmlOptions.length; i++) {
+          if (innerHtmlOptions[i] === option) {
+            selectElement.value = valueOptions[i];
+            return cb(null);
+          }
+        }
 
-    if (isString(option)) {
-      if (valueOptions.includes(option)) {
-        selectElement.value = option;
+        return cb(new Error(`select ${selectSelectorOrElement} not contains ${option} option`));
+      }
+
+      if (isNumber(option)) {
+        if (option < 0) {
+          return cb(new Error(`in ${selectSelectorOrElement}: your option is less then 0`));
+        }
+
+        if (option >= valueOptions.length) {
+          return cb(new Error(`in ${selectSelectorOrElement}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
+        }
+
+        selectElement.value = valueOptions[option];
         return cb(null);
       }
 
-      for (let i = 0; i < innerHtmlOptions.length; i++) {
-        if (innerHtmlOptions[i] === option) {
-          selectElement.value = valueOptions[i];
-          return cb(null);
-        }
-      }
+      return cb(new Error('option parameter is not string or number'));
+    });
+  }
 
-      return cb(new Error(`select ${selectSelectorOrElement} not contains ${option} option`));
-    }
+  function simpleThrowerCallback (err) {
+    if (err) throw err;
+  }
 
-    if (isNumber(option)) {
-      if (option < 0) {
-        return cb(new Error(`in ${selectSelectorOrElement}: your option is less then 0`));
-      }
+  module.directClick = directClick;
+  module.click = click;
+  module.focusOn = focusOn;
+  module.blur = blur;
+  module.changeValue = changeValue;
+  module.pickInSelect = pickInSelect;
+  module.triggerEvent = triggerEvent;
+  module.triggerHandler = triggerHandler;
 
-      if (option >= valueOptions.length) {
-        return cb(new Error(`in ${selectSelectorOrElement}: you selected ${option}, but max number is ${valueOptions.length - 1}`));
-      }
-
-      selectElement.value = valueOptions[option];
-      return cb(null);
-    }
-
-    return cb(new Error('option parameter is not string or number'));
-  });
-}
-
-function simpleThrowerCallback (err) {
-  if (err) throw err;
-}
-
-exports.directClick = directClick;
-exports.click = click;
-exports.focusOn = focusOn;
-exports.blur = blur;
-exports.changeValue = changeValue;
-exports.pickInSelect = pickInSelect;
-exports.triggerEvent = triggerEvent;
-exports.triggerHandler = triggerHandler;
-
-// EXPORTS ONLY FOR TESTS
-let ___nonMockedJquery = inlineJquery;
-exports.___jquerySetter = function (fakeJquery) {
-  inlineJquery = fakeJquery;
-};
-exports.___jqueryRestore = function () {
-  inlineJquery = ___nonMockedJquery;
+  return module;
 };
 
-},{"../node_modules/jquery/dist/jquery.min":2,"./findModule":5,"./getClassUtil":6}],8:[function(require,module,exports){
+},{"./findModule":5,"./getClassUtil":6}],8:[function(require,module,exports){
 'use strict';
 
-// TODO: maybe unify promisify-wrappers for all callback-methods ?
+// this wrapper cannot handle function with many results,
+// cause promise can pass only one of them to resolve function
+module.exports = function (func) {
+  return function (...funcArgs) {
+    return new Promise((resolve, reject) => {
+      func(...funcArgs, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
 
-exports.promisifyWrapper1arg = function (func, selector) {
-  return new Promise((resolve, reject) => {
-    func(selector, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
+        return resolve(result);
+      });
     });
-  });
-};
-
-exports.promisifyWrapper2arg = function (func, selector, secondArg) {
-  return new Promise((resolve, reject) => {
-    func(selector, secondArg, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
-};
-
-exports.promisifyWrapper1res = function (func, selector) {
-  return new Promise((resolve, reject) => {
-    func(selector, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve(result);
-    });
-  });
+  };
 };
 
 },{}]},{},[1]);
