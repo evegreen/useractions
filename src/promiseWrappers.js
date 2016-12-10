@@ -37,3 +37,21 @@ exports.promisifyWrapper1res = function (func, selector) {
     });
   });
 };
+
+// this wrapper cannot handle function with many results,
+// cause promise can pass only one of them to resolve function
+exports.unifyWrapper = function (func, ...args) {
+  let callback = function (err, result) {
+    if (err) {
+      return reject(err);
+    }
+
+    return resolve(result);
+  }
+
+  args.push(callback);
+
+  return new Promise((resolve, reject) => {
+    func.apply(args);
+  });
+};
