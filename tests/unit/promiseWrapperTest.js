@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('chai').assert;
-var promiseWrapper = require('../../src/promiseWrappers').unifyWrapper;
+var promiseWrapper = require('../../src/promiseWrapper');
 
 describe('promise wrappers', () => {
   it('works without argumets', done => {
@@ -11,9 +11,6 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    // let promisedFuncWithoutArgs = function () {
-    //   return promiseWrapper(funcWithoutArgs);
-    // };
     let promisedFuncWithoutArgs = promiseWrapper(funcWithoutArgs);
 
     promisedFuncWithoutArgs()
@@ -31,9 +28,6 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    // let promisedFuncWithArg = function (arg) {
-    //   return promiseWrapper(funcWithArg, arg);
-    // };
     let promisedFuncWithArg = promiseWrapper(funcWithArg);
 
     promisedFuncWithArg('example arg')
@@ -52,9 +46,6 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    // let promisedFuncWith2Args = function (arg1, arg2) {
-    //   return promiseWrapper(funcWith2Args, arg1, arg2);
-    // };
     let promisedFuncWith2Args = promiseWrapper(funcWith2Args);
 
     promisedFuncWith2Args('example arg1', 'example arg2')
@@ -69,9 +60,6 @@ describe('promise wrappers', () => {
       return cb(null, 'example result');
     };
 
-    // let promisedFuncWithResult = function () {
-    //   return promiseWrapper(funcWithResult);
-    // }
     let promisedFuncWithResult = promiseWrapper(funcWithResult);
 
     promisedFuncWithResult()
@@ -86,9 +74,6 @@ describe('promise wrappers', () => {
       return cb('example error');
     };
 
-    // let promisedFuncThatThrows = function () {
-    //   return promiseWrapper(funcThatThrows);
-    // };
     let promisedFuncThatThrows = promiseWrapper(funcThatThrows);
 
     promisedFuncThatThrows()
@@ -98,5 +83,3 @@ describe('promise wrappers', () => {
     });
   });
 });
-
-// TODO: delete comments

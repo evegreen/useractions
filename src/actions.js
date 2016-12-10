@@ -16,10 +16,7 @@ module.exports = function (inlineJquery) {
   var triggerEvent = interactModule.triggerEvent;
   var triggerHandler = interactModule.triggerHandler;
 
-  var promiseWrappers = require('./promiseWrappers');
-  var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
-  var promisifyWrapper2arg = promiseWrappers.promisifyWrapper2arg;
-  var promisifyWrapper1res = promiseWrappers.promisifyWrapper1res;
+  var promiseWrapper = require('./promiseWrapper');
 
 
   window.__defaultTimeout = 2000;
@@ -51,67 +48,37 @@ module.exports = function (inlineJquery) {
   module.promised = {};
 
   module.directClick = directClick;
-  module.promised.directClick = function (selectorOrElement) {
-    return promisifyWrapper1arg(directClick, selectorOrElement);
-  };
+  module.promised.directClick = promiseWrapper(directClick);
 
   module.click = click;
-  module.promised.click = function (selectorOrElement) {
-    return promisifyWrapper1arg(click, selectorOrElement);
-  };
+  module.promised.click = promiseWrapper(click);
 
   module.changeValue = changeValue;
-  module.promised.changeValue = function (selectorOrElement, newValue) {
-    return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
-  };
+  module.promised.changeValue = promiseWrapper(changeValue);
 
   module.focusOn = focusOn;
-  module.promised.focusOn = function (selectorOrElement) {
-    return promisifyWrapper1arg(focusOn, selectorOrElement);
-  };
+  module.promised.focusOn = promiseWrapper(focusOn);
 
   module.blur = blur;
-  module.promised.blur = function (selectorOrElement) {
-    return promisifyWrapper1arg(blur, selectorOrElement);
-  };
+  module.promised.blur = promiseWrapper(blur);
 
   module.pickInSelect = pickInSelect;
-  module.promised.pickInSelect = function (selectSelectorOrElement, option) {
-    return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
-  };
+  module.promised.pickInSelect = promiseWrapper(pickInSelect);
 
   module.triggerEvent = triggerEvent;
-  module.promised.triggerEvent = function (selectorOrElement, eventName) {
-    return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
-  };
+  module.promised.triggerEvent = promiseWrapper(triggerEvent);
 
   module.triggerHandler = triggerHandler;
-  module.promised.triggerHandler = function (selectorOrElement, eventName) {
-    return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
-  };
+  module.promised.triggerHandler = promiseWrapper(triggerHandler);
 
   module.getText = getText;
-  module.promised.getText = function promisedGetText (selectorOrElement) {
-    return promisifyWrapper1res(getText, selectorOrElement);
-  };
+  module.promised.getText = promiseWrapper(getText);
 
   module.getValue = getValue;
-  module.promised.getValue = function (selectorOrElement) {
-    return promisifyWrapper1res(getValue, selectorOrElement);
-  };
+  module.promised.getValue = promiseWrapper(getValue);
 
   module.findElement = findElement;
-  module.promised.findElement = function (selectorOrElement, optionalTimeout = window.__defaultTimeout) {
-    return new Promise((resolve, reject) => {
-      findElement(selectorOrElement, optionalTimeout, (err, element) => {
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(element);
-      });
-    });
-  };
+  module.promised.findElement = promiseWrapper(findElement);
 
   module.waitState = waitState;
   module.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {

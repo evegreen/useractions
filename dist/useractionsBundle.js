@@ -104,10 +104,7 @@ module.exports = function (inlineJquery) {
   var triggerEvent = interactModule.triggerEvent;
   var triggerHandler = interactModule.triggerHandler;
 
-  var promiseWrappers = require('./promiseWrappers');
-  var promisifyWrapper1arg = promiseWrappers.promisifyWrapper1arg;
-  var promisifyWrapper2arg = promiseWrappers.promisifyWrapper2arg;
-  var promisifyWrapper1res = promiseWrappers.promisifyWrapper1res;
+  var promiseWrapper = require('./promiseWrapper');
 
 
   window.__defaultTimeout = 2000;
@@ -139,67 +136,37 @@ module.exports = function (inlineJquery) {
   module.promised = {};
 
   module.directClick = directClick;
-  module.promised.directClick = function (selectorOrElement) {
-    return promisifyWrapper1arg(directClick, selectorOrElement);
-  };
+  module.promised.directClick = promiseWrapper(directClick);
 
   module.click = click;
-  module.promised.click = function (selectorOrElement) {
-    return promisifyWrapper1arg(click, selectorOrElement);
-  };
+  module.promised.click = promiseWrapper(click);
 
   module.changeValue = changeValue;
-  module.promised.changeValue = function (selectorOrElement, newValue) {
-    return promisifyWrapper2arg(changeValue, selectorOrElement, newValue);
-  };
+  module.promised.changeValue = promiseWrapper(changeValue);
 
   module.focusOn = focusOn;
-  module.promised.focusOn = function (selectorOrElement) {
-    return promisifyWrapper1arg(focusOn, selectorOrElement);
-  };
+  module.promised.focusOn = promiseWrapper(focusOn);
 
   module.blur = blur;
-  module.promised.blur = function (selectorOrElement) {
-    return promisifyWrapper1arg(blur, selectorOrElement);
-  };
+  module.promised.blur = promiseWrapper(blur);
 
   module.pickInSelect = pickInSelect;
-  module.promised.pickInSelect = function (selectSelectorOrElement, option) {
-    return promisifyWrapper2arg(pickInSelect, selectSelectorOrElement, option);
-  };
+  module.promised.pickInSelect = promiseWrapper(pickInSelect);
 
   module.triggerEvent = triggerEvent;
-  module.promised.triggerEvent = function (selectorOrElement, eventName) {
-    return promisifyWrapper2arg(triggerEvent, selectorOrElement, eventName);
-  };
+  module.promised.triggerEvent = promiseWrapper(triggerEvent);
 
   module.triggerHandler = triggerHandler;
-  module.promised.triggerHandler = function (selectorOrElement, eventName) {
-    return promisifyWrapper2arg(triggerHandler, selectorOrElement, eventName);
-  };
+  module.promised.triggerHandler = promiseWrapper(triggerHandler);
 
   module.getText = getText;
-  module.promised.getText = function promisedGetText (selectorOrElement) {
-    return promisifyWrapper1res(getText, selectorOrElement);
-  };
+  module.promised.getText = promiseWrapper(getText);
 
   module.getValue = getValue;
-  module.promised.getValue = function (selectorOrElement) {
-    return promisifyWrapper1res(getValue, selectorOrElement);
-  };
+  module.promised.getValue = promiseWrapper(getValue);
 
   module.findElement = findElement;
-  module.promised.findElement = function (selectorOrElement, optionalTimeout = window.__defaultTimeout) {
-    return new Promise((resolve, reject) => {
-      findElement(selectorOrElement, optionalTimeout, (err, element) => {
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(element);
-      });
-    });
-  };
+  module.promised.findElement = promiseWrapper(findElement);
 
   module.waitState = waitState;
   module.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
@@ -221,7 +188,7 @@ module.exports = function (inlineJquery) {
   return module;
 };
 
-},{"./findModule":5,"./interactModule":7,"./promiseWrappers":8}],5:[function(require,module,exports){
+},{"./findModule":5,"./interactModule":7,"./promiseWrapper":8}],5:[function(require,module,exports){
 'use strict';
 
 var getClassUtil = require('./getClassUtil');
@@ -538,45 +505,9 @@ module.exports = function (inlineJquery) {
 },{"./findModule":5,"./getClassUtil":6}],8:[function(require,module,exports){
 'use strict';
 
-exports.promisifyWrapper1arg = function (func, selector) {
-  return new Promise((resolve, reject) => {
-    func(selector, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
-};
-
-exports.promisifyWrapper2arg = function (func, selector, secondArg) {
-  return new Promise((resolve, reject) => {
-    func(selector, secondArg, err => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve();
-    });
-  });
-};
-
-exports.promisifyWrapper1res = function (func, selector) {
-  return new Promise((resolve, reject) => {
-    func(selector, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve(result);
-    });
-  });
-};
-
 // this wrapper cannot handle function with many results,
 // cause promise can pass only one of them to resolve function
-exports.unifyWrapper = function (func) {
+module.exports = function (func) {
   return function (...funcArgs) {
     return new Promise((resolve, reject) => {
       func(...funcArgs, (err, result) => {
@@ -589,7 +520,5 @@ exports.unifyWrapper = function (func) {
     });
   };
 };
-
-// TODO: delete old promisify methods
 
 },{}]},{},[1]);
