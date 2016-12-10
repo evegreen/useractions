@@ -44,7 +44,7 @@ module.exports={
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/unit/**/*.js --recursive ; exit 0"
   },
   "engines": {
-    "node": "6.9.1"
+    "node": "6.9.2"
   },
   "files": [
     "dist",
@@ -76,10 +76,10 @@ module.exports={
   "devDependencies": {
     "browserify": "13.1.1",
     "chai": "3.5.0",
-    "eslint": "3.10.2",
+    "eslint": "3.12.0",
     "istanbul": "0.4.5",
     "jquery": "3.1.1",
-    "mocha": "3.1.2",
+    "mocha": "3.2.0",
     "sinon": "1.17.6",
     "watchify": "3.7.0"
   }
@@ -217,7 +217,7 @@ module.exports = function (inlineJquery) {
   module.runPredicate = runPredicate;
   module.setDefaultRefreshTime = setDefaultRefreshTime;
   module.setDefaultTimeout = setDefaultTimeout;
-  
+
   return module;
 };
 
@@ -538,8 +538,6 @@ module.exports = function (inlineJquery) {
 },{"./findModule":5,"./getClassUtil":6}],8:[function(require,module,exports){
 'use strict';
 
-// TODO: maybe unify promisify-wrappers for all callback-methods ?
-
 exports.promisifyWrapper1arg = function (func, selector) {
   return new Promise((resolve, reject) => {
     func(selector, err => {
@@ -575,5 +573,23 @@ exports.promisifyWrapper1res = function (func, selector) {
     });
   });
 };
+
+// this wrapper cannot handle function with many results,
+// cause promise can pass only one of them to resolve function
+exports.unifyWrapper = function (func) {
+  return function (...funcArgs) {
+    return new Promise((resolve, reject) => {
+      func(...funcArgs, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(result);
+      });
+    });
+  };
+};
+
+// TODO: delete old promisify methods
 
 },{}]},{},[1]);

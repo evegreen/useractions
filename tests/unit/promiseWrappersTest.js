@@ -3,39 +3,6 @@
 var assert = require('chai').assert;
 var promiseWrapper = require('../../src/promiseWrappers').unifyWrapper;
 
-var funcWithoutArgs = function (cb) {
-  return cb(null);
-};
-
-var funcWith2Args = function (arg1, arg2, cb) {
-  assert.equal(arg1, 'example arg1');
-  assert.equal(arg2, 'example arg2');
-  return cb(null);
-};
-
-var funcWithResult = function (cb) {
-  return cb(null, 'example result');
-};
-
-var funcWithError = function (cb) {
-  return cb('example error');
-}
-
-// mocha done callback will be stored in global,
-// cause we need test arguments directly in this tests
-var resolveFunc = function (err) {
-  assert.isNull(err);
-};
-
-var rejectFunc = function (err) {
-  assert.equal(err, 'example error');
-};
-
-var resolveWithResult = function (err, res) {
-  assert.isNull(err);
-  assert.equal(res, 'example result');
-};
-
 describe('promise wrappers', () => {
   it('works without argumets', done => {
     let funcCalled = false;
@@ -44,9 +11,10 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    let promisedFuncWithoutArgs = function () {
-      return promiseWrapper(funcWithoutArgs);
-    };
+    // let promisedFuncWithoutArgs = function () {
+    //   return promiseWrapper(funcWithoutArgs);
+    // };
+    let promisedFuncWithoutArgs = promiseWrapper(funcWithoutArgs);
 
     promisedFuncWithoutArgs()
     .then(() => {
@@ -63,9 +31,10 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    let promisedFuncWithArg = function (arg) {
-      return promiseWrapper(funcWithArg, arg);
-    };
+    // let promisedFuncWithArg = function (arg) {
+    //   return promiseWrapper(funcWithArg, arg);
+    // };
+    let promisedFuncWithArg = promiseWrapper(funcWithArg);
 
     promisedFuncWithArg('example arg')
     .then(() => {
@@ -83,9 +52,10 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    let promisedFuncWith2Args = function (arg1, arg2) {
-      return promiseWrapper(funcWith2Args, arg1, arg2);
-    };
+    // let promisedFuncWith2Args = function (arg1, arg2) {
+    //   return promiseWrapper(funcWith2Args, arg1, arg2);
+    // };
+    let promisedFuncWith2Args = promiseWrapper(funcWith2Args);
 
     promisedFuncWith2Args('example arg1', 'example arg2')
     .then(() => {
@@ -99,9 +69,10 @@ describe('promise wrappers', () => {
       return cb(null, 'example result');
     };
 
-    let promisedFuncWithResult = function () {
-      return promiseWrapper(funcWithResult);
-    }
+    // let promisedFuncWithResult = function () {
+    //   return promiseWrapper(funcWithResult);
+    // }
+    let promisedFuncWithResult = promiseWrapper(funcWithResult);
 
     promisedFuncWithResult()
     .then(result => {
@@ -115,9 +86,10 @@ describe('promise wrappers', () => {
       return cb('example error');
     };
 
-    let promisedFuncThatThrows = function () {
-      return promiseWrapper(funcThatThrows);
-    }
+    // let promisedFuncThatThrows = function () {
+    //   return promiseWrapper(funcThatThrows);
+    // };
+    let promisedFuncThatThrows = promiseWrapper(funcThatThrows);
 
     promisedFuncThatThrows()
     .catch(err => {
@@ -126,3 +98,5 @@ describe('promise wrappers', () => {
     });
   });
 });
+
+// TODO: delete comments

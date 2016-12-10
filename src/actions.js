@@ -129,6 +129,6 @@ module.exports = function (inlineJquery) {
   module.runPredicate = runPredicate;
   module.setDefaultRefreshTime = setDefaultRefreshTime;
   module.setDefaultTimeout = setDefaultTimeout;
-  
+
   return module;
 };
