@@ -31,7 +31,7 @@ module.exports={
   "name": "useractions",
   "title": "UserActions",
   "main": "dist/useractionsBundle.js",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Library, that helps simulate user actions for write fast functional tests",
   "directories": {
     "test": "tests"
