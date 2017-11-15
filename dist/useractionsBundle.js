@@ -41,6 +41,8 @@ module.exports={
     "devmode": "./node_modules/.bin/watchify bundler.js -o dist/useractionsBundle.js",
     "test": "./node_modules/.bin/_mocha tests/unit --recursive",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js bundler.js src/**/*.js tests/**/*.js",
+    "regression-test": "node ./tests/regression/openRegressionTestPage.js",
+    "build-prod": "npm run lint && npm run test && npm run build && npm run regression-test",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/unit/**/*.js --recursive ; exit 0"
   },
   "files": [
@@ -76,7 +78,8 @@ module.exports={
     "eslint": "3.19.0",
     "istanbul": "0.4.5",
     "jquery": "3.2.1",
-    "mocha": "3.4.1",
+    "mocha": "^4.0.1",
+    "opn": "^5.1.0",
     "sinon": "2.2.0",
     "watchify": "3.9.0"
   }

@@ -5,7 +5,20 @@ var assert = chai.assert;
 var actions = userActions;
 var promisedActions = userActions.promised;
 
+let runnerState = null;
 mocha.setup('bdd');
+
+// eslint-disable-next-line no-undef
+after(() => {
+  let color;
+  if (runnerState.stats.failures) {
+    color = 'red';
+  } else {
+    color = 'green';
+  }
+
+  document.querySelector('div#mocha').style.backgroundColor = color;
+});
 
 describe('click method', () => {
 
@@ -257,10 +270,10 @@ describe('can write step-based integration tests', () => {
 function runTests () {
   let mochaBlock = document.createElement('div');
   mochaBlock.id = 'mocha';
-  let mainBlock = document.querySelector('#main')
+  let mainBlock = document.querySelector('#main');
   document.body.insertBefore(mochaBlock, mainBlock);
 
-  mocha.run();
+  runnerState = mocha.run();
 }
 
 runTests();
