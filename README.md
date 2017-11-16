@@ -46,6 +46,7 @@ But if you want add lib and tests without change your webpage files, you can use
 
 interact methods:
 - [click method](#click-method)
+- [event method](#event-method)
 - [changeValue method](#changevalue-method)
 - [focusOn method](#focuson-method)
 - [blur method](#blur-method)
@@ -69,6 +70,17 @@ core methods:
 var click = userActions.click;
 click('button#submit', optionalCallback);
 ```
+
+
+### event method
+```js
+var event = userActions.event;
+event({
+  type: 'click',
+  target: 'button#submit'
+}, optionalCallback);
+```
+
 
 
 ### changeValue method
@@ -117,7 +129,7 @@ click('#myCheckbox', optionalCallback);
 ### getText method
 ```js
 var getText = userActions.getText;
-getText('div#selectedCar', function (err, text) {
+getText('div#selectedCar', function(err, text) {
   if (err) throw err;
 
   // work with text
@@ -128,7 +140,7 @@ getText('div#selectedCar', function (err, text) {
 ### getValue method
 ```js
 var getValue = userActions.getValue;
-getValue('input#surname', function (err, value) {
+getValue('input#surname', function(err, value) {
   if (err) throw err;
 
   // work with value
@@ -141,14 +153,14 @@ getValue('input#surname', function (err, value) {
 var findElement = userActions.findElement;
 
 // You can use with default timeout waiting for element presense
-findElement('div#main', function (err, element) {
+findElement('div#main', function(err, element) {
   if (err) throw err;
 
   // work with element
 });
 
 // Or you can specify need timeout
-findElement('div#main', 3000, function (err, element) {
+findElement('div#main', 3000, function(err, element) {
   if (err) throw err;
 
   // work with element
@@ -160,11 +172,11 @@ findElement('div#main', 3000, function (err, element) {
 ```js
 var waitState = userActions.waitState;
 
-waitState(function () {
+waitState(function() {
   // this is predicate, it must return boolean value
   var loadedCarsInList = document.querySelectorAll('ul#cars>li').length;
   return loadedCarsInList === 12;
-}, function (err) {
+}, function(err) {
   // this is callback, it will called if predicate returns true, until timeout done
   if (err) throw err;
 
@@ -197,8 +209,8 @@ All action methods has promisified version, in example `getText`:
 var getText = userActions.promised.getText;
 
 getText('div#carDescription')
-.then(function (text) { /* work with text =) */ })
-.catch(function (err) { /* handle error =( */ };
+.then(function(text) { /* work with text =) */ })
+.catch(function(err) { /* handle error =( */ };
 ```
 
 ---
