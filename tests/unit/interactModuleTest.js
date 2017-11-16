@@ -31,29 +31,6 @@ describe('directClick method', () => {
   });
 });
 
-describe('triggerEvent method', () => {
-  it('can be called without callback', done => {
-    // stubs
-    let jqueryStub = function(fakeElement) {
-      return {
-        trigger: function(eventType) {
-          fakeElement['on' + eventType]();
-        }
-      };
-    };
-    let triggerEvent = require(INTERACT_MODULE_PATH)(jqueryStub).triggerEvent;
-
-    let fakeElement = {
-      nodeType: 1,
-      onclick: () => {
-        setTimeout(done, 5);
-      }
-    };
-
-    triggerEvent(fakeElement, 'click');
-  });
-});
-
 describe('click method', () => {
   it('can be called without callback', done => {
     // arrange

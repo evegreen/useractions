@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(inlineJquery) {
+module.exports = function() {
   var findModule = require('./findModule');
   var runPredicate = findModule.runPredicate;
   var waitState = findModule.waitState;
   var findElement = findModule.findElement;
 
-  var interactModule = require('./interactModule')(inlineJquery);
+  var interactModule = require('./interactModule')();
   var directClick = interactModule.directClick;
   var click = interactModule.click;
   var event = interactModule.event;
@@ -14,8 +14,6 @@ module.exports = function(inlineJquery) {
   var focusOn = interactModule.focusOn;
   var blur = interactModule.blur;
   var pickInSelect = interactModule.pickInSelect;
-  var triggerEvent = interactModule.triggerEvent;
-  var triggerHandler = interactModule.triggerHandler;
 
   var promiseWrapper = require('./promiseWrapper');
 
@@ -68,12 +66,6 @@ module.exports = function(inlineJquery) {
 
   module.pickInSelect = pickInSelect;
   module.promised.pickInSelect = promiseWrapper(pickInSelect);
-
-  module.triggerEvent = triggerEvent;
-  module.promised.triggerEvent = promiseWrapper(triggerEvent);
-
-  module.triggerHandler = triggerHandler;
-  module.promised.triggerHandler = promiseWrapper(triggerHandler);
 
   module.getText = getText;
   module.promised.getText = promiseWrapper(getText);

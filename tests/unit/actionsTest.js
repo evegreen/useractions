@@ -5,9 +5,8 @@ var sinon = require('sinon');
 
 // stub window
 global.window = {};
-var jqueryStub = {};
 
-var actions = require('../../src/actions')(jqueryStub);
+var actions = require('../../src/actions')();
 
 describe('actions', () => {
   describe('runPredicate method', () => {
@@ -139,24 +138,6 @@ describe('actions', () => {
       global.document = null;
     });
   });
-
-  // describe('focusOn method', () => {
-  //   let focusOn = actions.focusOn;
-  //   it('can be called without callback', done => {
-  //     // TODO: write test on triggerEvent method, then use it here
-  //
-  //     throw new Error('test not implemented right now =(');
-  //   });
-  // });
-
-  // describe('blur method', () => {
-  //   let blur = actions.blur;
-  //   it('can be called without callback', done => {
-  //     // TODO: write test on triggerEvent method, then use it here
-  //
-  //     throw new Error('test not implemented right now =(');
-  //   });
-  // });
 
   describe('changeValue method', () => {
     let changeValue = actions.changeValue;
