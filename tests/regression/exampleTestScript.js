@@ -53,16 +53,6 @@ describe('click method', () => {
       done();
     });
   });
-
-  it('can enable checkbox', done => {
-    let checkbox = document.querySelector('#forClickOnCheckbox');
-    assert.isFalse(checkbox.checked);
-    click('#forClickOnCheckbox', err => {
-      assert.isNull(err);
-      assert.isTrue(checkbox.checked);
-      done();
-    });
-  });
 });
 
 describe('directClick method', () => {

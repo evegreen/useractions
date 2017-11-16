@@ -1,20 +1,19 @@
 'use strict';
 
-module.exports = function (inlineJquery) {
+module.exports = function() {
   var findModule = require('./findModule');
   var runPredicate = findModule.runPredicate;
   var waitState = findModule.waitState;
   var findElement = findModule.findElement;
 
-  var interactModule = require('./interactModule')(inlineJquery);
+  var interactModule = require('./interactModule')();
   var directClick = interactModule.directClick;
   var click = interactModule.click;
+  var event = interactModule.event;
   var changeValue = interactModule.changeValue;
   var focusOn = interactModule.focusOn;
   var blur = interactModule.blur;
   var pickInSelect = interactModule.pickInSelect;
-  var triggerEvent = interactModule.triggerEvent;
-  var triggerHandler = interactModule.triggerHandler;
 
   var promiseWrapper = require('./promiseWrapper');
 
@@ -22,22 +21,22 @@ module.exports = function (inlineJquery) {
   window.__defaultTimeout = 2000;
   window.__defaultRefreshTime = 300;
 
-  function setDefaultTimeout (timeout) {
+  function setDefaultTimeout(timeout) {
     window.__defaultTimeout = timeout;
   }
 
-  function setDefaultRefreshTime (refreshTime) {
+  function setDefaultRefreshTime(refreshTime) {
     window.__defaultRefreshTime = refreshTime;
   }
 
-  function getText (selectorOrElement, cb) {
+  function getText(selectorOrElement, cb) {
     findElement(selectorOrElement, (err, element) => {
       let result = element.innerText || element.textContent;
       return cb(null, result);
     });
   }
 
-  function getValue (selectorOrElement, cb) {
+  function getValue(selectorOrElement, cb) {
     findElement(selectorOrElement, (err, element) => {
       let result = element.value;
       return cb(null, result);
@@ -53,6 +52,9 @@ module.exports = function (inlineJquery) {
   module.click = click;
   module.promised.click = promiseWrapper(click);
 
+  module.event = event;
+  module.promised.event = promiseWrapper(event);
+
   module.changeValue = changeValue;
   module.promised.changeValue = promiseWrapper(changeValue);
 
@@ -65,12 +67,6 @@ module.exports = function (inlineJquery) {
   module.pickInSelect = pickInSelect;
   module.promised.pickInSelect = promiseWrapper(pickInSelect);
 
-  module.triggerEvent = triggerEvent;
-  module.promised.triggerEvent = promiseWrapper(triggerEvent);
-
-  module.triggerHandler = triggerHandler;
-  module.promised.triggerHandler = promiseWrapper(triggerHandler);
-
   module.getText = getText;
   module.promised.getText = promiseWrapper(getText);
 
@@ -81,7 +77,7 @@ module.exports = function (inlineJquery) {
   module.promised.findElement = promiseWrapper(findElement);
 
   module.waitState = waitState;
-  module.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
+  module.promised.waitState = function(predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
     return new Promise((resolve, reject) => {
       waitState(predicate, err => {
         if (err) {
