@@ -1,38 +1,12 @@
 'use strict';
 
-function getClass (obj) {
-  return {}.toString.call(obj).slice(8, -1);
-}
+let getClass = obj => ({}).toString.call(obj).slice(8, -1);
 exports.getClass = getClass;
-
-exports.isFunction = function (obj) {
-  return getClass(obj) === 'Function';
-};
-
-exports.isArray = function (obj) {
-  return getClass(obj) === 'Array';
-};
-
-exports.isNumber = function (obj) {
-  return getClass(obj) === 'Number';
-};
-
-exports.isString = function (obj) {
-  return getClass(obj) === 'String';
-};
-
-exports.isObject = function (obj) {
-  return getClass(obj) === 'Object';
-};
-
-exports.isBoolean = function (obj) {
-  return getClass(obj) === 'Boolean';
-};
-
-exports.isNull = function (obj) {
-  return getClass(obj) === 'Null';
-};
-
-exports.isUndefined = function (obj) {
-  return getClass(obj) === 'Undefined';
-};
+exports.isFunction = obj => getClass(obj) === 'Function';
+exports.isArray = obj => getClass(obj) === 'Array';
+exports.isNumber = obj => getClass(obj) === 'Number';
+exports.isString = obj => getClass(obj) === 'String';
+exports.isObject = obj => getClass(obj) === 'Object';
+exports.isBoolean = obj => getClass(obj) === 'Boolean';
+exports.isNull = obj => getClass(obj) === 'Null';
+exports.isUndefined = obj => getClass(obj) === 'Undefined';

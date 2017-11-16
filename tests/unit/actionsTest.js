@@ -130,7 +130,7 @@ describe('actions', () => {
 
     it('calls cb with null-first(err) argument and found element when called with good selector and callback', done => {
       global.document = {querySelector: () => 'stubElement'};
-      let callbackFn = function (err, element) {
+      let callbackFn = function(err, element) {
         assert.isNull(err);
         assert.equal(element, 'stubElement');
         done();

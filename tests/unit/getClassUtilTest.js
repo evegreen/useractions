@@ -9,7 +9,7 @@ describe('getClassUtil', () => {
     let getClass = getClassUtil.getClass;
 
     it('returns "Function" when get function', done => {
-      let myFunc = function () {};
+      let myFunc = function() {};
       assert.equal(getClass(myFunc), 'Function');
       done();
     });
@@ -61,7 +61,7 @@ describe('getClassUtil', () => {
     let isFunction = getClassUtil.isFunction;
 
     it('try function', done => {
-      assert(isFunction((function () {})));
+      assert(isFunction((function() {})));
       done();
     });
 

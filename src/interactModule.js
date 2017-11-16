@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (inlineJquery) {
+module.exports = function(inlineJquery) {
   var getClassUtil = require('./getClassUtil');
   var isNumber = getClassUtil.isNumber;
   var isString = getClassUtil.isString;
@@ -23,22 +23,57 @@ module.exports = function (inlineJquery) {
     });
   }
 
-  function click (selectorOrElement, cb = simpleThrowerCallback) {
-    if (!selectorOrElement) {
+  /**
+   * @param {string|Element} target - target element or its selector
+  */
+  function click(target, cb = simpleThrowerCallback) {
+    if (!target) {
       throw new Error('selector argument is not defined');
     }
 
-    findElement(selectorOrElement, (err, element) => {
+    findElement(target, (err, elem) => {
       if (err) {
         return cb(err);
       }
 
-      inlineJquery(element).trigger('click');
+      let clickEvent = new Event('click', {bubbles: true, cancelable: true});
+      elem.dispatchEvent(clickEvent);
       return cb(null);
     });
   }
 
-  function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
+  /**
+   * @param {string} options.type - event name e.g. "click"
+   * @param {string|Element} options.target - target element or its selector
+  */
+  function event(
+    {type, target, bubbles = true, cancelable = true},
+    cb = simpleThrowerCallback
+  ) {
+    if (!type) {
+      throw new Error('event name argument is not defined');
+    }
+
+    if (!target) {
+      throw new Error('target selector argument is not defined');
+    }
+
+    findElement(target, (err, elem) => {
+      if (err) {
+        return cb(err);
+      }
+
+      let eventOptions = {
+        bubbles,
+        cancelable
+      };
+      let event = new Event(type, eventOptions);
+      elem.dispatchEvent(event);
+      return cb(null);
+    });
+  }
+
+  function focusOn(inputSelectorOrElement, cb = simpleThrowerCallback) {
     if (!inputSelectorOrElement) {
       throw new Error('inputSelector argument is not defined');
     }
@@ -48,12 +83,13 @@ module.exports = function (inlineJquery) {
         return cb(err);
       }
 
+      console.warn('jquery trigger was used');
       inlineJquery(element).trigger('focus');
       return cb(null);
     });
   }
 
-  function blur (selectorOrElement, cb = simpleThrowerCallback) {
+  function blur(selectorOrElement, cb = simpleThrowerCallback) {
     if (!selectorOrElement) {
       throw new Error('selector argument is not defined');
     }
@@ -63,12 +99,13 @@ module.exports = function (inlineJquery) {
         return cb(err);
       }
 
+      console.warn('jquery trigger was used');
       inlineJquery(element).trigger('blur');
       return cb(null);
     });
   }
 
-  function changeValue (selectorOrElement, newValue, cb = simpleThrowerCallback) {
+  function changeValue(selectorOrElement, newValue, cb = simpleThrowerCallback) {
     if (!selectorOrElement) {
       throw new Error('selector argument is not defined');
     }
@@ -83,30 +120,32 @@ module.exports = function (inlineJquery) {
     });
   }
 
-  function triggerEvent (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+  function triggerEvent(selectorOrElement, eventName, cb = simpleThrowerCallback) {
     findElement(selectorOrElement, (err, element) => {
       if (err) {
         return cb(err);
       }
 
+      console.warn('jquery trigger was used');
       inlineJquery(element).trigger(eventName);
       return cb(null);
     });
   }
 
-  function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+  function triggerHandler(selectorOrElement, eventName, cb = simpleThrowerCallback) {
     findElement(selectorOrElement, (err, element) => {
       if (err) {
         return cb(err);
       }
 
+      console.warn('jquery triggerHandler was used');
       inlineJquery(element).triggerHandler(eventName);
       return cb(null);
     });
   }
 
   // option - number or value or innerHTML
-  function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
+  function pickInSelect(selectSelectorOrElement, option, cb = simpleThrowerCallback) {
     findElement(selectSelectorOrElement, (err, selectElement) => {
       if (err) return cb(err);
 
@@ -157,12 +196,13 @@ module.exports = function (inlineJquery) {
     });
   }
 
-  function simpleThrowerCallback (err) {
+  function simpleThrowerCallback(err) {
     if (err) throw err;
   }
 
   module.directClick = directClick;
   module.click = click;
+  module.event = event;
   module.focusOn = focusOn;
   module.blur = blur;
   module.changeValue = changeValue;

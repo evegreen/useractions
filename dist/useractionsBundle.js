@@ -88,7 +88,7 @@ module.exports={
 },{}],4:[function(require,module,exports){
 'use strict';
 
-module.exports = function (inlineJquery) {
+module.exports = function(inlineJquery) {
   var findModule = require('./findModule');
   var runPredicate = findModule.runPredicate;
   var waitState = findModule.waitState;
@@ -97,6 +97,7 @@ module.exports = function (inlineJquery) {
   var interactModule = require('./interactModule')(inlineJquery);
   var directClick = interactModule.directClick;
   var click = interactModule.click;
+  var event = interactModule.event;
   var changeValue = interactModule.changeValue;
   var focusOn = interactModule.focusOn;
   var blur = interactModule.blur;
@@ -110,22 +111,22 @@ module.exports = function (inlineJquery) {
   window.__defaultTimeout = 2000;
   window.__defaultRefreshTime = 300;
 
-  function setDefaultTimeout (timeout) {
+  function setDefaultTimeout(timeout) {
     window.__defaultTimeout = timeout;
   }
 
-  function setDefaultRefreshTime (refreshTime) {
+  function setDefaultRefreshTime(refreshTime) {
     window.__defaultRefreshTime = refreshTime;
   }
 
-  function getText (selectorOrElement, cb) {
+  function getText(selectorOrElement, cb) {
     findElement(selectorOrElement, (err, element) => {
       let result = element.innerText || element.textContent;
       return cb(null, result);
     });
   }
 
-  function getValue (selectorOrElement, cb) {
+  function getValue(selectorOrElement, cb) {
     findElement(selectorOrElement, (err, element) => {
       let result = element.value;
       return cb(null, result);
@@ -140,6 +141,9 @@ module.exports = function (inlineJquery) {
 
   module.click = click;
   module.promised.click = promiseWrapper(click);
+
+  module.event = event;
+  module.promised.event = promiseWrapper(event);
 
   module.changeValue = changeValue;
   module.promised.changeValue = promiseWrapper(changeValue);
@@ -169,7 +173,7 @@ module.exports = function (inlineJquery) {
   module.promised.findElement = promiseWrapper(findElement);
 
   module.waitState = waitState;
-  module.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
+  module.promised.waitState = function(predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
     return new Promise((resolve, reject) => {
       waitState(predicate, err => {
         if (err) {
@@ -289,47 +293,21 @@ exports.findElement = findElement;
 },{"./getClassUtil":6}],6:[function(require,module,exports){
 'use strict';
 
-function getClass (obj) {
-  return {}.toString.call(obj).slice(8, -1);
-}
+let getClass = obj => ({}).toString.call(obj).slice(8, -1);
 exports.getClass = getClass;
-
-exports.isFunction = function (obj) {
-  return getClass(obj) === 'Function';
-};
-
-exports.isArray = function (obj) {
-  return getClass(obj) === 'Array';
-};
-
-exports.isNumber = function (obj) {
-  return getClass(obj) === 'Number';
-};
-
-exports.isString = function (obj) {
-  return getClass(obj) === 'String';
-};
-
-exports.isObject = function (obj) {
-  return getClass(obj) === 'Object';
-};
-
-exports.isBoolean = function (obj) {
-  return getClass(obj) === 'Boolean';
-};
-
-exports.isNull = function (obj) {
-  return getClass(obj) === 'Null';
-};
-
-exports.isUndefined = function (obj) {
-  return getClass(obj) === 'Undefined';
-};
+exports.isFunction = obj => getClass(obj) === 'Function';
+exports.isArray = obj => getClass(obj) === 'Array';
+exports.isNumber = obj => getClass(obj) === 'Number';
+exports.isString = obj => getClass(obj) === 'String';
+exports.isObject = obj => getClass(obj) === 'Object';
+exports.isBoolean = obj => getClass(obj) === 'Boolean';
+exports.isNull = obj => getClass(obj) === 'Null';
+exports.isUndefined = obj => getClass(obj) === 'Undefined';
 
 },{}],7:[function(require,module,exports){
 'use strict';
 
-module.exports = function (inlineJquery) {
+module.exports = function(inlineJquery) {
   var getClassUtil = require('./getClassUtil');
   var isNumber = getClassUtil.isNumber;
   var isString = getClassUtil.isString;
@@ -352,22 +330,57 @@ module.exports = function (inlineJquery) {
     });
   }
 
-  function click (selectorOrElement, cb = simpleThrowerCallback) {
-    if (!selectorOrElement) {
+  /**
+   * @param {string|Element} target - target element or its selector
+  */
+  function click(target, cb = simpleThrowerCallback) {
+    if (!target) {
       throw new Error('selector argument is not defined');
     }
 
-    findElement(selectorOrElement, (err, element) => {
+    findElement(target, (err, elem) => {
       if (err) {
         return cb(err);
       }
 
-      inlineJquery(element).trigger('click');
+      let clickEvent = new Event('click', {bubbles: true, cancelable: true});
+      elem.dispatchEvent(clickEvent);
       return cb(null);
     });
   }
 
-  function focusOn (inputSelectorOrElement, cb = simpleThrowerCallback) {
+  /**
+   * @param {string} options.type - event name e.g. "click"
+   * @param {string|Element} options.target - target element or its selector
+  */
+  function event(
+    {type, target, bubbles = true, cancelable = true},
+    cb = simpleThrowerCallback
+  ) {
+    if (!type) {
+      throw new Error('event name argument is not defined');
+    }
+
+    if (!target) {
+      throw new Error('target selector argument is not defined');
+    }
+
+    findElement(target, (err, elem) => {
+      if (err) {
+        return cb(err);
+      }
+
+      let eventOptions = {
+        bubbles,
+        cancelable
+      };
+      let event = new Event(type, eventOptions);
+      elem.dispatchEvent(event);
+      return cb(null);
+    });
+  }
+
+  function focusOn(inputSelectorOrElement, cb = simpleThrowerCallback) {
     if (!inputSelectorOrElement) {
       throw new Error('inputSelector argument is not defined');
     }
@@ -377,12 +390,13 @@ module.exports = function (inlineJquery) {
         return cb(err);
       }
 
+      console.warn('jquery trigger was used');
       inlineJquery(element).trigger('focus');
       return cb(null);
     });
   }
 
-  function blur (selectorOrElement, cb = simpleThrowerCallback) {
+  function blur(selectorOrElement, cb = simpleThrowerCallback) {
     if (!selectorOrElement) {
       throw new Error('selector argument is not defined');
     }
@@ -392,12 +406,13 @@ module.exports = function (inlineJquery) {
         return cb(err);
       }
 
+      console.warn('jquery trigger was used');
       inlineJquery(element).trigger('blur');
       return cb(null);
     });
   }
 
-  function changeValue (selectorOrElement, newValue, cb = simpleThrowerCallback) {
+  function changeValue(selectorOrElement, newValue, cb = simpleThrowerCallback) {
     if (!selectorOrElement) {
       throw new Error('selector argument is not defined');
     }
@@ -412,30 +427,32 @@ module.exports = function (inlineJquery) {
     });
   }
 
-  function triggerEvent (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+  function triggerEvent(selectorOrElement, eventName, cb = simpleThrowerCallback) {
     findElement(selectorOrElement, (err, element) => {
       if (err) {
         return cb(err);
       }
 
+      console.warn('jquery trigger was used');
       inlineJquery(element).trigger(eventName);
       return cb(null);
     });
   }
 
-  function triggerHandler (selectorOrElement, eventName, cb = simpleThrowerCallback) {
+  function triggerHandler(selectorOrElement, eventName, cb = simpleThrowerCallback) {
     findElement(selectorOrElement, (err, element) => {
       if (err) {
         return cb(err);
       }
 
+      console.warn('jquery triggerHandler was used');
       inlineJquery(element).triggerHandler(eventName);
       return cb(null);
     });
   }
 
   // option - number or value or innerHTML
-  function pickInSelect (selectSelectorOrElement, option, cb = simpleThrowerCallback) {
+  function pickInSelect(selectSelectorOrElement, option, cb = simpleThrowerCallback) {
     findElement(selectSelectorOrElement, (err, selectElement) => {
       if (err) return cb(err);
 
@@ -486,12 +503,13 @@ module.exports = function (inlineJquery) {
     });
   }
 
-  function simpleThrowerCallback (err) {
+  function simpleThrowerCallback(err) {
     if (err) throw err;
   }
 
   module.directClick = directClick;
   module.click = click;
+  module.event = event;
   module.focusOn = focusOn;
   module.blur = blur;
   module.changeValue = changeValue;
@@ -507,8 +525,8 @@ module.exports = function (inlineJquery) {
 
 // this wrapper cannot handle function with many results,
 // cause promise can pass only one of them to resolve function
-module.exports = function (func) {
-  return function (...funcArgs) {
+module.exports = function(func) {
+  return function(...funcArgs) {
     return new Promise((resolve, reject) => {
       func(...funcArgs, (err, result) => {
         if (err) {

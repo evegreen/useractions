@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (inlineJquery) {
+module.exports = function(inlineJquery) {
   var findModule = require('./findModule');
   var runPredicate = findModule.runPredicate;
   var waitState = findModule.waitState;
@@ -9,6 +9,7 @@ module.exports = function (inlineJquery) {
   var interactModule = require('./interactModule')(inlineJquery);
   var directClick = interactModule.directClick;
   var click = interactModule.click;
+  var event = interactModule.event;
   var changeValue = interactModule.changeValue;
   var focusOn = interactModule.focusOn;
   var blur = interactModule.blur;
@@ -22,22 +23,22 @@ module.exports = function (inlineJquery) {
   window.__defaultTimeout = 2000;
   window.__defaultRefreshTime = 300;
 
-  function setDefaultTimeout (timeout) {
+  function setDefaultTimeout(timeout) {
     window.__defaultTimeout = timeout;
   }
 
-  function setDefaultRefreshTime (refreshTime) {
+  function setDefaultRefreshTime(refreshTime) {
     window.__defaultRefreshTime = refreshTime;
   }
 
-  function getText (selectorOrElement, cb) {
+  function getText(selectorOrElement, cb) {
     findElement(selectorOrElement, (err, element) => {
       let result = element.innerText || element.textContent;
       return cb(null, result);
     });
   }
 
-  function getValue (selectorOrElement, cb) {
+  function getValue(selectorOrElement, cb) {
     findElement(selectorOrElement, (err, element) => {
       let result = element.value;
       return cb(null, result);
@@ -52,6 +53,9 @@ module.exports = function (inlineJquery) {
 
   module.click = click;
   module.promised.click = promiseWrapper(click);
+
+  module.event = event;
+  module.promised.event = promiseWrapper(event);
 
   module.changeValue = changeValue;
   module.promised.changeValue = promiseWrapper(changeValue);
@@ -81,7 +85,7 @@ module.exports = function (inlineJquery) {
   module.promised.findElement = promiseWrapper(findElement);
 
   module.waitState = waitState;
-  module.promised.waitState = function (predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
+  module.promised.waitState = function(predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
     return new Promise((resolve, reject) => {
       waitState(predicate, err => {
         if (err) {

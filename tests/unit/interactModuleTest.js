@@ -3,13 +3,19 @@
 var assert = require('chai').assert;
 
 const INTERACT_MODULE_PATH = '../../src/interactModule';
-var JQUERY_DEFAULT_STUB = {};
+
+// stub Event constructor
+global.Event = function(eventName, {bubbles, cancelable}) {
+  this.type = eventName;
+  this.bubbles = bubbles;
+  this.cancelable = cancelable;
+};
 
 describe('directClick method', () => {
-  let directClick = require(INTERACT_MODULE_PATH)(JQUERY_DEFAULT_STUB).directClick;
+  let directClick = require(INTERACT_MODULE_PATH)().directClick;
   it('execute .click() function on element directly once', done => {
     let directlyClickedCount = 0;
-    let doneCallback = function (err) {
+    let doneCallback = function(err) {
       if (err) throw err;
 
       assert.equal(directlyClickedCount, 1);
@@ -28,9 +34,9 @@ describe('directClick method', () => {
 describe('triggerEvent method', () => {
   it('can be called without callback', done => {
     // stubs
-    let jqueryStub = function (fakeElement) {
+    let jqueryStub = function(fakeElement) {
       return {
-        trigger: function (eventType) {
+        trigger: function(eventType) {
           fakeElement['on' + eventType]();
         }
       };
@@ -50,32 +56,43 @@ describe('triggerEvent method', () => {
 
 describe('click method', () => {
   it('can be called without callback', done => {
-    let stubElementWasReturned;
-    let eventWasTriggerred;
-
-    // stub document for findElement method
-    global.document = {querySelector: () => 'stubElement'};
-
-    let jqueryStub = fakeElement => {
-      assert.equal(fakeElement, 'stubElement');
-      stubElementWasReturned = true;
-      return {
-        trigger: eventForProduce => {
-          assert.equal(eventForProduce, 'click');
-          eventWasTriggerred = true;
-        }
-      };
+    // arrange
+    let fakeElement = {
+      dispatchEvent: event => {
+        // assert
+        assert.equal(event.type, 'click');
+        assert.equal(event.bubbles, true);
+        assert.equal(event.cancelable, true);
+        done();
+      }
     };
+    global.document = {querySelector: () => fakeElement};
+    let click = require(INTERACT_MODULE_PATH)().click;
 
-    let click = require(INTERACT_MODULE_PATH)(jqueryStub).click;
+    // act
     click('fakeSelector');
-
-    // asserts
-    assert.isTrue(stubElementWasReturned);
-    assert.isTrue(eventWasTriggerred);
 
     // restore stubs
     global.document = null;
-    done();
+  });
+});
+
+describe('event method', () => {
+  it('dispatches on element', done => {
+    // arrange
+    let fakeElement = {
+      dispatchEvent: event => {
+        // assert
+        assert.equal(event.type, 'myEvent');
+        assert.equal(event.bubbles, true);
+        assert.equal(event.cancelable, true);
+        done();
+      }
+    };
+    global.document = {querySelector: () => fakeElement};
+    let event = require(INTERACT_MODULE_PATH)().event;
+
+    // act
+    event({type: 'myEvent', target: 'fakeSelector'});
   });
 });

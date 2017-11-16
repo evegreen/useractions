@@ -6,7 +6,7 @@ var promiseWrapper = require('../../src/promiseWrapper');
 describe('promise wrappers', () => {
   it('works without argumets', done => {
     let funcCalled = false;
-    let funcWithoutArgs = function (cb) {
+    let funcWithoutArgs = function(cb) {
       funcCalled = true;
       return cb(null);
     };
@@ -22,7 +22,7 @@ describe('promise wrappers', () => {
 
   it('works with 1 argument', done => {
     let funcCalled = false;
-    let funcWithArg = function (arg, cb) {
+    let funcWithArg = function(arg, cb) {
       assert.equal(arg, 'example arg');
       funcCalled = true;
       return cb(null);
@@ -39,7 +39,7 @@ describe('promise wrappers', () => {
 
   it('works with 2 arguments', done => {
     let funcCalled = false;
-    let funcWith2Args = function (arg1, arg2, cb) {
+    let funcWith2Args = function(arg1, arg2, cb) {
       assert.equal(arg1, 'example arg1');
       assert.equal(arg2, 'example arg2');
       funcCalled = true;
@@ -56,7 +56,7 @@ describe('promise wrappers', () => {
   });
 
   it('works with result', done => {
-    let funcWithResult = function (cb) {
+    let funcWithResult = function(cb) {
       return cb(null, 'example result');
     };
 
@@ -70,7 +70,7 @@ describe('promise wrappers', () => {
   });
 
   it('works with error', done => {
-    let funcThatThrows = function (cb) {
+    let funcThatThrows = function(cb) {
       return cb('example error');
     };
 

@@ -2,8 +2,8 @@
 
 // this wrapper cannot handle function with many results,
 // cause promise can pass only one of them to resolve function
-module.exports = function (func) {
-  return function (...funcArgs) {
+module.exports = function(func) {
+  return function(...funcArgs) {
     return new Promise((resolve, reject) => {
       func(...funcArgs, (err, result) => {
         if (err) {
