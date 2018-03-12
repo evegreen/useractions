@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "new-test-build": "rollup bundler.js --output.format iife --output.file dist/useractionsBundle.js",
     "build": "./node_modules/.bin/browserify bundler.js -o dist/useractionsBundle.js",
     "devmode": "./node_modules/.bin/watchify bundler.js -o dist/useractionsBundle.js",
     "test": "./node_modules/.bin/_mocha tests/unit --recursive",
@@ -50,7 +51,9 @@
     "istanbul": "0.4.5",
     "mocha": "^4.0.1",
     "opn": "^5.1.0",
+    "rollup": "^0.56.5",
     "sinon": "2.2.0",
     "watchify": "3.9.0"
-  }
+  },
+  "dependencies": {}
 }
