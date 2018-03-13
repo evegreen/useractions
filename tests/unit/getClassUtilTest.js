@@ -1,8 +1,5 @@
-'use strict';
-
-var assert = require('chai').assert;
-
-var getClassUtil = require('../../src/getClassUtil');
+import {assert} from 'chai';
+import getClassUtil from '../../src/getClassUtil';
 
 describe('getClassUtil', () => {
   describe('getClass method', () => {

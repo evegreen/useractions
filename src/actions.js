@@ -1,97 +1,96 @@
-'use strict';
+import findModule from './findModule';
+let runPredicate = findModule.runPredicate;
+let waitState = findModule.waitState;
+let findElement = findModule.findElement;
 
-module.exports = function() {
-  var findModule = require('./findModule');
-  var runPredicate = findModule.runPredicate;
-  var waitState = findModule.waitState;
-  var findElement = findModule.findElement;
+import interactModule from './interactModule';
+let directClick = interactModule.directClick;
+let click = interactModule.click;
+let event = interactModule.event;
+let changeValue = interactModule.changeValue;
+let focusOn = interactModule.focusOn;
+let blur = interactModule.blur;
+let pickInSelect = interactModule.pickInSelect;
 
-  var interactModule = require('./interactModule')();
-  var directClick = interactModule.directClick;
-  var click = interactModule.click;
-  var event = interactModule.event;
-  var changeValue = interactModule.changeValue;
-  var focusOn = interactModule.focusOn;
-  var blur = interactModule.blur;
-  var pickInSelect = interactModule.pickInSelect;
-
-  var promiseWrapper = require('./promiseWrapper');
+import wrapInPromise from './promiseWrapper';
+import _root from './globalRoot';
 
 
-  window.__defaultTimeout = 2000;
-  window.__defaultRefreshTime = 300;
+_root.__defaultTimeout = 2000;
+_root.__defaultRefreshTime = 300;
 
-  function setDefaultTimeout(timeout) {
-    window.__defaultTimeout = timeout;
-  }
+function setDefaultTimeout(timeout) {
+  _root.__defaultTimeout = timeout;
+}
 
-  function setDefaultRefreshTime(refreshTime) {
-    window.__defaultRefreshTime = refreshTime;
-  }
+function setDefaultRefreshTime(refreshTime) {
+  _root.__defaultRefreshTime = refreshTime;
+}
 
-  function getText(selectorOrElement, cb) {
-    findElement(selectorOrElement, (err, element) => {
-      let result = element.innerText || element.textContent;
-      return cb(null, result);
-    });
-  }
+function getText(selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
+    let result = element.innerText || element.textContent;
+    return cb(null, result);
+  });
+}
 
-  function getValue(selectorOrElement, cb) {
-    findElement(selectorOrElement, (err, element) => {
-      let result = element.value;
-      return cb(null, result);
-    });
-  }
+function getValue(selectorOrElement, cb) {
+  findElement(selectorOrElement, (err, element) => {
+    let result = element.value;
+    return cb(null, result);
+  });
+}
 
 
-  module.promised = {};
+let actionsModule = {};
 
-  module.directClick = directClick;
-  module.promised.directClick = promiseWrapper(directClick);
+actionsModule.promised = {};
 
-  module.click = click;
-  module.promised.click = promiseWrapper(click);
+actionsModule.directClick = directClick;
+actionsModule.promised.directClick = wrapInPromise(directClick);
 
-  module.event = event;
-  module.promised.event = promiseWrapper(event);
+actionsModule.click = click;
+actionsModule.promised.click = wrapInPromise(click);
 
-  module.changeValue = changeValue;
-  module.promised.changeValue = promiseWrapper(changeValue);
+actionsModule.event = event;
+actionsModule.promised.event = wrapInPromise(event);
 
-  module.focusOn = focusOn;
-  module.promised.focusOn = promiseWrapper(focusOn);
+actionsModule.changeValue = changeValue;
+actionsModule.promised.changeValue = wrapInPromise(changeValue);
 
-  module.blur = blur;
-  module.promised.blur = promiseWrapper(blur);
+actionsModule.focusOn = focusOn;
+actionsModule.promised.focusOn = wrapInPromise(focusOn);
 
-  module.pickInSelect = pickInSelect;
-  module.promised.pickInSelect = promiseWrapper(pickInSelect);
+actionsModule.blur = blur;
+actionsModule.promised.blur = wrapInPromise(blur);
 
-  module.getText = getText;
-  module.promised.getText = promiseWrapper(getText);
+actionsModule.pickInSelect = pickInSelect;
+actionsModule.promised.pickInSelect = wrapInPromise(pickInSelect);
 
-  module.getValue = getValue;
-  module.promised.getValue = promiseWrapper(getValue);
+actionsModule.getText = getText;
+actionsModule.promised.getText = wrapInPromise(getText);
 
-  module.findElement = findElement;
-  module.promised.findElement = promiseWrapper(findElement);
+actionsModule.getValue = getValue;
+actionsModule.promised.getValue = wrapInPromise(getValue);
 
-  module.waitState = waitState;
-  module.promised.waitState = function(predicate, timeout = window.__defaultTimeout, refreshTime = window.__defaultRefreshTime) {
-    return new Promise((resolve, reject) => {
-      waitState(predicate, err => {
-        if (err) {
-          return reject(err);
-        }
+actionsModule.findElement = findElement;
+actionsModule.promised.findElement = wrapInPromise(findElement);
 
-        return resolve();
-      }, timeout, refreshTime);
-    });
-  };
+actionsModule.waitState = waitState;
+actionsModule.promised.waitState = function (predicate, timeout = _root.__defaultTimeout, refreshTime = _root.__defaultRefreshTime) {
+  return new Promise((resolve, reject) => {
+    waitState(predicate, err => {
+      if (err) {
+        return reject(err);
+      }
 
-  module.runPredicate = runPredicate;
-  module.setDefaultRefreshTime = setDefaultRefreshTime;
-  module.setDefaultTimeout = setDefaultTimeout;
-
-  return module;
+      return resolve();
+    }, timeout, refreshTime);
+  });
 };
+
+actionsModule.runPredicate = runPredicate;
+actionsModule.setDefaultRefreshTime = setDefaultRefreshTime;
+actionsModule.setDefaultTimeout = setDefaultTimeout;
+
+export default actionsModule;

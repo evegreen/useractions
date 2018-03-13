@@ -1,8 +1,6 @@
-'use strict';
-
-var assert = require('chai').assert;
-
-const INTERACT_MODULE_PATH = '../../src/interactModule';
+import {assert} from 'chai';
+import interactModule from '../../src/interactModule';
+let {click, directClick, event} = interactModule;
 
 // stub Event constructor
 global.Event = function(eventName, {bubbles, cancelable}) {
@@ -12,7 +10,6 @@ global.Event = function(eventName, {bubbles, cancelable}) {
 };
 
 describe('directClick method', () => {
-  let directClick = require(INTERACT_MODULE_PATH)().directClick;
   it('execute .click() function on element directly once', done => {
     let directlyClickedCount = 0;
     let doneCallback = function(err) {
@@ -44,7 +41,6 @@ describe('click method', () => {
       }
     };
     global.document = {querySelector: () => fakeElement};
-    let click = require(INTERACT_MODULE_PATH)().click;
 
     // act
     click('fakeSelector');
@@ -67,7 +63,6 @@ describe('event method', () => {
       }
     };
     global.document = {querySelector: () => fakeElement};
-    let event = require(INTERACT_MODULE_PATH)().event;
 
     // act
     event({type: 'myEvent', target: 'fakeSelector'});

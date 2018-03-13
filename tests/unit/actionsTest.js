@@ -1,12 +1,12 @@
 'use strict';
 
-var assert = require('chai').assert;
-var sinon = require('sinon');
+import {assert} from 'chai';
+import sinon from 'sinon';
 
 // stub window
 global.window = {};
 
-var actions = require('../../src/actions')();
+import actions from '../../src/actions';
 
 describe('actions', () => {
   describe('runPredicate method', () => {

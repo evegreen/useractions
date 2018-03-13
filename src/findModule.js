@@ -1,9 +1,8 @@
-'use strict';
-
-var getClassUtil = require('./getClassUtil');
-var isFunction = getClassUtil.isFunction;
-var isNumber = getClassUtil.isNumber;
-var isBoolean = getClassUtil.isBoolean;
+import _root from './globalRoot';
+import getClassUtil from './getClassUtil';
+let isFunction = getClassUtil.isFunction;
+let isNumber = getClassUtil.isNumber;
+let isBoolean = getClassUtil.isBoolean;
 
 function runPredicate (predicate) {
   if (isFunction(predicate)) {
@@ -22,8 +21,8 @@ function runPredicate (predicate) {
 }
 
 function waitState (predicate, cb,
-                    timeout = window.__defaultTimeout,
-                    refreshTime = window.__defaultRefreshTime,
+                    timeout = _root.__defaultTimeout,
+                    refreshTime = _root.__defaultRefreshTime,
                     startTime = Date.now()) {
   if (!isFunction(predicate)) {
     throw new Error('First argument of waitState is not predicate!');
@@ -71,7 +70,7 @@ function findElement (selectorOrElement, timeoutOrCb, cb) {
   }
 
   if (isFunction(timeoutOrCb)) {
-    return findElementNormalized(selectorOrElement, window.__defaultTimeout, timeoutOrCb);
+    return findElementNormalized(selectorOrElement, _root.__defaultTimeout, timeoutOrCb);
   }
 
   if (isNumber(timeoutOrCb)) {
@@ -91,6 +90,11 @@ function findElementNormalized (selectorOrElement, timeout, cb) {
   }, () => cb(null, foundElement), timeout);
 }
 
-exports.runPredicate = runPredicate;
-exports.waitState = waitState;
-exports.findElement = findElement;
+
+let findModule = {};
+
+findModule.runPredicate = runPredicate;
+findModule.waitState = waitState;
+findModule.findElement = findElement;
+
+export default findModule;

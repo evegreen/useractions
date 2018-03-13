@@ -1,12 +1,15 @@
-'use strict';
-
 let getClass = obj => ({}).toString.call(obj).slice(8, -1);
-exports.getClass = getClass;
-exports.isFunction = obj => getClass(obj) === 'Function';
-exports.isArray = obj => getClass(obj) === 'Array';
-exports.isNumber = obj => getClass(obj) === 'Number';
-exports.isString = obj => getClass(obj) === 'String';
-exports.isObject = obj => getClass(obj) === 'Object';
-exports.isBoolean = obj => getClass(obj) === 'Boolean';
-exports.isNull = obj => getClass(obj) === 'Null';
-exports.isUndefined = obj => getClass(obj) === 'Undefined';
+
+let getClassModule = {};
+
+getClassModule.getClass = getClass;
+getClassModule.isFunction = obj => getClass(obj) === 'Function';
+getClassModule.isArray = obj => getClass(obj) === 'Array';
+getClassModule.isNumber = obj => getClass(obj) === 'Number';
+getClassModule.isString = obj => getClass(obj) === 'String';
+getClassModule.isObject = obj => getClass(obj) === 'Object';
+getClassModule.isBoolean = obj => getClass(obj) === 'Boolean';
+getClassModule.isNull = obj => getClass(obj) === 'Null';
+getClassModule.isUndefined = obj => getClass(obj) === 'Undefined';
+
+export default getClassModule;

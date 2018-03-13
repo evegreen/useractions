@@ -1,10 +1,9 @@
-'use strict';
+import actions from './actions';
+import {version} from '../package.json';
 
-var packageJson = require('./package.json');
-var actions = require('./src/actions')();
 
 function getVersion () {
-  return `UserActions: ${packageJson.version}`;
+  return `UserActions: ${version}`;
 }
 
 actions.version = getVersion;
