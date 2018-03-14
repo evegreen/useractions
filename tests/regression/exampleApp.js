@@ -1,6 +1,7 @@
 'use strict';
 
 /* eslint no-unused-vars:0 */
+/* eslint strict:0 */
 
 // VIEW ACTIONS
 
