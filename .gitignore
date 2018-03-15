@@ -3,7 +3,7 @@
 *.iml
 
 # nohup output #
-# nohup.out # TODO: uncomment
+nohup.out
 
 # linux temp files #
 *~
@@ -20,4 +20,4 @@
 /coverage
 
 # build
-# /dist # TODO: uncomment
+/dist
