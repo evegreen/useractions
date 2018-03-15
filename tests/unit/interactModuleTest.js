@@ -1,6 +1,6 @@
 import {assert} from 'chai';
-import interactModule from '../../src/interactModule';
-let {click, directClick, event} = interactModule;
+import {click, directClick, event} from '../../src/interactModule';
+
 
 // stub Event constructor
 global.Event = function(eventName, {bubbles, cancelable}) {

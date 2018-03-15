@@ -1,16 +1,9 @@
-import {runPredicate, waitState, findElement} from './findModule';
-
+import { runPredicate, waitState, findElement } from './findModule';
 import wrapInPromise from './promiseWrapper';
 import _root from './globalRoot';
-import interactModule from './interactModule';
-let directClick = interactModule.directClick;
-let click = interactModule.click;
-let event = interactModule.event;
-let changeValue = interactModule.changeValue;
-let focusOn = interactModule.focusOn;
-let blur = interactModule.blur;
-let pickInSelect = interactModule.pickInSelect;
-
+import {
+  directClick, click, event, changeValue, focusOn, blur, pickInSelect
+} from './interactModule';
 
 _root.__defaultTimeout = 2000;
 _root.__defaultRefreshTime = 300;

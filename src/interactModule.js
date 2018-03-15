@@ -2,7 +2,11 @@ import {findElement} from './findModule';
 import {isNumber, isString} from './getClassUtil';
 
 
-function directClick(selectorOrElement, cb = simpleThrowerCallback) {
+function simpleThrowerCallback(err) {
+  if (err) throw err;
+}
+
+export function directClick(selectorOrElement, cb = simpleThrowerCallback) {
   if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
@@ -20,7 +24,7 @@ function directClick(selectorOrElement, cb = simpleThrowerCallback) {
 /**
  * @param {string|Element} target - target element or its selector
 */
-function click(target, cb = simpleThrowerCallback) {
+export function click(target, cb = simpleThrowerCallback) {
   if (!target) {
     throw new Error('selector argument is not defined');
   }
@@ -40,7 +44,7 @@ function click(target, cb = simpleThrowerCallback) {
  * @param {string} options.type - event name e.g. "click"
  * @param {string|Element} options.target - target element or its selector
 */
-function event(
+export function event(
   { type, target, bubbles = true, cancelable = true },
   cb = simpleThrowerCallback
 ) {
@@ -70,7 +74,7 @@ function event(
 /**
  * @param {string|Element} targetInput - target input element or its selector
 */
-function focusOn(targetInput, cb = simpleThrowerCallback) {
+export function focusOn(targetInput, cb = simpleThrowerCallback) {
   if (!targetInput) {
     throw new Error('inputSelector argument is not defined');
   }
@@ -88,7 +92,7 @@ function focusOn(targetInput, cb = simpleThrowerCallback) {
 /**
  * @param {string|Element} target - target element or its selector
  */
-function blur(target, cb = simpleThrowerCallback) {
+export function blur(target, cb = simpleThrowerCallback) {
   if (!target) {
     throw new Error('selector argument is not defined');
   }
@@ -103,7 +107,7 @@ function blur(target, cb = simpleThrowerCallback) {
   });
 }
 
-function changeValue(selectorOrElement, newValue, cb = simpleThrowerCallback) {
+export function changeValue(selectorOrElement, newValue, cb = simpleThrowerCallback) {
   if (!selectorOrElement) {
     throw new Error('selector argument is not defined');
   }
@@ -118,8 +122,10 @@ function changeValue(selectorOrElement, newValue, cb = simpleThrowerCallback) {
   });
 }
 
-// option - number or value or innerHTML
-function pickInSelect(selectSelectorOrElement, option, cb = simpleThrowerCallback) {
+/**
+ * @param {Number | String} option - number or value or innerHTML
+ */
+export function pickInSelect(selectSelectorOrElement, option, cb = simpleThrowerCallback) {
   findElement(selectSelectorOrElement, (err, selectElement) => {
     if (err) return cb(err);
 
@@ -169,19 +175,3 @@ function pickInSelect(selectSelectorOrElement, option, cb = simpleThrowerCallbac
     return cb(new Error('option parameter is not string or number'));
   });
 }
-
-function simpleThrowerCallback(err) {
-  if (err) throw err;
-}
-
-
-let interactModule = {};
-interactModule.directClick = directClick;
-interactModule.click = click;
-interactModule.event = event;
-interactModule.focusOn = focusOn;
-interactModule.blur = blur;
-interactModule.changeValue = changeValue;
-interactModule.pickInSelect = pickInSelect;
-
-export default interactModule;
