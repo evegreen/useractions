@@ -1,10 +1,11 @@
 import {assert} from 'chai';
-import getClassUtil from '../../src/getClassUtil';
+import {
+  getClass, isFunction, isArray, isNumber, isString,
+  isObject, isNull, isUndefined, isBoolean
+} from '../../src/getClassUtil';
 
 describe('getClassUtil', () => {
   describe('getClass method', () => {
-    let getClass = getClassUtil.getClass;
-
     it('returns "Function" when get function', done => {
       let myFunc = function() {};
       assert.equal(getClass(myFunc), 'Function');
@@ -55,8 +56,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isFunction method', () => {
-    let isFunction = getClassUtil.isFunction;
-
     it('try function', done => {
       assert(isFunction((function() {})));
       done();
@@ -74,8 +73,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isArray method', () => {
-    let isArray = getClassUtil.isArray;
-
     it('try array', done => {
       assert(isArray([]));
       done();
@@ -88,8 +85,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isNumber method', () => {
-    let isNumber = getClassUtil.isNumber;
-
     it('try number', done => {
       assert(isNumber(5));
       done();
@@ -102,8 +97,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isString method', () => {
-    let isString = getClassUtil.isString;
-
     it('try string', done => {
       assert(isString('my string'));
       done();
@@ -116,8 +109,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isObject method', () => {
-    let isObject = getClassUtil.isObject;
-
     it('try object', done => {
       assert(isObject({}));
       done();
@@ -135,8 +126,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isNull method', () => {
-    let isNull = getClassUtil.isNull;
-
     it('try null', done => {
       assert(isNull(null));
       done();
@@ -149,8 +138,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isUndefined method', () => {
-    let isUndefined = getClassUtil.isUndefined;
-
     it('try undefined', done => {
       let lol = {};
       assert(isUndefined(lol.undef));
@@ -165,8 +152,6 @@ describe('getClassUtil', () => {
   });
 
   describe('isBoolean method', () => {
-    let isBoolean = getClassUtil.isBoolean;
-
     it('try true', done => {
       assert(isBoolean(true));
       done();

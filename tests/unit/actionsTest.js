@@ -1,12 +1,13 @@
 'use strict';
 
+/* eslint strict:0 */
+
+import actions from '../../src/actions';
 import {assert} from 'chai';
 import sinon from 'sinon';
 
 // stub window
 global.window = {};
-
-import actions from '../../src/actions';
 
 describe('actions', () => {
   describe('runPredicate method', () => {

@@ -2,6 +2,9 @@
 .idea/
 *.iml
 
+# nohup output #
+# nohup.out # TODO: uncomment
+
 # linux temp files #
 *~
 
@@ -13,7 +16,8 @@
 *.diff
 *.patch
 
-**/node_modules/**
-**/bower_components/**
-**/coverage/**
-yarn.lock
+/node_modules
+/coverage
+
+# build
+# /dist # TODO: uncomment

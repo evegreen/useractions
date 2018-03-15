@@ -1,9 +1,6 @@
-import getClassUtil from './getClassUtil';
-let isNumber = getClassUtil.isNumber;
-let isString = getClassUtil.isString;
+import {findElement} from './findModule';
+import {isNumber, isString} from './getClassUtil';
 
-import findModule from './findModule';
-let findElement = findModule.findElement;
 
 function directClick(selectorOrElement, cb = simpleThrowerCallback) {
   if (!selectorOrElement) {

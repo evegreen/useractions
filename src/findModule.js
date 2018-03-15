@@ -1,10 +1,8 @@
 import _root from './globalRoot';
-import getClassUtil from './getClassUtil';
-let isFunction = getClassUtil.isFunction;
-let isNumber = getClassUtil.isNumber;
-let isBoolean = getClassUtil.isBoolean;
+import {isFunction, isNumber, isBoolean} from './getClassUtil';
 
-function runPredicate (predicate) {
+
+export function runPredicate (predicate) {
   if (isFunction(predicate)) {
     try {
       let result = predicate();
@@ -20,7 +18,7 @@ function runPredicate (predicate) {
   throw new Error('Argument is not predicate function!');
 }
 
-function waitState (predicate, cb,
+export function waitState (predicate, cb,
                     timeout = _root.__defaultTimeout,
                     refreshTime = _root.__defaultRefreshTime,
                     startTime = Date.now()) {
@@ -55,7 +53,7 @@ function checkFoundElement (element, selectorForError) {
   throw new Error('Can\'t find element, selector = ' + selectorForError);
 }
 
-function findElement (selectorOrElement, timeoutOrCb, cb) {
+export function findElement (selectorOrElement, timeoutOrCb, cb) {
   if (!selectorOrElement) {
     throw new Error('first argument of findElement() undefined, it must be css selector!');
   }
@@ -89,12 +87,3 @@ function findElementNormalized (selectorOrElement, timeout, cb) {
     return checkFoundElement(foundElement);
   }, () => cb(null, foundElement), timeout);
 }
-
-
-let findModule = {};
-
-findModule.runPredicate = runPredicate;
-findModule.waitState = waitState;
-findModule.findElement = findElement;
-
-export default findModule;

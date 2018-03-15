@@ -1,12 +1,14 @@
 'use strict';
 
-var assert = chai.assert;
+/* eslint strict:0 */
 
-var actions = userActions;
-var promisedActions = userActions.promised;
+let assert = chai.assert; // eslint-disable-line no-undef
+
+let actions = userActions; // eslint-disable-line no-undef
+let promisedActions = actions.promised;
 
 let runnerState = null;
-mocha.setup('bdd');
+mocha.setup('bdd'); // eslint-disable-line no-undef
 
 // eslint-disable-next-line no-undef
 after(() => {
@@ -263,7 +265,8 @@ function runTests () {
   let mainBlock = document.querySelector('#main');
   document.body.insertBefore(mochaBlock, mainBlock);
 
-  runnerState = mocha.run();
+  runnerState = mocha.run(); // eslint-disable-line no-undef
 }
 
+// in this example, we will run tests automatically
 runTests();

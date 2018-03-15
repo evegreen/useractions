@@ -1,8 +1,7 @@
-import findModule from './findModule';
-let runPredicate = findModule.runPredicate;
-let waitState = findModule.waitState;
-let findElement = findModule.findElement;
+import {runPredicate, waitState, findElement} from './findModule';
 
+import wrapInPromise from './promiseWrapper';
+import _root from './globalRoot';
 import interactModule from './interactModule';
 let directClick = interactModule.directClick;
 let click = interactModule.click;
@@ -11,9 +10,6 @@ let changeValue = interactModule.changeValue;
 let focusOn = interactModule.focusOn;
 let blur = interactModule.blur;
 let pickInSelect = interactModule.pickInSelect;
-
-import wrapInPromise from './promiseWrapper';
-import _root from './globalRoot';
 
 
 _root.__defaultTimeout = 2000;
