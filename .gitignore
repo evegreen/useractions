@@ -16,7 +16,11 @@ nohup.out
 *.diff
 *.patch
 
+# dependencies
 /node_modules
+
+# coverage files
+/.nyc_output
 /coverage
 
 # build
