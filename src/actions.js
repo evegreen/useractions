@@ -1,8 +1,14 @@
-import { runPredicate, waitState, findElement } from './findModule';
+import {runPredicate, waitState, findElement} from './findModule';
 import wrapInPromise from './promiseWrapper';
 import _root from './globalRoot';
 import {
-  directClick, click, event, changeValue, focusOn, blur, pickInSelect
+  directClick,
+  click,
+  event,
+  changeValue,
+  focusOn,
+  blur,
+  pickInSelect
 } from './interactModule';
 
 _root.__defaultTimeout = 2000;
@@ -29,7 +35,6 @@ function getValue(selectorOrElement, cb) {
     return cb(null, result);
   });
 }
-
 
 let actionsModule = {};
 
@@ -66,15 +71,24 @@ actionsModule.findElement = findElement;
 actionsModule.promised.findElement = wrapInPromise(findElement);
 
 actionsModule.waitState = waitState;
-actionsModule.promised.waitState = function (predicate, timeout = _root.__defaultTimeout, refreshTime = _root.__defaultRefreshTime) {
+actionsModule.promised.waitState = function(
+  predicate,
+  timeout = _root.__defaultTimeout,
+  refreshTime = _root.__defaultRefreshTime
+) {
   return new Promise((resolve, reject) => {
-    waitState(predicate, err => {
-      if (err) {
-        return reject(err);
-      }
+    waitState(
+      predicate,
+      err => {
+        if (err) {
+          return reject(err);
+        }
 
-      return resolve();
-    }, timeout, refreshTime);
+        return resolve();
+      },
+      timeout,
+      refreshTime
+    );
   });
 };
 

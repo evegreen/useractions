@@ -1,4 +1,4 @@
-export const getClass = obj => ({}).toString.call(obj).slice(8, -1);
+export const getClass = obj => ({}.toString.call(obj).slice(8, -1));
 
 export const isFunction = obj => getClass(obj) === 'Function';
 export const isArray = obj => getClass(obj) === 'Array';

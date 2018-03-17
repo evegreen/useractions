@@ -1,7 +1,6 @@
 import {assert} from 'chai';
 import {click, directClick, event} from '../../src/interactModule';
 
-
 // stub Event constructor
 global.Event = function(eventName, {bubbles, cancelable}) {
   this.type = eventName;
@@ -21,7 +20,9 @@ describe('directClick method', () => {
 
     let fakeElement = {
       nodeType: 1,
-      click: () => { directlyClickedCount++; }
+      click: () => {
+        directlyClickedCount++;
+      }
     };
 
     directClick(fakeElement, doneCallback);

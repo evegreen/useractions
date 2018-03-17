@@ -16,7 +16,7 @@
     "regression-test": "node ./tests/regression/openRegressionTestPage.js",
     "build-prod": "npm run lint && npm run test && npm run build && npm run regression-test",
     "coverage": "nyc --reporter=html  mocha --require babel-register tests/unit/**/*.js",
-    "prettier": "prettier src/**/*.js tests/**/*.js"
+    "prettier": "prettier --single-quote --no-bracket-spacing --write src/**/*.js tests/**/*.js"
   },
   "files": [
     "dist",

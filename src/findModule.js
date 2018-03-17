@@ -1,8 +1,7 @@
 import _root from './globalRoot';
 import {isFunction, isNumber, isBoolean} from './getClassUtil';
 
-
-export function runPredicate (predicate) {
+export function runPredicate(predicate) {
   if (isFunction(predicate)) {
     try {
       let result = predicate();
@@ -18,10 +17,13 @@ export function runPredicate (predicate) {
   throw new Error('Argument is not predicate function!');
 }
 
-export function waitState (predicate, cb,
-                    timeout = _root.__defaultTimeout,
-                    refreshTime = _root.__defaultRefreshTime,
-                    startTime = Date.now()) {
+export function waitState(
+  predicate,
+  cb,
+  timeout = _root.__defaultTimeout,
+  refreshTime = _root.__defaultRefreshTime,
+  startTime = Date.now()
+) {
   if (!isFunction(predicate)) {
     throw new Error('First argument of waitState is not predicate!');
   }
@@ -41,24 +43,35 @@ export function waitState (predicate, cb,
       return cb(new Error('Timeout in waitState occurred!'));
     }
 
-    setTimeout(waitState, refreshTime, predicate, cb, timeout, refreshTime, startTime);
+    setTimeout(
+      waitState,
+      refreshTime,
+      predicate,
+      cb,
+      timeout,
+      refreshTime,
+      startTime
+    );
   }
 }
 
-function checkFoundElement (element, selectorForError) {
+function checkFoundElement(element, selectorForError) {
   if (element != null) {
     return true;
   }
 
-  throw new Error('Can\'t find element, selector = ' + selectorForError);
+  throw new Error("Can't find element, selector = " + selectorForError);
 }
 
-export function findElement (selectorOrElement, timeoutOrCb, cb) {
+export function findElement(selectorOrElement, timeoutOrCb, cb) {
   if (!selectorOrElement) {
-    throw new Error('first argument of findElement() undefined, it must be css selector!');
+    throw new Error(
+      'first argument of findElement() undefined, it must be css selector!'
+    );
   }
 
-  let secondArgumentErrorMessage = 'second argument of findElement() must be timeout number or a callback function!';
+  let secondArgumentErrorMessage =
+    'second argument of findElement() must be timeout number or a callback function!';
   if (!timeoutOrCb) {
     throw new Error(secondArgumentErrorMessage);
   }
@@ -68,7 +81,11 @@ export function findElement (selectorOrElement, timeoutOrCb, cb) {
   }
 
   if (isFunction(timeoutOrCb)) {
-    return findElementNormalized(selectorOrElement, _root.__defaultTimeout, timeoutOrCb);
+    return findElementNormalized(
+      selectorOrElement,
+      _root.__defaultTimeout,
+      timeoutOrCb
+    );
   }
 
   if (isNumber(timeoutOrCb)) {
@@ -76,14 +93,18 @@ export function findElement (selectorOrElement, timeoutOrCb, cb) {
   }
 }
 
-function findElementNormalized (selectorOrElement, timeout, cb) {
+function findElementNormalized(selectorOrElement, timeout, cb) {
   if (selectorOrElement.nodeType) {
     return cb(null, selectorOrElement);
   }
 
   let foundElement;
-  waitState(() => {
-    foundElement = document.querySelector(selectorOrElement);
-    return checkFoundElement(foundElement);
-  }, () => cb(null, foundElement), timeout);
+  waitState(
+    () => {
+      foundElement = document.querySelector(selectorOrElement);
+      return checkFoundElement(foundElement);
+    },
+    () => cb(null, foundElement),
+    timeout
+  );
 }

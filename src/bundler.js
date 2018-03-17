@@ -1,8 +1,7 @@
 import actions from './actions';
 import {version} from '../package.json';
 
-
-function getVersion () {
+function getVersion() {
   return `UserActions: ${version}`;
 }
 

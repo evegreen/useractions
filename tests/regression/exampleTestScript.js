@@ -23,7 +23,6 @@ after(() => {
 });
 
 describe('click method', () => {
-
   let click = actions.click;
 
   it('works when check immediate result after click', done => {
@@ -121,7 +120,6 @@ describe('changeValue method', () => {
 });
 
 describe('getValue method', () => {
-
   let getValue = actions.getValue;
 
   it('works with simple input', done => {
@@ -135,7 +133,6 @@ describe('getValue method', () => {
 });
 
 describe('getText method', () => {
-
   let getText = actions.getText;
 
   it('works with simple div element with inner text', done => {
@@ -159,7 +156,9 @@ describe('findElement method', () => {
   });
 
   it('can be called with already found element', done => {
-    let foundElement = document.querySelector('#forFindElementByAlreadyFoundElement');
+    let foundElement = document.querySelector(
+      '#forFindElementByAlreadyFoundElement'
+    );
     findElement(foundElement, (err, element) => {
       assert.isNull(err);
       assert.equal(element.innerHTML, 'expected result two');
@@ -169,13 +168,14 @@ describe('findElement method', () => {
 });
 
 describe('pickInSelect method', () => {
-
   let pickInSelect = actions.pickInSelect;
 
   it('pick by option number', done => {
     pickInSelect('select#forPickInSelectByOptionNumber', 1, err => {
       assert.isNull(err);
-      let actualValue = document.querySelector('select#forPickInSelectByOptionNumber').value;
+      let actualValue = document.querySelector(
+        'select#forPickInSelectByOptionNumber'
+      ).value;
       assert.equal(actualValue, 'mercedez');
       done();
     });
@@ -184,7 +184,8 @@ describe('pickInSelect method', () => {
   it('pick by option value', done => {
     pickInSelect('select#forPickInSelectByValue', 'bmw', err => {
       assert.isNull(err);
-      let actualValue = document.querySelector('select#forPickInSelectByValue').value;
+      let actualValue = document.querySelector('select#forPickInSelectByValue')
+        .value;
       assert.equal(actualValue, 'bmw');
       done();
     });
@@ -193,7 +194,9 @@ describe('pickInSelect method', () => {
   it('pick by option innerHtml', done => {
     pickInSelect('select#forPickInSelectByInnerHtml', 'Mercedez Benz', err => {
       assert.isNull(err);
-      let actualValue = document.querySelector('select#forPickInSelectByInnerHtml').value;
+      let actualValue = document.querySelector(
+        'select#forPickInSelectByInnerHtml'
+      ).value;
       assert.equal(actualValue, 'mercedez');
       done();
     });
@@ -207,18 +210,19 @@ describe('promise style usage', () => {
     let changeValue = promisedActions.changeValue;
 
     click('input#forPromiseChainTest')
-    .then(() => getText('div#promiseChainSecondDiv'))
-    .then(text => changeValue('input#promiseChainSecondInput', text))
-    .then(() => click('input#promiseChainSecondButton'))
-    .then(() => getText('div#promiseChainThirdDiv'))
-    .then(text => {
-      assert.equal(text, 'promiseChainTextResult1 is given');
-      done();
-    }).catch(err => {
-      if (err) {
-        throw err;
-      }
-    });
+      .then(() => getText('div#promiseChainSecondDiv'))
+      .then(text => changeValue('input#promiseChainSecondInput', text))
+      .then(() => click('input#promiseChainSecondButton'))
+      .then(() => getText('div#promiseChainThirdDiv'))
+      .then(text => {
+        assert.equal(text, 'promiseChainTextResult1 is given');
+        done();
+      })
+      .catch(err => {
+        if (err) {
+          throw err;
+        }
+      });
   });
 });
 
@@ -259,7 +263,7 @@ describe('can write step-based integration tests', () => {
 
 // for start tests, just run this function from browser console, or right in test script
 // eslint-disable-next-line no-unused-vars
-function runTests () {
+function runTests() {
   let mochaBlock = document.createElement('div');
   mochaBlock.id = 'mocha';
   let mainBlock = document.querySelector('#main');

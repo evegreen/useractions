@@ -11,8 +11,7 @@ describe('promise wrappers', () => {
 
     let promisedFuncWithoutArgs = wrapInPromise(funcWithoutArgs);
 
-    promisedFuncWithoutArgs()
-    .then(() => {
+    promisedFuncWithoutArgs().then(() => {
       assert.isTrue(funcCalled);
       done();
     });
@@ -28,8 +27,7 @@ describe('promise wrappers', () => {
 
     let promisedFuncWithArg = wrapInPromise(funcWithArg);
 
-    promisedFuncWithArg('example arg')
-    .then(() => {
+    promisedFuncWithArg('example arg').then(() => {
       assert.isTrue(funcCalled);
       done();
     });
@@ -46,8 +44,7 @@ describe('promise wrappers', () => {
 
     let promisedFuncWith2Args = wrapInPromise(funcWith2Args);
 
-    promisedFuncWith2Args('example arg1', 'example arg2')
-    .then(() => {
+    promisedFuncWith2Args('example arg1', 'example arg2').then(() => {
       assert.isTrue(funcCalled);
       done();
     });
@@ -60,8 +57,7 @@ describe('promise wrappers', () => {
 
     let promisedFuncWithResult = wrapInPromise(funcWithResult);
 
-    promisedFuncWithResult()
-    .then(result => {
+    promisedFuncWithResult().then(result => {
       assert.equal(result, 'example result');
       done();
     });
@@ -74,8 +70,7 @@ describe('promise wrappers', () => {
 
     let promisedFuncThatThrows = wrapInPromise(funcThatThrows);
 
-    promisedFuncThatThrows()
-    .catch(err => {
+    promisedFuncThatThrows().catch(err => {
       assert.equal(err, 'example error');
       done();
     });

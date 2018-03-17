@@ -5,8 +5,10 @@
 
 // VIEW ACTIONS
 
-function immediateResultButtonClicked () {
-  let immediateResultButton = document.querySelector('input#immediateResultButton');
+function immediateResultButtonClicked() {
+  let immediateResultButton = document.querySelector(
+    'input#immediateResultButton'
+  );
   let newDiv = document.createElement('div');
   newDiv.id = 'immediateResult';
   newDiv.innerHTML = 'immediateResult';
@@ -14,12 +16,14 @@ function immediateResultButtonClicked () {
 }
 
 var onceButtonWasClickedCount = 0;
-function onceButtonClicked () {
+function onceButtonClicked() {
   onceButtonWasClickedCount++;
 }
 
-function promiseChainFirstClick () {
-  let promiseChainFirstButton = document.querySelector('input#forPromiseChainTest');
+function promiseChainFirstClick() {
+  let promiseChainFirstButton = document.querySelector(
+    'input#forPromiseChainTest'
+  );
 
   let secondDiv = document.createElement('div');
   let secondInput = document.createElement('input');
@@ -45,9 +49,13 @@ function promiseChainFirstClick () {
   }, 900);
 }
 
-function promiseChainSecondClick () {
-  let promiseChainSecondInput = document.querySelector('input#promiseChainSecondInput');
-  let promiseChainSecondButton = document.querySelector('input#promiseChainSecondButton');
+function promiseChainSecondClick() {
+  let promiseChainSecondInput = document.querySelector(
+    'input#promiseChainSecondInput'
+  );
+  let promiseChainSecondButton = document.querySelector(
+    'input#promiseChainSecondButton'
+  );
 
   let secondInputText = promiseChainSecondInput.value;
 
@@ -59,9 +67,11 @@ function promiseChainSecondClick () {
   }, 300);
 }
 
-function stepsExampleClicked () {
+function stepsExampleClicked() {
   setTimeout(() => {
-    let stepsExampleFirstButton = document.querySelector('input#forStepsExample');
+    let stepsExampleFirstButton = document.querySelector(
+      'input#forStepsExample'
+    );
     let secondButton = document.createElement('input');
     secondButton.type = 'button';
     secondButton.onclick = stepsExampleSecondButtonClicked;
@@ -71,9 +81,11 @@ function stepsExampleClicked () {
   }, 300);
 }
 
-function stepsExampleSecondButtonClicked () {
+function stepsExampleSecondButtonClicked() {
   setTimeout(() => {
-    let stepsExampleSecondButton = document.querySelector('input#stepsExampleSecondButton');
+    let stepsExampleSecondButton = document.querySelector(
+      'input#stepsExampleSecondButton'
+    );
     let thirdButton = document.createElement('input');
     thirdButton.type = 'button';
     thirdButton.onclick = stepsExampleThirdButtonClicked;
@@ -83,9 +95,11 @@ function stepsExampleSecondButtonClicked () {
   }, 300);
 }
 
-function stepsExampleThirdButtonClicked () {
+function stepsExampleThirdButtonClicked() {
   setTimeout(() => {
-    let stepsExampleThirdButton = document.querySelector('input#stepsExampleThirdButton');
+    let stepsExampleThirdButton = document.querySelector(
+      'input#stepsExampleThirdButton'
+    );
     let stepsExampleLastDiv = document.createElement('div');
     stepsExampleLastDiv.id = 'stepsExampleLastDiv';
     stepsExampleLastDiv.innerHTML = 'stepsExampleFinalText';
@@ -95,6 +109,6 @@ function stepsExampleThirdButtonClicked () {
 
 // OTHER
 
-function insertAfter (newNode, referenceNode) {
+function insertAfter(newNode, referenceNode) {
   referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }

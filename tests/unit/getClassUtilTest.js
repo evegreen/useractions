@@ -1,7 +1,14 @@
 import {assert} from 'chai';
 import {
-  getClass, isFunction, isArray, isNumber, isString,
-  isObject, isNull, isUndefined, isBoolean
+  getClass,
+  isFunction,
+  isArray,
+  isNumber,
+  isString,
+  isObject,
+  isNull,
+  isUndefined,
+  isBoolean
 } from '../../src/getClassUtil';
 
 describe('getClassUtil', () => {
@@ -57,7 +64,7 @@ describe('getClassUtil', () => {
 
   describe('isFunction method', () => {
     it('try function', done => {
-      assert(isFunction((function() {})));
+      assert(isFunction(function() {}));
       done();
     });
 
