@@ -1,6 +1,0 @@
-V --> fix testing (window not defined)
-V --> fix linting (why cannot install "babel-eslint" module ?)
-o --> review all files and optimize imports
-V --> need fix coverage
-V --> upgrade sinon package
-o --> edit docs
