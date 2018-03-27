@@ -2,7 +2,7 @@
   "name": "useractions",
   "title": "UserActions",
   "main": "dist/useractionsBundle.js",
-  "version": "0.7.0-dev.1",
+  "version": "0.7.0",
   "description": "Library, that helps simulate user actions for write fast functional tests",
   "directories": {
     "test": "tests"
