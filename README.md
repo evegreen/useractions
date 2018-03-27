@@ -1,18 +1,12 @@
 # **UserActions**
 
-Library, that helps simulate user actions for write fast functional tests
+Library, that helps simulate user actions for write fast functional tests fro browsers
 
 ## Getting started
 
 ### Npm
 
     npm install useractions --save-dev
-
-### Bower
-
-    bower install useractions --save-dev
-
-Or just fetch build under [dist](https://github.com/evegreen/useractions/tree/master/dist).
 
 ---
 
@@ -23,6 +17,7 @@ Or just fetch build under [dist](https://github.com/evegreen/useractions/tree/ma
 - [Configure timeouts](#configure-timeouts)
 - [Promisified methods](#promisified-methods)
 - [Already found element](#already-found-element)
+- [Todo section](#todo)
 - [Other](#other)
 
 ---
@@ -227,6 +222,17 @@ var click = promiseActions.click;
 findElement('#buttonForClick')
 .then(button => click(button));
 ```
+
+---
+
+## TODO
+- [ ] make possible es6 imports, not only IIFE
+- [ ] console-browser integration for test runs
+- [ ] step synchronization for non SPA websites (or crossdomain websites)
+- [ ] headless chrome usage examples
+- [ ] test runs results keeping
+- [ ] test runs results statistics
+- [ ] fix stacktrace after waiting recursive functions
 
 ---
 

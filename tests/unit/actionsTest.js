@@ -1,45 +1,58 @@
 'use strict';
 
-var assert = require('chai').assert;
-var sinon = require('sinon');
+/* eslint strict:0 */
+
+import actions from '../../src/actions';
+import {assert} from 'chai';
+import sinon from 'sinon';
 
 // stub window
 global.window = {};
-
-var actions = require('../../src/actions')();
 
 describe('actions', () => {
   describe('runPredicate method', () => {
     let runPredicate = actions.runPredicate;
 
     it('returns true after predicate returns true', done => {
-      let result = runPredicate(() => {return true;});
+      let result = runPredicate(() => {
+        return true;
+      });
       assert.isTrue(result);
       done();
     });
 
     it('returns false after predicate returns false', done => {
-      let result = runPredicate(() => {return false;});
+      let result = runPredicate(() => {
+        return false;
+      });
       assert.isFalse(result);
       done();
     });
 
     it('returns false after predicate returns nothing', done => {
-      let result = runPredicate(() => {return;});
+      let result = runPredicate(() => {
+        return;
+      });
       assert.isFalse(result);
       done();
     });
 
     it('returns false after predicate throws error', done => {
-      let result = runPredicate(() => {throw new Error('lol');});
+      let result = runPredicate(() => {
+        throw new Error('lol');
+      });
       assert.isFalse(result);
       done();
     });
 
     it('throws error, if predicate is not function', done => {
-      assert.throws(() => {
-        return runPredicate(5);
-      }, Error, 'Argument is not predicate function!');
+      assert.throws(
+        () => {
+          return runPredicate(5);
+        },
+        Error,
+        'Argument is not predicate function!'
+      );
       done();
     });
 
@@ -51,33 +64,49 @@ describe('actions', () => {
     let waitState = actions.waitState;
 
     it('throws error without predicate', done => {
-      assert.throws(() => {
-        waitState();
-      }, Error, 'First argument of waitState is not predicate!');
+      assert.throws(
+        () => {
+          waitState();
+        },
+        Error,
+        'First argument of waitState is not predicate!'
+      );
       done();
     });
 
     it('throws error without callback', done => {
-      assert.throws(() => {
-        waitState(() => {return true;});
-      }, Error, 'Second argument of waitState is not function!');
+      assert.throws(
+        () => {
+          waitState(() => {
+            return true;
+          });
+        },
+        Error,
+        'Second argument of waitState is not function!'
+      );
       done();
     });
 
     it('runs callback immediately, when predicate is immediately true', done => {
       let startTime = process.hrtime()[1];
-      waitState(() => true, () => {
-        let resultTime = process.hrtime()[1] - startTime;
-        assert(resultTime < 400000);
-        done();
-      });
+      waitState(
+        () => true,
+        () => {
+          let resultTime = process.hrtime()[1] - startTime;
+          assert(resultTime < 400000);
+          done();
+        }
+      );
     });
 
     it('runs callback with null-first argument, when predicate immediately true', done => {
-      waitState(() => true, err => {
-        assert.isNull(err);
-        done();
-      });
+      waitState(
+        () => true,
+        err => {
+          assert.isNull(err);
+          done();
+        }
+      );
     });
 
     it('runs callback with null-first argument, when predicate is false, then true', done => {
@@ -88,24 +117,36 @@ describe('actions', () => {
         return results[resultIndex];
       };
 
-      waitState(predicate, err => {
-        assert.isNull(err);
-        done();
-      }, 5, 2);
+      waitState(
+        predicate,
+        err => {
+          assert.isNull(err);
+          done();
+        },
+        5,
+        2
+      );
     });
 
     it('runs callback with timeout error, when predicate is always false', done => {
-      waitState(() => false, err => {
-        assert.typeOf(err, 'error');
-        assert.equal(err.message, 'Timeout in waitState occurred!');
-        done();
-      }, 5, 2);
+      waitState(
+        () => false,
+        err => {
+          assert.typeOf(err, 'error');
+          assert.equal(err.message, 'Timeout in waitState occurred!');
+          done();
+        },
+        5,
+        2
+      );
     });
 
     it('writes warning, if timeout less then refresh predicate time', done => {
       let consoleWarnSpy = sinon.spy(console, 'warn');
       waitState(() => {}, () => {}, 2, 4);
-      let isCalled = consoleWarnSpy.calledWith('Warning: Timeout argument less then refreshTime argument!');
+      let isCalled = consoleWarnSpy.calledWith(
+        'Warning: Timeout argument less then refreshTime argument!'
+      );
       assert.isTrue(isCalled);
       consoleWarnSpy.restore();
       done();
@@ -116,14 +157,22 @@ describe('actions', () => {
     let findElement = actions.findElement;
 
     it('throws error without arguments', done => {
-      assert.throws(findElement, Error, 'first argument of findElement() undefined, it must be css selector!');
+      assert.throws(
+        findElement,
+        Error,
+        'first argument of findElement() undefined, it must be css selector!'
+      );
       done();
     });
 
     it('throws error with selector argument only', done => {
-      assert.throws(() => {
-        findElement('my selector');
-      }, Error, 'second argument of findElement() must be timeout number or a callback function!');
+      assert.throws(
+        () => {
+          findElement('my selector');
+        },
+        Error,
+        'second argument of findElement() must be timeout number or a callback function!'
+      );
       done();
     });
 
@@ -159,7 +208,6 @@ describe('actions', () => {
   describe('pickInSelect method', () => {
     let pickInSelect = actions.pickInSelect;
     it('can be called without callback', done => {
-
       // stubs
       let stubSelectElement = {
         value: 'oldValue',

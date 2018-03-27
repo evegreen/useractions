@@ -1,12 +1,10 @@
-'use strict';
+export const getClass = obj => ({}.toString.call(obj).slice(8, -1));
 
-let getClass = obj => ({}).toString.call(obj).slice(8, -1);
-exports.getClass = getClass;
-exports.isFunction = obj => getClass(obj) === 'Function';
-exports.isArray = obj => getClass(obj) === 'Array';
-exports.isNumber = obj => getClass(obj) === 'Number';
-exports.isString = obj => getClass(obj) === 'String';
-exports.isObject = obj => getClass(obj) === 'Object';
-exports.isBoolean = obj => getClass(obj) === 'Boolean';
-exports.isNull = obj => getClass(obj) === 'Null';
-exports.isUndefined = obj => getClass(obj) === 'Undefined';
+export const isFunction = obj => getClass(obj) === 'Function';
+export const isArray = obj => getClass(obj) === 'Array';
+export const isNumber = obj => getClass(obj) === 'Number';
+export const isString = obj => getClass(obj) === 'String';
+export const isObject = obj => getClass(obj) === 'Object';
+export const isBoolean = obj => getClass(obj) === 'Boolean';
+export const isNull = obj => getClass(obj) === 'Null';
+export const isUndefined = obj => getClass(obj) === 'Undefined';

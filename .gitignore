@@ -2,6 +2,9 @@
 .idea/
 *.iml
 
+# nohup output #
+nohup.out
+
 # linux temp files #
 *~
 
@@ -13,7 +16,12 @@
 *.diff
 *.patch
 
-**/node_modules/**
-**/bower_components/**
-**/coverage/**
-yarn.lock
+# dependencies
+/node_modules
+
+# coverage files
+/.nyc_output
+/coverage
+
+# build
+/dist

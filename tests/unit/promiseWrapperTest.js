@@ -1,7 +1,5 @@
-'use strict';
-
-var assert = require('chai').assert;
-var promiseWrapper = require('../../src/promiseWrapper');
+import {assert} from 'chai';
+import wrapInPromise from '../../src/promiseWrapper';
 
 describe('promise wrappers', () => {
   it('works without argumets', done => {
@@ -11,10 +9,9 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    let promisedFuncWithoutArgs = promiseWrapper(funcWithoutArgs);
+    let promisedFuncWithoutArgs = wrapInPromise(funcWithoutArgs);
 
-    promisedFuncWithoutArgs()
-    .then(() => {
+    promisedFuncWithoutArgs().then(() => {
       assert.isTrue(funcCalled);
       done();
     });
@@ -28,10 +25,9 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    let promisedFuncWithArg = promiseWrapper(funcWithArg);
+    let promisedFuncWithArg = wrapInPromise(funcWithArg);
 
-    promisedFuncWithArg('example arg')
-    .then(() => {
+    promisedFuncWithArg('example arg').then(() => {
       assert.isTrue(funcCalled);
       done();
     });
@@ -46,10 +42,9 @@ describe('promise wrappers', () => {
       return cb(null);
     };
 
-    let promisedFuncWith2Args = promiseWrapper(funcWith2Args);
+    let promisedFuncWith2Args = wrapInPromise(funcWith2Args);
 
-    promisedFuncWith2Args('example arg1', 'example arg2')
-    .then(() => {
+    promisedFuncWith2Args('example arg1', 'example arg2').then(() => {
       assert.isTrue(funcCalled);
       done();
     });
@@ -60,10 +55,9 @@ describe('promise wrappers', () => {
       return cb(null, 'example result');
     };
 
-    let promisedFuncWithResult = promiseWrapper(funcWithResult);
+    let promisedFuncWithResult = wrapInPromise(funcWithResult);
 
-    promisedFuncWithResult()
-    .then(result => {
+    promisedFuncWithResult().then(result => {
       assert.equal(result, 'example result');
       done();
     });
@@ -74,10 +68,9 @@ describe('promise wrappers', () => {
       return cb('example error');
     };
 
-    let promisedFuncThatThrows = promiseWrapper(funcThatThrows);
+    let promisedFuncThatThrows = wrapInPromise(funcThatThrows);
 
-    promisedFuncThatThrows()
-    .catch(err => {
+    promisedFuncThatThrows().catch(err => {
       assert.equal(err, 'example error');
       done();
     });
