@@ -1,5 +1,4 @@
 'use strict';
-
 /* eslint strict:0 */
 
 let path = require('path');

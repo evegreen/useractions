@@ -1,7 +1,4 @@
-'use strict';
-
 /* eslint no-unused-vars:0 */
-/* eslint strict:0 */
 
 // VIEW ACTIONS
 
@@ -15,9 +12,9 @@ function immediateResultButtonClicked() {
   insertAfter(newDiv, immediateResultButton);
 }
 
-var onceButtonWasClickedCount = 0;
+window.onceButtonWasClickedCount = 0;
 function onceButtonClicked() {
-  onceButtonWasClickedCount++;
+  window.onceButtonWasClickedCount++;
 }
 
 function promiseChainFirstClick() {

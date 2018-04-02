@@ -1,16 +1,28 @@
-'use strict';
+/*
+ * TODO:
+ * - review eslint disabling comments
+ * - build testing page (e.g. target resource)
+ * - run node server with socket.io receiver
+ * - server must "opn" testing page
+ * - try to use two reporters (html, json) / json only
+ * - send json-result to node server via socket.io
+ * - can i close browser page with javascript only ?
+ * - optional: can i run many browser pages with "opn" in differrent browser windows ?
+ * - get result in node server and print in in console with error codes?
+ *   - need use mocha package or mocha standart reporter only?
+ *
+ */
 
-/* eslint strict:0 */
+/* eslint-env mocha */
 
-let assert = chai.assert; // eslint-disable-line no-undef
+import {assert} from 'chai';
 
 let actions = userActions; // eslint-disable-line no-undef
 let promisedActions = actions.promised;
 
 let runnerState = null;
-mocha.setup('bdd'); // eslint-disable-line no-undef
+mocha.setup('bdd');
 
-// eslint-disable-next-line no-undef
 after(() => {
   let color;
   if (runnerState.stats.failures) {
@@ -45,12 +57,10 @@ describe('click method', () => {
 
   it('can click on button once', done => {
     // than variable has raght in application, no need to declare it
-    // eslint-disable-next-line no-undef
-    assert.equal(onceButtonWasClickedCount, 0);
+    assert.equal(window.onceButtonWasClickedCount, 0);
     click('#forClickOnButtonOnce', err => {
       assert.isNull(err);
-      // eslint-disable-next-line no-undef
-      assert.equal(onceButtonWasClickedCount, 1);
+      assert.equal(window.onceButtonWasClickedCount, 1);
       done();
     });
   });
@@ -226,7 +236,7 @@ describe('promise style usage', () => {
   });
 });
 
-// attention: nested describes is not synchronized!
+// WARNING: nested describes is not synchronized!
 describe('can write step-based integration tests', () => {
   let click = actions.click;
   let getText = actions.getText;
@@ -262,14 +272,13 @@ describe('can write step-based integration tests', () => {
 });
 
 // for start tests, just run this function from browser console, or right in test script
-// eslint-disable-next-line no-unused-vars
 function runTests() {
   let mochaBlock = document.createElement('div');
   mochaBlock.id = 'mocha';
   let mainBlock = document.querySelector('#main');
   document.body.insertBefore(mochaBlock, mainBlock);
 
-  runnerState = mocha.run(); // eslint-disable-line no-undef
+  runnerState = mocha.run();
 }
 
 // in this example, we will run tests automatically
