@@ -16,23 +16,11 @@
 /* eslint-env mocha */
 
 import {assert} from 'chai';
+import {runTests} from './browserMochaRunner';
 
 let actions = userActions; // eslint-disable-line no-undef
 let promisedActions = actions.promised;
 
-let runnerState = null;
-mocha.setup('bdd');
-
-after(() => {
-  let color;
-  if (runnerState.stats.failures) {
-    color = 'red';
-  } else {
-    color = 'green';
-  }
-
-  document.querySelector('div#mocha').style.backgroundColor = color;
-});
 
 describe('click method', () => {
   let click = actions.click;
@@ -270,16 +258,6 @@ describe('can write step-based integration tests', () => {
     });
   });
 });
-
-// for start tests, just run this function from browser console, or right in test script
-function runTests() {
-  let mochaBlock = document.createElement('div');
-  mochaBlock.id = 'mocha';
-  let mainBlock = document.querySelector('#main');
-  document.body.insertBefore(mochaBlock, mainBlock);
-
-  runnerState = mocha.run();
-}
 
 // in this example, we will run tests automatically
 runTests();

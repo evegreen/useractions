@@ -7,11 +7,11 @@
     <div id="main">
 
       <!-- for click and wait immediate result -->
-      <input type="button" id="immediateResultButton" onclick="immediateResultButtonClicked()" value="immediateResult">
+      <input type="button" id="immediateResultButton" onclick="window.immediateResultButtonClicked()" value="immediateResult">
       <br><br>
 
       <!-- for click on button once -->
-      <input type="button" id="forClickOnButtonOnce" onclick="onceButtonClicked()" value="onceButton">
+      <input type="button" id="forClickOnButtonOnce" onclick="window.onceButtonClicked()" value="onceButton">
       <br><br>
 
       <!-- for directClick method -->
@@ -68,21 +68,20 @@
       <br><br>
 
       <!-- for promise chain test -->
-      <input type="button" id="forPromiseChainTest" onclick="promiseChainFirstClick()" value="forPromiseChainTest">
+      <input type="button" id="forPromiseChainTest" onclick="window.promiseChainFirstClick()" value="forPromiseChainTest">
       <br><br>
 
       <!-- for steps example -->
-      <input type="button" id="forStepsExample" onclick="stepsExampleClicked()" value="forStepsExample">
+      <input type="button" id="forStepsExample" onclick="window.stepsExampleClicked()" value="forStepsExample">
       <br><br>
 
     </div>
   </body>
-  <script src="exampleApp.js"></script>
 
   <script src="../../node_modules/chai/chai.js"></script>
   <link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
   <script src="../../node_modules/mocha/mocha.js"></script>
   <script src="../../dist/useractionsBundle.js"></script>
 
-  <script src="exampleTestScript.js"></script>
+  <script src="build/exampleAppBundle.js"></script>
 </html>

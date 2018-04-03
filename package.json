@@ -13,8 +13,9 @@
     "test": "mocha --require babel-register tests/unit/**/*.js",
     "test-debug": "node --inspect-brk ./node_modules/.bin/mocha --require babel-register tests/unit/**/*.js",
     "lint": "eslint -c .eslintrc.js src/**/*.js tests/**/*.js",
-    "regression-test": "node ./tests/regression/openRegressionTestPage.js",
-    "build-prod": "npm run lint && npm run test && npm run build && npm run regression-test",
+    "regression-build": "rollup tests/regression/bundler.js --format iife --file tests/regression/build/exampleAppBundle.js",
+    "regression-start": "node ./tests/regression/openRegressionTestPage.js",
+    "build-prod": "npm run lint && npm run test && npm run build && npm run regression-build && npm run regression-start",
     "coverage": "nyc --reporter=html  mocha --require babel-register tests/unit/**/*.js",
     "prettier": "prettier --single-quote --no-bracket-spacing --write src/**/*.js tests/**/*.js"
   },

@@ -1,8 +1,6 @@
-/* eslint no-unused-vars:0 */
-
 // VIEW ACTIONS
 
-function immediateResultButtonClicked() {
+window.immediateResultButtonClicked = function immediateResultButtonClicked() {
   let immediateResultButton = document.querySelector(
     'input#immediateResultButton'
   );
@@ -13,11 +11,11 @@ function immediateResultButtonClicked() {
 }
 
 window.onceButtonWasClickedCount = 0;
-function onceButtonClicked() {
+window.onceButtonClicked = function onceButtonClicked() {
   window.onceButtonWasClickedCount++;
 }
 
-function promiseChainFirstClick() {
+window.promiseChainFirstClick = function promiseChainFirstClick() {
   let promiseChainFirstButton = document.querySelector(
     'input#forPromiseChainTest'
   );
@@ -40,13 +38,13 @@ function promiseChainFirstClick() {
   setTimeout(() => {
     secondButton.id = 'promiseChainSecondButton';
     secondButton.type = 'button';
-    secondButton.onclick = promiseChainSecondClick;
+    secondButton.onclick = window.promiseChainSecondClick;
     secondButton.value = 'promiseChainSecondButton';
     insertAfter(secondButton, secondInput);
   }, 900);
 }
 
-function promiseChainSecondClick() {
+window.promiseChainSecondClick = function promiseChainSecondClick() {
   let promiseChainSecondInput = document.querySelector(
     'input#promiseChainSecondInput'
   );
@@ -64,35 +62,35 @@ function promiseChainSecondClick() {
   }, 300);
 }
 
-function stepsExampleClicked() {
+window.stepsExampleClicked = function stepsExampleClicked() {
   setTimeout(() => {
     let stepsExampleFirstButton = document.querySelector(
       'input#forStepsExample'
     );
     let secondButton = document.createElement('input');
     secondButton.type = 'button';
-    secondButton.onclick = stepsExampleSecondButtonClicked;
+    secondButton.onclick = window.stepsExampleSecondButtonClicked;
     secondButton.id = 'stepsExampleSecondButton';
     secondButton.value = 'stepsExampleSecondButton';
     insertAfter(secondButton, stepsExampleFirstButton);
   }, 300);
 }
 
-function stepsExampleSecondButtonClicked() {
+window.stepsExampleSecondButtonClicked = function stepsExampleSecondButtonClicked() {
   setTimeout(() => {
     let stepsExampleSecondButton = document.querySelector(
       'input#stepsExampleSecondButton'
     );
     let thirdButton = document.createElement('input');
     thirdButton.type = 'button';
-    thirdButton.onclick = stepsExampleThirdButtonClicked;
+    thirdButton.onclick = window.stepsExampleThirdButtonClicked;
     thirdButton.id = 'stepsExampleThirdButton';
     thirdButton.value = 'stepsExampleThirdButton';
     insertAfter(thirdButton, stepsExampleSecondButton);
   }, 300);
 }
 
-function stepsExampleThirdButtonClicked() {
+window.stepsExampleThirdButtonClicked = function stepsExampleThirdButtonClicked() {
   setTimeout(() => {
     let stepsExampleThirdButton = document.querySelector(
       'input#stepsExampleThirdButton'
