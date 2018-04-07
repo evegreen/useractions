@@ -10,16 +10,17 @@ let browserProcess;
 new ReportServer({
   port: 4567,
   handleConnection: runnerWorker => {
-    // TODO: shure need eventPayload ?
-    runnerWorker.on('mocha-event', ({eventName, eventPayload}) => {
+    runnerWorker.on('mocha-event', eventName => {
+      console.log(eventName);
       // TODO: event matching ?
+      // TODO: create fake mochaRunner or modify exists runner ?
     });
 
     runnerWorker.on('browser-done', () => {
       closeBrowser();
     });
   },
-  handleDisconnect: runnerWorker => {
+  handleDisconnect: () => {
     closeBrowser();
   }
 });

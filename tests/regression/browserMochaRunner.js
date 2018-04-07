@@ -1,8 +1,8 @@
 /* eslint-env mocha */
+import io from 'socket.io-client';
 
 let runnerState = null;
 mocha.setup('bdd');
-mocha.reporter('json');
 
 // for start tests, just run this function from browser console, or right in test script
 // tests must started after test definitions
@@ -12,7 +12,16 @@ export function runTests() {
   let mainBlock = document.querySelector('#main');
   document.body.insertBefore(mochaBlock, mainBlock);
 
-  runnerState = mocha.run();
+  let reportServer = io('ws://localhost:4567');
+  reportServer.on('connect', () => {
+    console.log('connected to report server');
+    runnerState = mocha.run();
+    let emitOriginal = runnerState.emit;
+    let emitWrapper = function (eventName) {
+      reportServer.emit('mocha-event', eventName);
+      return emitOriginal(...arguments);
+    }
+  });
 }
 
 after(() => {

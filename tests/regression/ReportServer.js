@@ -7,7 +7,7 @@ class ReportServer {
       console.log('runnerWorker connected');
       handleConnection(runnerWorker);
 
-      // TODO: browser cloded? network fail? test it
+      // TODO: browser closed? network fail? test it
       runnerWorker.on('disconnect', () => {
         console.log('runnerWorker disconnected');
         handleDisconnect(runnerWorker);
@@ -15,3 +15,5 @@ class ReportServer {
     });
   }
 }
+
+module.exports = ReportServer;
