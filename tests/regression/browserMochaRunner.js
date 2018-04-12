@@ -21,6 +21,7 @@ export function runTests() {
       reportServer.emit('mocha-event', eventName);
       return emitOriginal(...arguments);
     }
+    runnerState.emit = emitWrapper;
   });
 }
 

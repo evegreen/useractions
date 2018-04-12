@@ -1,8 +1,14 @@
-let Server = require('socket.io');
+let socketIoServer = require('socket.io');
+
+/*
+  TODO: is javascript freezes in inactive tab, when socket.io works through:
+  - http (must do?)
+  - websockets (must not do?)
+*/
 
 class ReportServer {
-  constructor({port, handleConnection, handleDisconnect}) {
-    let io = Server(port);
+  constructor({httpServer, handleConnection, handleDisconnect}) {
+    let io = socketIoServer(httpServer);
     io.on('connection', runnerWorker => {
       console.log('runnerWorker connected');
       handleConnection(runnerWorker);
