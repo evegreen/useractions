@@ -12,7 +12,7 @@ export function runTests() {
   let mainBlock = document.querySelector('#main');
   document.body.insertBefore(mochaBlock, mainBlock);
 
-  let reportServer = io('ws://localhost:4567');
+  let reportServer = io('ws://localhost:27000');
   reportServer.on('connect', () => {
     console.log('connected to report server');
     runnerState = mocha.run();

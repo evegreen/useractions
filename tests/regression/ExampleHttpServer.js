@@ -23,7 +23,7 @@ class ExampleHttpServer {
   }
 
   start() {
-    // TODO: add routes ... (try static routes before)
+    this._app.use(express.static('./'));
 
     this._httpServer.listen(
       this._port,

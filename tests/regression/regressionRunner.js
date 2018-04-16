@@ -27,6 +27,7 @@ new ReportSocketServer({
   },
   handleDisconnect: closeBrowserAndServer
 });
+exampleHttpServer.start();
 
 opn('http://localhost:27000/tests/regression/exampleApp.html').then(browserChildProcess => {
   browserProcess = browserChildProcess;
