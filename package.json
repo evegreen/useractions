@@ -10,12 +10,12 @@
   "scripts": {
     "build": "rollup --config",
     "devmode": "rollup --config --watch",
-    "test": "mocha --require babel-register tests/unit/**/*.js",
-    "test-debug": "node --inspect-brk ./node_modules/.bin/mocha --require babel-register tests/unit/**/*.js",
+    "test": "mocha --require babel-register tests/unit/**",
+    "test-debug": "node --inspect-brk ./node_modules/.bin/mocha --require babel-register tests/unit/**",
     "lint": "eslint -c .eslintrc.js src/** tests/**",
     "regression-test": "node ./tests/regression/openRegressionTestPage.js",
     "build-prod": "npm run lint && npm run test && npm run build && npm run regression-test",
-    "coverage": "nyc --reporter=html  mocha --require babel-register tests/unit/**/*.js",
+    "coverage": "nyc --reporter=html  mocha --require babel-register tests/unit/**",
     "prettier": "prettier --single-quote --no-bracket-spacing --write src/**/*.js tests/**/*.js"
   },
   "files": [
