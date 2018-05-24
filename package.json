@@ -12,7 +12,7 @@
     "devmode": "rollup --config --watch",
     "test": "mocha --require babel-register tests/unit/**/*.js",
     "test-debug": "node --inspect-brk ./node_modules/.bin/mocha --require babel-register tests/unit/**/*.js",
-    "lint": "eslint -c .eslintrc.js src/**/*.js tests/**/*.js",
+    "lint": "eslint -c .eslintrc.js src/** tests/**",
     "regression-test": "node ./tests/regression/openRegressionTestPage.js",
     "build-prod": "npm run lint && npm run test && npm run build && npm run regression-test",
     "coverage": "nyc --reporter=html  mocha --require babel-register tests/unit/**/*.js",
